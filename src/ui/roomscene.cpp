@@ -56,8 +56,8 @@ using namespace QSanProtocol;
 struct RoomLayout {
     QPointF discard, drawpile;
     QPointF enemy_box, self_box;
-    QSize chat_box_size;
-    QPointF chat_box_pos;
+    QSize chat_box_size, log_box_size;
+    QPointF chat_box_pos, log_box_pos;
     QPointF button1_pos, button2_pos;
     QPointF state_item_pos;
 };
@@ -86,6 +86,12 @@ struct NormalRoomLayout : public RoomLayout{
 
         coord = settings.value("chat_box_pos").toList();
         chat_box_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("log_box_size").toList();
+        log_box_size = QSize(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("log_box_pos").toList();
+        log_box_pos = QPointF(coord.first().toReal(), coord.last().toReal());
 
         coord = settings.value("button1_pos").toList();
         button1_pos = QPointF(coord.first().toReal(), coord.last().toReal());
@@ -364,21 +370,18 @@ RoomScene::RoomScene(QMainWindow *main_window)
     {
         // log box
         log_box = new ClientLogBox;
-        log_box->resize(chat_box->width(), 205);
+        QSize log_box_size = room_layout->log_box_size;
+        log_box->resize(chat_box->width(), log_box_size.height());
         log_box->setTextColor(Config.TextEditColor);
         log_box->setObjectName("log_box");
         log_box->setProperty("type", "border");
 
         QGraphicsProxyWidget *log_box_widget = addWidget(log_box);
-        log_box_widget->setPos(114, -83);
+        QPointF log_box_pos = room_layout->log_box_pos;
+        log_box_widget->setPos(log_box_pos);
         log_box_widget->setZValue(-2.0);
         log_box_widget->setObjectName("log_box_widget");
         connect(ClientInstance, SIGNAL(log_received(QString)), log_box, SLOT(appendLog(QString)));
-
-        if(circular){
-            log_box->resize(chat_box->width(), 210);
-            log_box_widget->setPos(367, -246);
-        }
 
         log_box_widget->setFlag(QGraphicsItem::ItemIsMovable);
     }

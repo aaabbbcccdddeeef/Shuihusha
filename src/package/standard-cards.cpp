@@ -936,7 +936,7 @@ bool Indulgence::targetFilter(const QList<const Player *> &targets, const Player
 
 void Indulgence::takeEffect(ServerPlayer *target, bool good) const{
     target->clearHistory();
-	if(!good)
+    if(!good)
         target->skip(Player::Play);
 }
 
