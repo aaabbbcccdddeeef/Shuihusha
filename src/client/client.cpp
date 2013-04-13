@@ -425,7 +425,7 @@ void Client::onPlayerChooseGeneral(const QString &item_name){
 
 void Client::requestCheatRunScript(const QString& script)
 {
-    Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
+    Json::Value cheatReq(Json::arrayValue);
     cheatReq[0] = (int)S_CHEAT_RUN_SCRIPT;
     cheatReq[1] = toJsonString(script);
     requestToServer(S_COMMAND_CHEAT, cheatReq);
@@ -1425,7 +1425,7 @@ void Client::askForSuit(const Json::Value &){
     setStatus(ExecDialog);
 }
 
-void Client::askForKingdom(const Json::Value&){
+void Client::askForKingdom(const Json::Value &include_god){
     delete ask_dialog;
 
     QDialog *dialog = new QDialog;
@@ -1434,7 +1434,10 @@ void Client::askForKingdom(const Json::Value&){
     QVBoxLayout *layout = new QVBoxLayout;
 
     QStringList kingdoms = Sanguosha->getKingdoms();
-    //kingdoms.removeOne("god"); // god kingdom does not really exist
+    if(include_god.asInt() == 0)
+        kingdoms.removeOne("god"); // god kingdom does not really exist
+    kingdoms.removeOne("sun");
+    kingdoms.removeOne("moon");
 
     foreach(QString kingdom, kingdoms){
         QCommandLinkButton *button = new QCommandLinkButton;

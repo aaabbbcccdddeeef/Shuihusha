@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130404",
-	version_name = "F4.7.5",
+	version = "20130413",
+	version_name = "F4.8",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
@@ -212,6 +212,7 @@ ban_list = { -- 初始禁表设置
 	},
 	forbid_packages = { -- 灰色不可选的包
 		"test",
+		"zhangong"
 	},
 }
 

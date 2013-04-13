@@ -974,7 +974,7 @@ public:
 	// interactive methods
 	void activate(ServerPlayer *player, CardUseStruct &card_use);
 	Card::Suit askForSuit(ServerPlayer *player, const char *reason);
-	QString askForKingdom(ServerPlayer *player);
+	QString askForKingdom(ServerPlayer *player, bool include_god = true);
 	bool askForSkillInvoke(ServerPlayer *player, const char *skill_name, const QVariant &data = QVariant());
 	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices, const QVariant &data = QVariant());
 	bool askForDiscard(ServerPlayer *target, const char *reason, int discard_num, bool optional = false, bool include_equip = false);

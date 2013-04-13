@@ -186,8 +186,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     switch(event){
     case GameStart: {
-        if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
-            QString new_kingdom = room->askForKingdom(player);
+        bool sun_moon = player->getGeneral()->getKingdom() == "sun" || player->getGeneral()->getKingdom() == "moon";
+        if((player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang") || sun_moon){
+            QString new_kingdom = room->askForKingdom(player, !sun_moon);
             room->setPlayerProperty(player, "kingdom", new_kingdom);
 
             LogMessage log;
@@ -310,9 +311,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     case HpLost:{
         int lose = data.toInt();
-
-        if(room->getCurrent()->hasSkill("jueqing"))
-            return true;
 
         LogMessage log;
         log.type = "#LoseHp";
@@ -550,9 +548,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             damage.damage ++;
             room->setPlayerFlag(player, "-drunken");
         }
-
-        if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
-            damage.damage ++;
 
         damage.from = effect.from;
         damage.to = effect.to;
@@ -1419,6 +1414,22 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         if(player->hasMark("dizzy_jur")){
             room->setPlayerProperty(player, "scarecrow", false);
             player->loseAllMarks("dizzy_jur");
+        }
+        break;
+    }
+    case Death:{
+        if(player->getGeneralName().startsWith("sun") ||
+           player->getGeneralName().startsWith("moon")){
+            if(player->askForSkillInvoke("casket_death")){
+                QStringList genlist = Sanguosha->getLimitedGeneralNames();
+                qShuffle(genlist);
+                genlist = genlist.mid(0, 4);
+                QString general = room->askForGeneral(player, genlist);
+                room->setPlayerProperty(player, "general", general);
+                room->revivePlayer(player);
+                room->setPlayerProperty(player, "maxhp", 1);
+                room->setPlayerProperty(player, "hp", 1);
+            }
         }
         break;
     }

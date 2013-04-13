@@ -5,6 +5,8 @@ return {
 	["qian_casket"] = "乾匣子",
 	["kun_casket"] = "坤匣子",
 
+	["casket_death"] = "阴阳再生",
+
 	["$moon_panqiaoyun"] = "阴武将",
 	["#moon_panqiaoyun"] = "花开荼蘼", -- 3/3
 	["moon_panqiaoyun"] = "潘巧云",
