@@ -202,9 +202,11 @@ public:
 
 	void addHistory(const char *name, int times = 1);
 	void clearHistory();
+	void clearHistory(const char *name);
 	bool hasUsed(const char *card_class) const;
 	int usedTimes(const char *card_class, int init = 0) const;
 	int getSlashCount() const;
+	QStringList getHistorys() const;
 
 	QSet<const TriggerSkill *> getTriggerSkills() const;
 	QSet<const Skill *> getVisibleSkills() const;
@@ -996,8 +998,8 @@ public:
 	void broadcastInvoke(const char *method, const char *arg = ".", ServerPlayer *except = NULL);
 
 	void updateStateItem();
-	bool notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const QString &value = QString());
-	bool broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
+	bool notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const char *value = QString());
+	bool broadcastProperty(ServerPlayer *player, const char *property_name, const char *value = QString());
 };
 
 %extend Room {

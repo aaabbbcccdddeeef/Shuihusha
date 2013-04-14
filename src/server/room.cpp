@@ -4100,8 +4100,11 @@ void Room::makeState(const QString &name, const QString &str){
                 detachSkillFromPlayer(player, value);
             }
         }
-        else if(key == "history")
-            player->clearHistory();
+        else if(key == "history"){
+            value.remove("-");
+            player->clearHistory(value);
+            player->invoke("clearHistory", value);
+        }
         else if(key.endsWith("_jur"))
             player->gainJur(key, value.toInt());
         else if(key == "flag")

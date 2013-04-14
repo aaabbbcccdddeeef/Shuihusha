@@ -846,8 +846,15 @@ int Player::getSlashCount() const{
     return usedTimes("Slash") + usedTimes("ThunderSlash") + usedTimes("FireSlash");
 }
 
-void Player::clearHistory(){
-    history.clear();
+QStringList Player::getHistorys() const{
+    return history.keys();
+}
+
+void Player::clearHistory(const QString &name){
+    if(!getHistorys().contains(name))
+        history.clear();
+    else
+        history.remove(name);
 }
 
 bool Player::hasUsed(const QString &card_class) const{

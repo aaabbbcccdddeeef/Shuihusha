@@ -361,8 +361,7 @@ QWidget *CheatDialog::createSetStateTab(){
     drank = new QCheckBox(tr("Drank"));
     shutup = new QCheckBox(tr("Tie"));
     extra_button = new QPushButton(tr("Remove extra skills"));
-    QPushButton *clear_button = new QPushButton(tr("Clear History"));
-    connect(clear_button, SIGNAL(clicked()), this, SLOT(clearHistory()));
+    clear_button = new QPushButton(tr("Clear History"));
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
     adhere_layout->addRow(HLay(shutup, new QLabel));
@@ -499,6 +498,21 @@ void CheatDialog::loadState(int index){
             skill_menu->addAction(action);
             connect(action, SIGNAL(triggered()), this, SLOT(loseSkill()));
         }
+        QMenu *history_menu = new QMenu(clear_button);
+        clear_button->setMenu(history_menu);
+        QAction *action = new QAction(history_menu);
+        action->setText(tr("Clear All"));
+        action->setData("histall");
+        history_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(clearHistory()));
+        history_menu->addSeparator();
+        QStringList historys = player->getHistorys();
+        foreach(QString history, historys){
+            action = new QAction(history_menu);
+            action->setText(history);
+            history_menu->addAction(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(clearHistory()));
+        }
         QMenu *flag_menu = new QMenu(flag_option);
         flag_option->setMenu(flag_menu);
         QStringList f1ags = player->getFlags().split("+");
@@ -594,9 +608,15 @@ void CheatDialog::loseSkill(){
 }
 
 void CheatDialog::clearHistory(){
-    //history:1
-    QString item = "history:1";
-    ClientInstance->requestCheatState(getPlayerString(), item);
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action){
+        //history:-YongleCard
+        QString item = QString("history:-%1").arg(action->text());
+        if(action->data().toString() == "histall")
+            item = "history:-";
+        qDebug("item: %s", qPrintable(item));
+        ClientInstance->requestCheatState(getPlayerString(), item);
+    }
 }
 
 void CheatDialog::doClearExpert(){
