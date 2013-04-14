@@ -649,6 +649,9 @@ void ServerPlayer::loseAllMarks(const QString &mark_name){
 }
 
 void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
+    if(room->getThread()->trigger(PreConjuring, room, this))
+        return;
+
     int value = getMark(jur) + n;
     if(n < 1)
         return;

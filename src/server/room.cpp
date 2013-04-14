@@ -1237,14 +1237,15 @@ void Room::setPlayerProperty(ServerPlayer *player, const char *property_name, co
 
     if (strcmp(property_name, "maxhp") == 0)
         thread->trigger(MaxHpChanged, this, player);
-
-    if (strcmp(property_name, "chained") == 0)
-        thread->trigger(ChainStateChanged, this, player);
 }
 
 void Room::setPlayerMark(ServerPlayer *player, const QString &mark, int value){
     player->setMark(mark, value);
     broadcastInvoke("setMark", QString("%1.%2=%3").arg(player->objectName()).arg(mark).arg(value));
+}
+
+void Room::setPlayerChained(ServerPlayer *player){
+    thread->trigger(ChainStateChange, this, player);
 }
 
 void Room::addPlayerHistory(ServerPlayer *player, const QString &name, int times){

@@ -19,7 +19,7 @@ GameRule::GameRule(QObject *)
             << CardAsk << CardUseAsk << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
-            << PreDeath << RewardAndPunish << TurnedOver
+            << PreDeath << RewardAndPunish << TurnedOver << ChainStateChange
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
             << DamageDone << DamageComplete << Damaged
             << StartJudge << FinishJudge << Pindian;
@@ -694,6 +694,14 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         log.from = player;
         log.arg = player->faceUp() ? "face_up" : "face_down";
         room->sendLog(log);
+        break;
+    }
+
+    case ChainStateChange:{
+        bool chained = !player->isChained();
+        player->setChained(chained);
+        room->broadcastProperty(player, "chained");
+        room->setEmotion(player, "chain");
         break;
     }
 

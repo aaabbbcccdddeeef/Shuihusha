@@ -351,11 +351,7 @@ void IronChain::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
 }
 
 void IronChain::onEffect(const CardEffectStruct &effect) const{
-    bool chained = ! effect.to->isChained();
-    effect.to->setChained(chained);
-
-    effect.to->getRoom()->broadcastProperty(effect.to, "chained");
-    effect.to->getRoom()->setEmotion(effect.to, "chain");
+    effect.from->getRoom()->setPlayerChained(effect.to);
 }
 
 SupplyShortage::SupplyShortage(Card::Suit suit, int number)

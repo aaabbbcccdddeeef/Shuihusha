@@ -306,9 +306,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
         foreach(ServerPlayer *player, players){
             if(player->hasEquip("Horse", true)){
                 if(!player->isChained()){
-                    player->setChained(true);
-                    room->broadcastProperty(player, "chained");
-                    room->setEmotion(player, "chain");
+                    room->setPlayerChained(player);
                     log.to << player;
                 }
             }
@@ -319,7 +317,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
         foreach(ServerPlayer *player, players){
             if(!player->hasEquip("Horse", true)){
                 if(player->isChained()){
-                    room->setPlayerProperty(player, "chained", false);
+                    room->setPlayerChained(player);
                     log.to << player;
                 }
             }

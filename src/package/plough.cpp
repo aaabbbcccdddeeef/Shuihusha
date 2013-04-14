@@ -245,10 +245,7 @@ public:
                 player->playCardEffect("Edouble_whip1", "weapon");
             else
                 player->playCardEffect("Edouble_whip2", "weapon");
-            bool chained = ! effect.to->isChained();
-            effect.to->setChained(chained);
-            room->broadcastProperty(effect.to, "chained");
-            room->setEmotion(effect.to, "chain");
+            room->setPlayerChained(effect.to);
         }
         return false;
     }

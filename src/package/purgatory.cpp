@@ -170,13 +170,16 @@ bool EdoTensei::isAvailable(const Player *) const{
 class ProudBannerSkill: public ArmorSkill{
 public:
     ProudBannerSkill():ArmorSkill("renwang_shield"){
-        events << TurnedOver;
+        events << TurnedOver << ChainStateChange << PreConjuring;
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(event == TurnedOver){
+    virtual bool trigger(TriggerEvent event, Room *, ServerPlayer *player, QVariant &data) const{
+        if(event == TurnedOver)
             return player->faceUp();
-        }
+        else if(event == ChainStateChange)
+            return !player->isChained();
+        else if(event == PreConjuring)
+            return qrand() % 2 == 0;
         return false;
     }
 };

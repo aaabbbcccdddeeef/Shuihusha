@@ -236,9 +236,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
 
         if(this->players.at(i)["chained"] != NULL){
-            sp->setChained(true);
-            room->broadcastProperty(sp, "chained");
-            room->setEmotion(sp, "chain");
+            room->setPlayerChained(sp);
         }
         if(this->players.at(i)["turned"] == "true"){
             if(sp->faceUp())

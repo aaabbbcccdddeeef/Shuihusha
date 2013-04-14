@@ -62,6 +62,7 @@ public:
     void setPlayerFlag(ServerPlayer *player, const QString &flag);
     void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
     void setPlayerMark(ServerPlayer *player, const QString &mark, int value);
+    void setPlayerChained(ServerPlayer *player);
     void addPlayerHistory(ServerPlayer *player, const QString &name, int times = 1);
     void setPlayerCardLock(ServerPlayer *player, const QString &name);
     void clearPlayerCardLock(ServerPlayer *player);

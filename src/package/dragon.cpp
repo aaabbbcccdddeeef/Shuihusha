@@ -713,16 +713,14 @@ void QianxianCard::onEffect(const CardEffectStruct &effect) const{
         effect.from->obtainCard(club);
         if(!effect.to->faceUp())
             effect.to->turnOver();
+        if(effect.to->isChained())
+            room->setPlayerChained(effect.to);
     }
     else{
         if(effect.to->faceUp())
             effect.to->turnOver();
-    }
-    bool ch = club == NULL;
-    if(ch != effect.to->isChained()){
-        effect.to->setChained(ch);
-        room->broadcastProperty(effect.to, "chained");
-        room->setEmotion(effect.to, "chain");
+        if(!effect.to->isChained())
+            room->setPlayerChained(effect.to);
     }
 }
 

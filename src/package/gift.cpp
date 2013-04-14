@@ -135,12 +135,8 @@ public:
             room->sendLog(ogg);
             room->throwCard(use.card);
 
-            foreach(ServerPlayer *target, targets){
-                bool chained = ! target->isChained();
-                target->setChained(chained);
-                room->broadcastProperty(target, "chained");
-                room->setEmotion(target, "chain");
-            }
+            foreach(ServerPlayer *target, targets)
+                room->setPlayerChained(target);
 
             return true;
         }

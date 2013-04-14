@@ -751,7 +751,6 @@ public:
         if(p->getPhase() == Player::NotActive){
             Room *room = p->getRoom();
             if(!p->isChained()){
-                p->setChained(true);
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#Mozhang";
@@ -759,8 +758,7 @@ public:
                 log.arg = objectName();
                 room->sendLog(log);
 
-                room->broadcastProperty(p, "chained");
-                room->setEmotion(p, "chain");
+                room->setPlayerChained(p);
             }
         }
         return false;
