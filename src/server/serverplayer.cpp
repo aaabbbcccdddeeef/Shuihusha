@@ -663,6 +663,7 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
     log.arg = jur;
     room->sendLog(log);
 
+    room->setEmotion(this, "conjuring/" + jur.split("_").first());
     room->setPlayerMark(this, jur, value);
     if(jur.startsWith("dizzy"))
         room->setPlayerProperty(this, "scarecrow", true);

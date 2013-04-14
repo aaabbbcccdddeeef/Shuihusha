@@ -120,6 +120,7 @@ public:
     void log(const QString &log_str);
     void speak(const QString &speak_data);
     void addHistory(const QString &card);
+    void clearHistory(const QString &name = QString());
     void moveFocus(const Json::Value &focus);
     void setEmotion(const QString &set_str);
     void skillInvoked(const Json::Value &invoke_str);

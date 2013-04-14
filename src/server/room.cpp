@@ -4100,8 +4100,11 @@ void Room::makeState(const QString &name, const QString &str){
                 detachSkillFromPlayer(player, value);
             }
         }
-        else if(key == "history")
-            player->clearHistory();
+        else if(key == "history"){
+            value.remove("-");
+            player->clearHistory(value);
+            player->invoke("clearHistory", value);
+        }
         else if(key.endsWith("_jur"))
             player->gainJur(key, value.toInt());
         else if(key == "flag")
@@ -4485,34 +4488,19 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             }
         }
         player->playCardEffect(card_use.card, mute);
-        if(card_use.card->isKindOf("Duel"))
-            broadcastInvoke("playAudio", "card/duel");
-        if(card_use.card->isKindOf("Assassinate")){
-            broadcastInvoke("playAudio", "card/assassinate");
-            setEmotion(card_use.to, "assassinate");
-        }
-        if(card_use.card->isKindOf("GodSalvation")){
-            broadcastInvoke("playAudio", "card/god_salvation");
-            setEmotion(card_use.to, "god_salvation");
-        }
-        if(card_use.card->isKindOf("AmazingGrace")){
-            broadcastInvoke("playAudio", "card/amazing_grace");
-            setEmotion(card_use.to, "amazing_grace");
-        }
-        if(card_use.card->isKindOf("SavageAssault")){
-            broadcastInvoke("playAudio", "card/savage_assault");
-            setEmotion(card_use.to, "savage_assault");
-        }
-        if(card_use.card->isKindOf("ArcheryAttack")){
-            broadcastInvoke("playAudio", "card/archery_attack");
-            setEmotion(card_use.to, "archery_attack");
-        }
-        if(card_use.card->isKindOf("Inspiration")){
-            broadcastInvoke("playAudio", "card/inspiration");
-            setEmotion(card_use.to, "inspiration");
+        QString play_card_names;
+        play_card_names
+                << "duel" << "god_salvation" << "amazing_grace"
+                << "savage_assault" << "archery_attack"
+                << "assassinate" << "inspiration"
+                << "spin_destiny";
+        QString card_name = card_use.card->objectName();
+        if(play_card_names.contains(card_name)){
+            broadcastInvoke("playAudio", QString("card/%1").arg(card_name));
+            setEmotion(card_use.to, card_name);
         }
         if(!card_use.card->isVirtualCard())
-            setEmotion(card_use.from, "cards/" + card_use.card->objectName());
+            setEmotion(card_use.from, QString("card/%1").arg(card_name));
     }
     if(event == SlashEffect){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();

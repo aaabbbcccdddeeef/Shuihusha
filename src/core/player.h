@@ -192,10 +192,11 @@ public:
     QString getPileName(int card_id) const;
 
     void addHistory(const QString &name, int times = 1);
-    void clearHistory();
+    void clearHistory(const QString &name = QString());
     bool hasUsed(const QString &card_class) const;
     int usedTimes(const QString &card_class, int init = 0) const;
     int getSlashCount() const;
+    QStringList getHistorys() const;
 
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;

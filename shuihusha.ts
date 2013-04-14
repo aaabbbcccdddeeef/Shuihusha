@@ -675,6 +675,11 @@
         <source>Expert</source>
         <translation>专家</translation>
     </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="504"/>
+        <source>Clear All</source>
+        <translation>清除全部</translation>
+    </message>
 </context>
 <context>
     <name>ChooseGeneralDialog</name>

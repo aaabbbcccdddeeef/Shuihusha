@@ -52,7 +52,7 @@ private:
     QComboBox *target;
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank, *shutup;
-    QPushButton *extra_button;
+    QPushButton *extra_button, *clear_button;
     QButtonGroup *conjur_group;
     QAbstractButton *poison, *sleep, *dizzy, *petro;
     QLineEdit *conjur_text;

@@ -287,7 +287,7 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     room->throwCard(this);
 
     player->addHistory("HuaceCard");
-    Self->addHistory("HuaceCard");
+    player->invoke("addHistory", "HuaceCard");
     return use_card;
 }
 

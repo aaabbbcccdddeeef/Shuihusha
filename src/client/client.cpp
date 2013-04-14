@@ -76,6 +76,7 @@ Client::Client(QObject *parent, const QString &filename)
     m_callbacks[S_COMMAND_SET_PROPERTY] = &Client::updateProperty;
     //callbacks["skillInvoked"] = &Client::skillInvoked;
     callbacks["addHistory"] = &Client::addHistory;
+    callbacks["clearHistory"] = &Client::clearHistory;
     callbacks["animate"] = &Client::animate;
     callbacks["judgeResult"] = &Client::judgeResult;
     callbacks["setScreenName"] = &Client::setScreenName;
@@ -1112,6 +1113,10 @@ void Client::addHistory(const QString &add_str){
 
         Self->addHistory(card_name, times);
     }
+}
+
+void Client::clearHistory(const QString &name){
+    Self->clearHistory(name);
 }
 
 int Client::alivePlayerCount() const{
