@@ -4488,7 +4488,7 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             }
         }
         player->playCardEffect(card_use.card, mute);
-        QString play_card_names;
+        QStringList play_card_names;
         play_card_names
                 << "duel" << "god_salvation" << "amazing_grace"
                 << "savage_assault" << "archery_attack"

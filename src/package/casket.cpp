@@ -8,10 +8,18 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent , Room*, ServerPlayer *, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room *, ServerPlayer *yunr, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->getGender() == General::Male)
+        if(damage.to->getGender() == General::Male){
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = yunr;
+            log.arg = objectName();
+            yunr->getRoom()->sendLog(log);
+            yunr->playSkillEffect(objectName());
+
             damage.to->gainJur("poison_jur", 5);
+        }
         return false;
     }
 };
@@ -29,13 +37,11 @@ void TumiCard::onEffect(const CardEffectStruct &effect) const{
 
     QList<int> card_ids = effect.from->handCards();
     room->fillAG(card_ids);
-    //room->askForAG(effect.from, card_ids, true, skill_name);
     QList<const Card *> cards = effect.from->getHandcards();
     foreach(const Card *card, cards){
         if(card->isRed()){
             room->getThread()->delay();
             effect.to->obtainCard(card);
-            //room->takeAG(effect.to, card->getId());
         }
     }
     room->broadcastInvoke("clearAG");
@@ -95,9 +101,12 @@ public:
             log.type = "#TriggerSkill";
             log.arg = objectName();
             room->sendLog(log);
+            room->playSkillEffect(objectName(), 1);
             killer->throwAllCards();
             killer->loseAllMarks("poison_jur");
         }
+        else
+            room->playSkillEffect(objectName(), 2);
         return false;
     }
 };
@@ -153,6 +162,7 @@ public:
         }
         x = qMin(x, 4);
         if(x > 0 && room->askForSkillInvoke(tulv, objectName())){
+            room->playSkillEffect(objectName());
             room->setPlayerMark(tulv, objectName(), x);
             return n + x;
         }else
@@ -193,10 +203,12 @@ public:
             log.from = player;
             log.arg = objectName();
             room->sendLog(log);
+            killer->playSkillEffect(objectName(), 1);
             room->loseMaxHp(killer);
             room->acquireSkill(killer, objectName());
-            killer->playSkillEffect(objectName());
         }
+        else
+            room->playSkillEffect(objectName(), 2);
         return false;
     }
 };
