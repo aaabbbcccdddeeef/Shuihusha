@@ -97,6 +97,10 @@ void Mastermind::onEffect(const CardEffectStruct &effect) const{
     life->gainMark("@life");
 }
 
+QString Mastermind::getEffectPath(bool ) const{
+    return Card::getEffectPath();
+}
+
 SpinDestiny::SpinDestiny(Suit suit, int number)
     :GlobalEffect(suit, number)
 {
@@ -125,6 +129,10 @@ void SpinDestiny::onEffect(const CardEffectStruct &effect) const{
     room->loseHp(effect.to);
 }
 
+QString SpinDestiny::getEffectPath(bool ) const{
+    return Card::getEffectPath();
+}
+
 EdoTensei::EdoTensei(Suit suit, int number)
     :SingleTargetTrick(suit, number, false){
     setObjectName("edo_tensei");
@@ -151,8 +159,33 @@ void EdoTensei::onEffect(const CardEffectStruct &effect) const{
     room->revivePlayer(revivd);
 }
 
+QString EdoTensei::getEffectPath(bool ) const{
+    return Card::getEffectPath();
+}
+
 bool EdoTensei::isAvailable(const Player *) const{
     return false;
+}
+
+class ProudBannerSkill: public ArmorSkill{
+public:
+    ProudBannerSkill():ArmorSkill("renwang_shield"){
+        events << TurnedOver;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == TurnedOver){
+            return player->faceUp();
+        }
+        return false;
+    }
+};
+
+ProudBanner::ProudBanner(Suit suit, int number)
+    :Armor(suit, number)
+{
+    setObjectName("proud_banner");
+    skill = new ProudBannerSkill;
 }
 
 class LashGunSkill : public WeaponSkill{
@@ -212,7 +245,8 @@ PurgatoryPackage::PurgatoryPackage()
             << new SpinDestiny(Card::Diamond, 5)
             << new EdoTensei(Card::Club, 5)
             << new EdoTensei(Card::Spade, 5)
-            << new LashGun(Card::Diamond, 11)
+            << new LashGun(Card::Club, 4)
+            << new ProudBanner(Card::Heart, 1)
             ;
 
     foreach(Card *card, cards)

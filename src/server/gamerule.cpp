@@ -19,7 +19,7 @@ GameRule::GameRule(QObject *)
             << CardAsk << CardUseAsk << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
-            << PreDeath << RewardAndPunish
+            << PreDeath << RewardAndPunish << TurnedOver
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
             << DamageDone << DamageComplete << Damaged
             << StartJudge << FinishJudge << Pindian;
@@ -186,8 +186,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     switch(event){
     case GameStart: {
-        if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
-            QString new_kingdom = room->askForKingdom(player);
+        bool sun_moon = player->getGeneral()->getKingdom() == "sun" || player->getGeneral()->getKingdom() == "moon";
+        if((player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang") || sun_moon){
+            QString new_kingdom = room->askForKingdom(player, !sun_moon);
             room->setPlayerProperty(player, "kingdom", new_kingdom);
 
             LogMessage log;
@@ -310,9 +311,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     case HpLost:{
         int lose = data.toInt();
-
-        if(room->getCurrent()->hasSkill("jueqing"))
-            return true;
 
         LogMessage log;
         log.type = "#LoseHp";
@@ -551,9 +549,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             room->setPlayerFlag(player, "-drunken");
         }
 
-        if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
-            damage.damage ++;
-
         damage.from = effect.from;
         damage.to = effect.to;
         damage.nature = effect.nature;
@@ -689,6 +684,19 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         }
         break;
     }
+
+    case TurnedOver:{
+        player->setFaceUp(!player->faceUp());
+        room->broadcastProperty(player, "faceup");
+
+        LogMessage log;
+        log.type = "#TurnOver";
+        log.from = player;
+        log.arg = player->faceUp() ? "face_up" : "face_down";
+        room->sendLog(log);
+        break;
+    }
+
     case StartJudge:{
         int card_id = room->drawCard();
 
@@ -1419,6 +1427,22 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         if(player->hasMark("dizzy_jur")){
             room->setPlayerProperty(player, "scarecrow", false);
             player->loseAllMarks("dizzy_jur");
+        }
+        break;
+    }
+    case Death:{
+        if(player->getGeneralName().startsWith("sun") ||
+           player->getGeneralName().startsWith("moon")){
+            if(player->askForSkillInvoke("casket_death")){
+                QStringList genlist = Sanguosha->getLimitedGeneralNames();
+                qShuffle(genlist);
+                genlist = genlist.mid(0, 4);
+                QString general = room->askForGeneral(player, genlist);
+                room->setPlayerProperty(player, "general", general);
+                room->revivePlayer(player);
+                room->setPlayerProperty(player, "maxhp", 1);
+                room->setPlayerProperty(player, "hp", 1);
+            }
         }
         break;
     }

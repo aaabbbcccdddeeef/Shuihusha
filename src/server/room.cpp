@@ -3542,12 +3542,13 @@ Card::Suit Room::askForSuit(ServerPlayer *player, const QString& reason){
     return suit;
 }
 
-QString Room::askForKingdom(ServerPlayer *player){
+QString Room::askForKingdom(ServerPlayer *player, bool include_god){
     AI *ai = player->getAI();
     if(ai)
         return ai->askForKingdom();
 
-    bool success = doRequest(player, S_COMMAND_CHOOSE_KINGDOM, Json::Value::null);
+    int js = include_god ? 1 : 0;
+    bool success = doRequest(player, S_COMMAND_CHOOSE_KINGDOM, js);
 
     //@todo: check if the result is valid before return!!
     //@todo: make kingdom a enum or static const instead of variable QString
@@ -3558,7 +3559,7 @@ QString Room::askForKingdom(ServerPlayer *player){
         if (kingdom == "guan" || kingdom == "jiang" || kingdom == "min" || kingdom == "kou")
             return kingdom;
     }
-    return "god";
+    return include_god ? "god" : "guan";
 }
 
 bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discard_num, bool optional, bool include_equip){

@@ -56,11 +56,10 @@ int Skill::getEffectIndex(const ServerPlayer *, const Card *) const{
 void Skill::initMediaSource(){
     sources.clear();
 
-    int i;
-    for(i=1; ;i++){
+    for(int i=1; ;i++){
         QString effect_file = QString("audio/skill/%1%2.dat").arg(objectName()).arg(i);
-        //if(!QFile::exists(effect_file))
-        //    effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
+        if(!QFile::exists(effect_file))
+            effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
         if(!QFile::exists(effect_file))
             effect_file = QString("extensions/audio/skill/%1%2.ogg").arg(objectName()).arg(i);
         if(QFile::exists(effect_file))

@@ -541,15 +541,6 @@ bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Ca
 }
 
 void ServerPlayer::turnOver(){
-    setFaceUp(!faceUp());
-    room->broadcastProperty(this, "faceup");
-
-    LogMessage log;
-    log.type = "#TurnOver";
-    log.from = this;
-    log.arg = faceUp() ? "face_up" : "face_down";
-    room->sendLog(log);
-
     room->getThread()->trigger(TurnedOver, room, this);
 }
 

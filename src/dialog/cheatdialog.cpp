@@ -3,8 +3,6 @@
 #include "roomscene.h"
 #include "client.h"
 
-using namespace QSanProtocol;
-
 ScriptExecutor::ScriptExecutor(QWidget *parent)
     :QDialog(parent)
 {

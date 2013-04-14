@@ -11,7 +11,7 @@ QString Zongzi::getSubtype() const{
 }
 
 QString Zongzi::getEffectPath(bool) const{
-    return "audio/card/common/zongzi.ogg";
+    return Card::getEffectPath();
 }
 
 bool Zongzi::isAvailable(const Player *quyuan) const{
