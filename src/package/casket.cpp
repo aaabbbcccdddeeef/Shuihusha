@@ -4,7 +4,7 @@
 class Qingdu: public TriggerSkill{
 public:
     Qingdu():TriggerSkill("qingdu"){
-        events << Damage;
+        events << DamageConclude;
         frequency = Compulsory;
     }
 
