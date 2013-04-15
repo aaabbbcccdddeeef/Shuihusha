@@ -107,6 +107,7 @@ return {
 	["#SkillNullify"] = "%from 的技能【%arg】被触发，【%arg2】对其无效",
 	["#ComskillNullify"] = "%to 的锁定技【%arg2】被触发，%from 对 %to 的 %arg 无效",
 	["#ArmorNullify"] = "%from 的防具【%arg】技能被触发，【%arg2】对其无效",
+	["#ArmorTrigger"] = "%from 的防具【%arg】技能被触发",
 	["#DrawNCards"] = "%from 摸了 %arg 张牌",
 	["#MoveNCards"] = "%to 从 %from 处得到 %arg 张牌",
 	["$TakeAG"] = "%from 拿走了 %card",

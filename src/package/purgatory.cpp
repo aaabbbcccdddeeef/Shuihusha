@@ -169,17 +169,33 @@ bool EdoTensei::isAvailable(const Player *) const{
 
 class ProudBannerSkill: public ArmorSkill{
 public:
-    ProudBannerSkill():ArmorSkill("renwang_shield"){
+    ProudBannerSkill():ArmorSkill("proud_banner"){
         events << TurnedOver << ChainStateChange << PreConjuring;
     }
 
-    virtual bool trigger(TriggerEvent event, Room *, ServerPlayer *player, QVariant &data) const{
-        if(event == TurnedOver)
-            return player->faceUp();
-        else if(event == ChainStateChange)
-            return !player->isChained();
-        else if(event == PreConjuring)
-            return qrand() % 2 == 0;
+    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
+        LogMessage log;
+        log.from = player;
+        log.arg = objectName();
+        if(event == TurnedOver && player->faceUp()){
+            log.type = "#ProudBanner1";
+            room->sendLog(log);
+            player->playCardEffect("Eproud_banner1");
+            return true;
+        }
+        else if(event == ChainStateChange && !player->isChained()){
+            log.type = "#ProudBanner2";
+            room->sendLog(log);
+            player->playCardEffect("Eproud_banner2");
+            return true;
+        }
+        else if(event == PreConjuring && qrand() % 2 == 0){
+            log.type = "#ProudBanner3";
+            log.arg2 = data.toString();
+            room->sendLog(log);
+            player->playCardEffect("Eproud_banner3");
+            return true;
+        }
         return false;
     }
 };
@@ -219,6 +235,12 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card->isKindOf("Slash") && damage.nature != DamageStruct::Normal){
             player->playCardEffect("Elash_gun", "weapon");
+            LogMessage log;
+            log.type = "#ArmorTrigger";
+            log.from = player;
+            log.arg = objectName();
+            player->getRoom()->sendLog(log);
+
             foreach(ServerPlayer *tmp, getNextandPrevious(damage.to))
                 tmp->gainJur("dizzy_jur", 2);
         }

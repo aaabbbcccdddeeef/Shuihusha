@@ -54,6 +54,12 @@ Photo::Photo()
     jail_icon->setOpacity(back_icon->opacity());
     jail_icon->hide();
 
+    conjur_icon = new Pixmap();
+    conjur_icon->setParentItem(this);
+    conjur_icon->setPos(-55, -47);
+    conjur_icon->setZValue(back_icon->zValue() + 0.2);
+    conjur_icon->hide();
+
     chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(this);
     coord = settings->value("chain_icon/pos").toList();
@@ -289,15 +295,24 @@ void Photo::setWakeState(){
         wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
 }
 
-void Photo::setDrankState(){
+void Photo::setColorState(){
     if(player->hasFlag("drank"))
         avatar_area->setBrush(QColor(0xFF, 0x00, 0x00, 255 * 0.45));
+    else if(player->hasFlag("ecst"))
+        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
     else
         avatar_area->setBrush(Qt::NoBrush);
 }
 
 void Photo::setConjuring(){
-
+    QStringList conjurs = player->getAllMarkName(3, "_jur");
+    if(!conjurs.isEmpty()){
+        QString conjur = conjurs.first();
+        conjur_icon->setPixmap(QPixmap(QString("image/system/conjuring/%1_p.png").arg(conjur)));
+        conjur_icon->setVisible(player->hasMark(conjur));
+    }
+    else
+        conjur_icon->hide();
 }
 
 void Photo::setActionState(){
@@ -339,9 +354,9 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(state_changed()), this, SLOT(refresh()));
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
         connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
-        connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
-        //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
-        //connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
+        connect(player, SIGNAL(drank_changed()), this, SLOT(setColorState()));
+        connect(player, SIGNAL(ecst_changed()), this, SLOT(setColorState()));
+        connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
@@ -780,20 +795,11 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     jail_icon->setVisible(player->containsTrick("indulgence", false));
     wake_icon->setVisible(!player->getWakeSkills().isEmpty());
 
-    if(player->hasFlag("ecst"))
-        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    else if(player->hasFlag("drank"))
-        setDrankState();
-    else
-        avatar_area->setBrush(Qt::NoBrush);
-
     //conjuring
     QStringList conjurs = player->getAllMarkName(3, "_jur");
     if(!conjurs.isEmpty()){
         QString conjur = conjurs.first();
         if(player->hasMark(conjur)){
-            static QPixmap cojur(QString("image/system/conjuring/%1_p.png").arg(conjur));
-            painter->drawPixmap(-55, -47, cojur);
             QString conj_text = QString("%1 %2 %3")
                     .arg(Sanguosha->translate(conjur))
                     .arg(Sanguosha->translate("multiply"))
