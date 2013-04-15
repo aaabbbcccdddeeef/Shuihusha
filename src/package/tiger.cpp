@@ -814,8 +814,9 @@ public:
     Linse():ClientSkill("linse"){
     }
 
-    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
-        return card->inherits("Snatch") || card->inherits("Dismantlement");
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasSkill(objectName()) &&
+                (card->isKindOf("Snatch") || card->isKindOf("Dismantlement"));
     }
 
     virtual int getExtra(const Player *target) const{

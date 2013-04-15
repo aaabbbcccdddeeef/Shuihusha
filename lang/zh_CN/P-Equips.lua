@@ -31,4 +31,9 @@ return {
 	["$sun_bow"] = "一箭双雕！",
 	["$gold_armor1"] = "宝甲护身！",
 	["$gold_armor2"] = "你这破刀太钝了！",
+
+	["$proud_banner1"] = "大耳瓜子抽你！",
+	["$proud_banner2"] = "赶紧给我去死",
+	["$proud_banner3"] = "行，你牛逼！",
+	["$lash_gun"] = "在你身上打的炮都够收复钓鱼岛了~",
 }

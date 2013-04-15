@@ -1398,7 +1398,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                         }
                     }
                 }
-                else{
+                else if(!player->isAllNude()){
                     int index = qrand() % player->getCards("hej").length();
                     const Card *card = player->getCards("hej").at(index);
                     room->throwCard(card, player);

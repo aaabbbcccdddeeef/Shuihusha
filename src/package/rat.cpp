@@ -610,8 +610,9 @@ public:
     Feiyan():ClientSkill("feiyan"){
     }
 
-    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
-        return card->inherits("Snatch") || card->inherits("SupplyShortage");
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasSkill(objectName()) &&
+                (card->isKindOf("Snatch") || card->isKindOf("SupplyShortage"));
     }
 };
 

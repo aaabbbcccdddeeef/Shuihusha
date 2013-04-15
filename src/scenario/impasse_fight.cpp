@@ -235,8 +235,8 @@ public:
     Duduan():ClientSkill("duduan"){
     }
 
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
-        return card->inherits("DelayedTrick");
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasSkill(objectName()) && card->isKindOf("DelayedTrick");
     }
 };
 

@@ -3,7 +3,7 @@
 #include "scenario.h"
 
 #include <QListWidget>
-#include <QTextEdit>
+#include <QTextBrowser>
 #include <QHBoxLayout>
 #include <QFile>
 #include <QTextStream>
@@ -17,14 +17,14 @@ ScenarioOverview::ScenarioOverview(QWidget *parent)
     list = new QListWidget;
     list->setMaximumWidth(100);
 
-    content_box = new QTextEdit;
+    content_box = new QTextBrowser;
     content_box->setReadOnly(true);
-    content_box->setProperty("type", "description");
+    //content_box->setProperty("type", "description");
 
     QHBoxLayout *layout = new QHBoxLayout;
 
-    layout->addWidget(content_box);
     layout->addWidget(list);
+    layout->addWidget(content_box);
 
     setLayout(layout);
 
@@ -39,9 +39,8 @@ ScenarioOverview::ScenarioOverview(QWidget *parent)
 
     connect(list, SIGNAL(currentRowChanged(int)), this, SLOT(loadContent(int)));
 
-    if(!names.isEmpty()){
+    if(!names.isEmpty())
         loadContent(0);
-    }
 }
 
 void ScenarioOverview::loadContent(int row){

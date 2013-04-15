@@ -13,7 +13,10 @@ function SmartAI:useEventsCard(card, use)
 	elseif card:isKindOf("FuckGaolian") or card:isKindOf("Jiangjieshi") or card:isKindOf("NanaStars") then
 		return
 	elseif card:isKindOf("Daojia") then
-		return math.random(1, 3) == 2
+		if math.random(1, 3) == 2 then
+			use.card = card
+			return
+		end
 	elseif card:isKindOf("NinedayGirl") then
 		for _, enemy in ipairs(self.enemies) do
 			if not enemy:isKongcheng() then

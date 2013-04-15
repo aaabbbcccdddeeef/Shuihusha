@@ -58,7 +58,7 @@ public slots:
     void hideEmotion();
     void hideSkillName();
     void setWakeState();
-    void setDrankState();
+    void setColorState();
     void setConjuring();
     void setActionState();
     void updateRoleComboboxPos();
@@ -96,7 +96,7 @@ private:
     QGraphicsPixmapItem *order_item;
     bool hide_avatar;
     QPixmap death_pixmap;
-    Pixmap *back_icon, *chain_icon, *wake_icon, *jail_icon;
+    Pixmap *back_icon, *chain_icon, *wake_icon, *jail_icon, *conjur_icon;
     QProgressBar *progress_bar;
     int timer_id;
     QGraphicsPixmapItem *emotion_item, *frame_item;

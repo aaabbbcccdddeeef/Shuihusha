@@ -1528,10 +1528,8 @@ public:
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
-        if(to->getHp() == 1)
-            return card->inherits("Slash") || card->inherits("Duel") || card->inherits("Assassinate");
-        else
-            return false;
+        return to->hasSkill(objectName()) && to->getHp() == 1 &&
+                (card->isKindOf("Slash") || card->isKindOf("Duel") || card->isKindOf("Assassinate"));
     }
 };
 

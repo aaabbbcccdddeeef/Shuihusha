@@ -117,10 +117,10 @@ void SpinDestiny::onUse(Room *room, const CardUseStruct &card_use) const{
     }
     TrickCard::onUse(room, use);
     foreach(ServerPlayer *dead, deads){
+        room->revivePlayer(dead);
         if(dead->getMaxHp() <= 0)
             room->setPlayerProperty(dead, "maxhp", 1);
         room->setPlayerProperty(dead, "hp", 1);
-        room->revivePlayer(dead);
     }
 }
 
@@ -154,9 +154,9 @@ void EdoTensei::onEffect(const CardEffectStruct &effect) const{
                    room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
     int index = targets.indexOf(hcoi);
     PlayerStar revivd = room->findPlayer(targets_object.at(index), true);
+    room->revivePlayer(revivd);
     room->setPlayerProperty(revivd, "hp", 1);
     revivd->drawCards(3);
-    room->revivePlayer(revivd);
 }
 
 QString EdoTensei::getEffectPath(bool ) const{
@@ -167,19 +167,46 @@ bool EdoTensei::isAvailable(const Player *) const{
     return false;
 }
 
-class ProudBannerSkill: public ArmorSkill{
+class ProudBannerChain: public ClientSkill{
 public:
-    ProudBannerSkill():ArmorSkill("renwang_shield"){
-        events << TurnedOver << ChainStateChange << PreConjuring;
+    ProudBannerChain():ClientSkill("#proud_chain"){
     }
 
-    virtual bool trigger(TriggerEvent event, Room *, ServerPlayer *player, QVariant &data) const{
-        if(event == TurnedOver)
-            return player->faceUp();
-        else if(event == ChainStateChange)
-            return !player->isChained();
-        else if(event == PreConjuring)
-            return qrand() % 2 == 0;
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasEquip("proud_banner") &&
+                !to->isChained() && card->isKindOf("IronChain");
+    }
+};
+
+class ProudBannerSkill: public ArmorSkill{
+public:
+    ProudBannerSkill():ArmorSkill("proud_banner"){
+        events << TurnedOver << PreConjuring/* << ChainStateChange*/;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
+        LogMessage log;
+        log.from = player;
+        log.arg = objectName();
+        if(event == TurnedOver && player->faceUp()){
+            log.type = "#ProudBanner1";
+            room->sendLog(log);
+            player->playCardEffect("Eproud_banner1");
+            return true;
+        }/*
+        else if(event == ChainStateChange && !player->isChained()){
+            log.type = "#ProudBanner2";
+            room->sendLog(log);
+            player->playCardEffect("Eproud_banner2");
+            return true;
+        }*/
+        else if(event == PreConjuring && qrand() % 2 == 0){
+            log.type = "#ProudBanner3";
+            log.arg2 = data.toString();
+            room->sendLog(log);
+            player->playCardEffect("Eproud_banner3");
+            return true;
+        }
         return false;
     }
 };
@@ -219,6 +246,12 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card->isKindOf("Slash") && damage.nature != DamageStruct::Normal){
             player->playCardEffect("Elash_gun", "weapon");
+            LogMessage log;
+            log.type = "#ArmorTrigger";
+            log.from = player;
+            log.arg = objectName();
+            player->getRoom()->sendLog(log);
+
             foreach(ServerPlayer *tmp, getNextandPrevious(damage.to))
                 tmp->gainJur("dizzy_jur", 2);
         }
@@ -236,20 +269,21 @@ LashGun::LashGun(Suit suit, int number)
 PurgatoryPackage::PurgatoryPackage()
     :CardPackage("purgatory")
 {
+    skills << new ProudBannerChain;
     QList<Card *> cards;
 
     cards
-            /*<< new Shit(Card::Club, 1)
-            << new Shit(Card::Heart, 8)
-            << new Shit(Card::Diamond, 13)*/
-            << new Shit(Card::Spade, 10)
+            << new Shit(Card::Heart, 10)
             << new Mastermind(Card::Heart, 5)
             << new Mastermind(Card::Heart, 5)
             << new SpinDestiny(Card::Diamond, 5)
+            << new Shit(Card::Club, 10)
             << new EdoTensei(Card::Club, 5)
             << new EdoTensei(Card::Spade, 5)
+            << new Shit(Card::Diamond, 10)
             << new LashGun(Card::Club, 4)
             << new ProudBanner(Card::Heart, 1)
+            << new Shit(Card::Spade, 10)
             ;
 
     foreach(Card *card, cards)

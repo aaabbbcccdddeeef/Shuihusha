@@ -96,8 +96,8 @@ config = {
 	color_min = "#4DB873",
 	color_kou = "#8A807A",
 	color_god = "#96943D",
-	color_moon = "#56789A",
-	color_sun = "#BA9876",
+	color_moon = "#2A2A2A",
+	color_sun = "#FC7202",
 
 	mini_max = 30 -- 此处以Config.S_MINI_MAX_COUNT为准
 }
