@@ -261,17 +261,17 @@ PurgatoryPackage::PurgatoryPackage()
     QList<Card *> cards;
 
     cards
-            /*<< new Shit(Card::Club, 1)
-            << new Shit(Card::Heart, 8)
-            << new Shit(Card::Diamond, 13)*/
-            << new Shit(Card::Spade, 10)
+            << new Shit(Card::Heart, 10)
             << new Mastermind(Card::Heart, 5)
             << new Mastermind(Card::Heart, 5)
             << new SpinDestiny(Card::Diamond, 5)
+            << new Shit(Card::Club, 10)
             << new EdoTensei(Card::Club, 5)
             << new EdoTensei(Card::Spade, 5)
+            << new Shit(Card::Diamond, 10)
             << new LashGun(Card::Club, 4)
             << new ProudBanner(Card::Heart, 1)
+            << new Shit(Card::Spade, 10)
             ;
 
     foreach(Card *card, cards)

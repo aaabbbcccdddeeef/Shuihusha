@@ -402,6 +402,7 @@ void MainWindow::enterRoom(){
     else{
         ui->menuCheat->setEnabled(false);
         ui->actionGet_card->disconnect();
+        ui->actionChange_general->disconnect();
         ui->actionDeath_note->disconnect();
         ui->actionDamage_maker->disconnect();
         ui->actionRevive_wand->disconnect();

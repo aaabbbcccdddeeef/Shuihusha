@@ -4,7 +4,7 @@
 #include <QDialog>
 
 class QListWidget;
-class QTextEdit;
+class QTextBrowser;
 
 class ScenarioOverview: public QDialog{
     Q_OBJECT
@@ -14,7 +14,7 @@ public:
 
 private:
     QListWidget *list;
-    QTextEdit *content_box;
+    QTextBrowser *content_box;
 
 private slots:
     void loadContent(int row);

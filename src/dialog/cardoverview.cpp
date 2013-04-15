@@ -106,6 +106,8 @@ void CardOverview::on_tableWidget_itemSelectionChanged()
         pixmap_path = QString("image/big-card/%1.png").arg(card->objectName());
 
     ui->cardLabel->setPixmap(pixmap_path);
+    ui->cardSuit->setPixmap(QPixmap(QString("image/system/suit/%1.png").arg(card->getSuitString())));
+    ui->cardNumber->setPixmap(QPixmap(QString("image/system/card/%1/%2.png").arg(card->getColorString()).arg(card->getNumberString())));
     ui->cardDescriptionBox->setText(card->getDescription());
     QString cv = Sanguosha->translate("cv:" + card->objectName());
     if(cv.startsWith("cv:"))
