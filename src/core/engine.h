@@ -76,6 +76,7 @@ public:
     void addSkills(const QList<const Skill *> &skills);
 
     bool isDuplicated(const QString &name, bool is_skill = true);
+    bool isExist(const QString &str);
 
     int getCardCount() const;
     const Card *getCard(int index) const;

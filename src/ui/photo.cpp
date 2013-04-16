@@ -235,20 +235,43 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
     }
 
     QString path = QString("image/system/emotion/%1.png").arg(emotion);
-    emotion_item->setPixmap(QPixmap(path));
-    emotion_item->show();
+    if(Sanguosha->isExist(path)){
+        emotion_item->setPixmap(QPixmap(path));
+        emotion_item->show();
 
-    if(emotion == "question" || emotion == "no-question")
-        return;
-    //if(emotion.contains("cards"))
-    //    emotion_item->moveBy(-10,0);
+        QString spec_name = "image/system/emotion/revise.ini";
+        QSettings emo_sets(spec_name, QSettings::IniFormat);
 
-    if(!permanent)
-        QTimer::singleShot(2000, this, SLOT(hideEmotion()));
+        QString item = emotion.startsWith("cards") ? "cards" : emotion;
+        emo_sets.beginGroup(item);
+        qreal data1 = 0, data2 = 0;
+        if(emo_sets.contains("x") && emo_sets.contains("y")){
+            data1 = emo_sets.value("x", 0).toReal();
+            data2 = emo_sets.value("y", 0).toReal();
+            emotion_item->moveBy(data1, data2);
+        }
+        if(emo_sets.contains("z")){
+            data1 = emo_sets.value("z", 1).toReal();
+            emotion_item->setZValue(data1);
+        }
+        if(emo_sets.contains("s")){
+            data1 = emo_sets.value("s", 1).toReal();
+            emotion_item->setScale(data1);
+        }
+        if(emo_sets.contains("o")){
+            data1 = emo_sets.value("o", 1).toReal();
+            emotion_item->setOpacity(data1);
+        }
+        emo_sets.endGroup();
 
-    if(emotion.contains("cards"))
-        return;
-    PixmapAnimation::GetPixmapAnimation(this, emotion);
+        emo_sets.deleteLater();
+
+        //if(emotion == "%question" || emotion == "%no-question") permanent = true
+        if(!permanent)
+            QTimer::singleShot(2000, this, SLOT(hideEmotion()));
+    }
+    else
+        PixmapAnimation::GetPixmapAnimation(this, emotion);
 }
 
 void Photo::tremble(){

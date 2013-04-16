@@ -5,7 +5,6 @@
 #include "room.h"
 #include "carditem.h"
 #include "lua-wrapper.h"
-#include <QFile>
 
 const Card::Suit Card::AllSuits[4] = {
     Card::Spade,
@@ -199,7 +198,7 @@ QString Card::getPixmapPath() const{
 #else
     QString path = QString("image/card/%1.jpg").arg(objectName());
 #endif
-    return QFile::exists(path) ? path : "image/card/unknown.jpg";
+    return Sanguosha->isExist(path) ? path : "image/card/unknown.jpg";
 }
 
 QString Card::getIconPath() const{

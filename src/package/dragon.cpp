@@ -812,17 +812,13 @@ public:
                 if(target->isDead())
                     return;
                 QString prompt = QString("@jianwu-slash:%1:%2").arg(lizhu->objectName()).arg(target->objectName());
-                const Card *slash = room->askForCard(p, "slash", prompt, QVariant::fromValue(target));
-                if(slash) {
-                    Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
-                    slas->setSkillName(objectName());
-                    slas->addSubcard(slash);
+                const Card *slash = room->askForCard(p, "slash", prompt, false, QVariant::fromValue(target));
+                if(slash){
                     CardUseStruct use;
-                    use.card = slas;
+                    use.card = slash;
                     use.to << target;
                     use.from = lizhu;
                     room->useCard(use);
-                    //break;
                 }
             }
         }

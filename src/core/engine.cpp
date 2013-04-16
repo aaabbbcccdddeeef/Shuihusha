@@ -216,6 +216,10 @@ bool Engine::isDuplicated(const QString &name, bool is_skill){
         return generals.contains(name);
 }
 
+bool Engine::isExist(const QString &str){
+    return QFile::exists(str);
+}
+
 QString Engine::translate(const QString &to_translate) const{
     return translations.value(to_translate, to_translate);
 }

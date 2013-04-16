@@ -4501,7 +4501,7 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             setEmotion(card_use.to, card_name);
         }
         if(!card_use.card->isVirtualCard())
-            setEmotion(card_use.from, QString("card/%1").arg(card_name));
+            setEmotion(card_use.from, QString("cards/%1").arg(card_name));
     }
     if(event == SlashEffect){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();

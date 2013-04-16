@@ -68,4 +68,6 @@ sgs.weapon_range.LashGun = 6
 function sgs.ai_armor_value.proud_banner(player, self)
 	return 3.5
 end
-
+function sgs.ai_trick_prohibit.proud_banner(card, self, to)
+	return to:hasEquip("proud_banner") and not to:isChained() and card:isKindOf("IronChain")
+end

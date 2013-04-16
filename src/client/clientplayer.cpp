@@ -6,7 +6,6 @@
 
 #include <QTextDocument>
 #include <QTextOption>
-#include <QFile>
 
 ClientPlayer *Self = NULL;
 
@@ -178,7 +177,7 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
         if(itor.key().startsWith("@") && itor.value() > 0){
             QString path = QString("image/mark/%1.png").arg(itor.key());
-            if(!QFile::exists(path))
+            if(!Sanguosha->isExist(path))
                 path = QString("extensions/generals/mark/%1.png").arg(itor.key());
             QString mark_text = QString("<img src='%1' />").arg(path);
             QString mark_text_small = QString("<img src='%1' />").arg(path);

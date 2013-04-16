@@ -2710,7 +2710,7 @@ void RoomScene::onGameOver(){
             loser_list << player;
 
         if(player != Self)
-            setEmotion(player->objectName(), win ? "win" : "lose", true);
+            setEmotion(player->objectName(), win ? "%win" : "%lose");
     }
 
     fillTable(winner_table, winner_list);
@@ -3488,15 +3488,21 @@ void RoomScene::moveFocus(const QString &who){
     }
 }
 
-void RoomScene::setEmotion(const QString &who, const QString &emotion ,bool permanent){
-    if(Config.BanEmotions.contains(emotion))
+void RoomScene::setEmotion(const QString &who, const QString &emotion){
+    QString true_emotion = emotion;
+    bool permanent = false;
+    if(emotion.startsWith("%")){ //% mean keep show for example: "%win"
+        true_emotion.remove("%");
+        permanent = true;
+    }
+    if(Config.BanEmotions.contains(true_emotion))
         return;
     Photo *photo = name2photo[who];
     if(photo){
-        photo->setEmotion(emotion,permanent);
+        photo->setEmotion(true_emotion, permanent);
         return;
     }
-    PixmapAnimation * pma = PixmapAnimation::GetPixmapAnimation(dashboard,emotion);
+    PixmapAnimation * pma = PixmapAnimation::GetPixmapAnimation(dashboard, true_emotion);
     if(pma){
         pma->moveBy(0,- dashboard->boundingRect().height()/2);
         pma->setZValue(8.0);

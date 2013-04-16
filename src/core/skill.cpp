@@ -6,8 +6,6 @@
 #include "standard.h"
 #include "scenario.h"
 
-#include <QFile>
-
 Skill::Skill(const QString &name, Frequency frequency)
     :frequency(frequency), default_choice("no"), equip_skill(false)
 {
@@ -58,11 +56,11 @@ void Skill::initMediaSource(){
 
     for(int i=1; ;i++){
         QString effect_file = QString("audio/skill/%1%2.dat").arg(objectName()).arg(i);
-        if(!QFile::exists(effect_file))
+        if(!Sanguosha->isExist(effect_file))
             effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-        if(!QFile::exists(effect_file))
+        if(!Sanguosha->isExist(effect_file))
             effect_file = QString("extensions/audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-        if(QFile::exists(effect_file))
+        if(Sanguosha->isExist(effect_file))
             sources << effect_file;
         else
             break;
@@ -70,11 +68,11 @@ void Skill::initMediaSource(){
 
     if(sources.isEmpty()){
         QString effect_file = QString("audio/skill/%1.dat").arg(objectName());
-        //if(!QFile::exists(effect_file))
+        //if(!Sanguosha->isExist(effect_file))
         //    effect_file = QString("audio/skill/%1.ogg").arg(objectName());
-        if(!QFile::exists(effect_file))
+        if(!Sanguosha->isExist(effect_file))
             effect_file = QString("extensions/audio/skill/%1.ogg").arg(objectName());
-        if(QFile::exists(effect_file))
+        if(Sanguosha->isExist(effect_file))
             sources << effect_file;
     }
 }

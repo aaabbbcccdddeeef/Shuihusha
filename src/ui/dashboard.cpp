@@ -10,7 +10,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include <QPixmapCache>
-#include <QFile>
 
 Dashboard::Dashboard(QGraphicsItem *button_widget)
 #ifdef USE_RCC
@@ -53,12 +52,12 @@ void Dashboard::createLeft(){
         plate_path = "image/mode/hegemony.png";
     else if(ServerInfo.EnableEndless)
         plate_path = "image/mode/endless.png";
-    if(!QFile::exists(plate_path)){
+    if(!Sanguosha->isExist(plate_path)){
         QString gm = game_mode;
         gm.chop(1);
         plate_path = QString("image/mode/%1.png").arg(gm);
     }
-    if(!QFile::exists(plate_path))
+    if(!Sanguosha->isExist(plate_path))
         plate->hide();
     else{
         plate->show();
