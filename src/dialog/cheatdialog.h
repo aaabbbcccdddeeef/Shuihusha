@@ -59,6 +59,7 @@ private:
     QLineEdit *flags, *marks, *propty, *tag;
     QPushButton *flag_option;
     QPushButton *mark_option;
+    QCheckBox *tag_room;
 
 protected:
     virtual QString getPlayerString();

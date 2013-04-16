@@ -412,10 +412,11 @@ QWidget *CheatDialog::createSetStateTab(){
 
     flag_option = new QPushButton(tr("Option"));
     mark_option = new QPushButton(tr("Option"));
+    tag_room = new QCheckBox("room");
     expert_layout->addLayout(HLay(new QLabel("Flag"), flags, flag_option));
     expert_layout->addLayout(HLay(new QLabel("Mark"), marks, mark_option));
     expert_layout->addLayout(HLay(new QLabel("Property"), propty));
-    expert_layout->addLayout(HLay(new QLabel("Tag"), tag));
+    expert_layout->addLayout(HLay(new QLabel("Tag"), tag, tag_room));
     expert_layout->addLayout(HLay(clear, apply));
     expert->setLayout(expert_layout);
 
@@ -627,7 +628,7 @@ void CheatDialog::doClearExpert(){
 }
 
 void CheatDialog::doApplyExpert(){
-    //mark:key=value,flag:flag,propty:hp=2,tag:Tag=0
+    //mark:key=value,flag:flag,propty:hp=2,tag:Tag=0(tagr:Shudan=true)
     QStringList strs;
     QString str = QString("mark:%1").arg(marks->text());
     strs << str;
@@ -635,7 +636,7 @@ void CheatDialog::doApplyExpert(){
     strs << str;
     str = QString("propty:%1").arg(propty->text());
     strs << str;
-    str = QString("tag:%1").arg(tag->text());
+    str = QString("tag%1:%2").arg(tag_room->isChecked() ? "r" : "").arg(tag->text());
     strs << str;
 
     QString data = strs.join(",");
