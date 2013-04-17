@@ -789,6 +789,7 @@ public:
 };
 
 XiangmaCard::XiangmaCard(){
+    mute = true;
 }
 
 bool XiangmaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -805,6 +806,7 @@ void XiangmaCard::onEffect(const CardEffectStruct &effect) const{
                 effect.to->getEquips().first()->getEffectiveId() :
                 room->askForCardChosen(effect.from, effect.to, "e", skill_name);
     const Card *horse = Sanguosha->getCard(card_id);
+    effect.from->setFlags("YimaMute");
     if(horse->isKindOf("Horse"))
         room->throwCard(card_id, effect.to, effect.from);
     else{
@@ -813,6 +815,7 @@ void XiangmaCard::onEffect(const CardEffectStruct &effect) const{
         else
             room->throwCard(effect.to->getDefensiveHorse(), effect.to, effect.from);
     }
+    effect.from->setFlags("-YimaMute");
 }
 
 class XiangmaViewAsSkill: public ZeroCardViewAsSkill{
@@ -886,7 +889,8 @@ public:
         foreach(ServerPlayer *huangfu, huangfus){
             if(huangfu != player && horse->isKindOf("Horse")
                 && huangfu->askForSkillInvoke("yima")){
-                room->playSkillEffect("yima");
+                if(!huangfu->hasFlag("YimaMute"))
+                    room->playSkillEffect("yima");
                 huangfu->obtainCard(horse);
                 if(player && player->isWounded()
                         && room->askForChoice(huangfu, "yima", "yes+no", QVariant::fromValue(player)) == "yes"){

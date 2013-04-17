@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130413",
-	version_name = "F4.8",
+	version = "20130417",
+	version_name = "F4.9",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
@@ -44,6 +44,7 @@ config = {
 		"ArthurFerris",
 		"Contract",
 		"Impasse",
+		"FuckGuanyu",
 --		"Changban",
 --[[	"Zombie",
 		"Legend",]]

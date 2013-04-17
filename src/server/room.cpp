@@ -4150,7 +4150,7 @@ void Room::makeState(const QString &name, const QString &str){
                 value = "0";
             setPlayerProperty(player, QString(p.first()).toLocal8Bit().data(), QVariant::fromValue(value));
         }
-        else if(key == "tag"){
+        else if(key == "tag" || key == "tagr"){
             QStringList t = value.split("=");
             value = t.last();
             if(value == "true")
@@ -4159,10 +4159,17 @@ void Room::makeState(const QString &name, const QString &str){
                 value = "0";
             if(t.first().startsWith("-")){
                 QString key2 = t.first().remove("-");
-                player->tag.remove(key2);
+                if(key == "tag")
+                    player->tag.remove(key2);
+                else
+                    removeTag(key2);
             }
-            else
-                player->tag.insert(t.first(), QVariant::fromValue(value));
+            else{
+                if(key == "tag")
+                    player->tag.insert(t.first(), QVariant::fromValue(value));
+                else
+                    setTag(t.first(), QVariant::fromValue(value));
+            }
         }
     }
 }
