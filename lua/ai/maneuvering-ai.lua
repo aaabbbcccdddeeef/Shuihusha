@@ -379,7 +379,7 @@ wusheng_skill.getTurnUseCard=function(self,inclusive)
 	local red_card
 	self:sortByUseValue(cards,true)
 	for _,card in ipairs(cards) do
-		if card:isRed() and not card:isKindOf("FireAttack") then
+		if card:isRed() then
 			red_card = card
 			break
 		end

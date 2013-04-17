@@ -163,6 +163,7 @@ public:
                 QStringList choices = all_generals.mid(0, Config.value("MaxChoice", 5).toInt());
                 QString name = room->askForGeneral(player, choices, choices.first());
                 room->transfigure(player, name);
+                room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
             }
             break;
         }
@@ -196,12 +197,17 @@ public:
             QStringList choices = all_generals.mid(0, Config.value("MaxChoice", 5).toInt());
             QString name = room->askForGeneral(challanger, choices, choices.first());
             room->transfigure(challanger, name);
+            room->setPlayerProperty(challanger, "kingdom", challanger->getGeneral()->getKingdom());
             challanger->drawCards(4);
             room->revivePlayer(player);
             if(room->getCurrent() != guanyu)
                 challanger->setFlags("ShutUp");
-            else
+            else{
                 guanyu->drawCards(2);
+                guanyu->clearFlags();
+                guanyu->clearHistory();
+                guanyu->invoke("clearHistory");
+            }
             return true;
         }
         default:

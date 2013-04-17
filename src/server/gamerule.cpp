@@ -1450,6 +1450,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                 room->revivePlayer(player);
                 room->setPlayerProperty(player, "maxhp", 1);
                 room->setPlayerProperty(player, "hp", 1);
+                player->drawCards(3);
             }
         }
         break;

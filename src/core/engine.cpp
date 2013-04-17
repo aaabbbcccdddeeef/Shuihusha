@@ -690,9 +690,14 @@ QList<int> Engine::getRandomCards() const{
             continue;
 
         const Scenario *scenario = getScenario(Config.GameMode);
-        if(scenario)
+        if(scenario){
             if(scenario->setCardPiles(card))
                 continue;
+        }
+        else{
+            if(getScenario(card->getPackage()))
+                continue;
+        }
 
         if(Config.GameMode == "06_3v3"){
             bool exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
