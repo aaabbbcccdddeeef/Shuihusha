@@ -925,7 +925,7 @@ void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     ServerPlayer *current = room->getCurrent();
 
     room->setCurrent(this);
-    room->removeTag("Shudan");
+    //room->removeTag("Shudan");
     if(clearflag)
         clearflag->clearFlags();
     room->getThread()->trigger(TurnStart, room, this);

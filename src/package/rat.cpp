@@ -551,23 +551,6 @@ public:
     }
 };
 
-class ShudanClear: public TriggerSkill{
-public:
-    ShudanClear():TriggerSkill("#shudan_clear"){
-        events << PhaseChange;
-    }
-
-    virtual bool triggerable(const ServerPlayer *) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
-        if(player->getPhase() == Player::NotActive)
-            room->removeTag("Shudan");
-        return false;
-    }
-};
-
 class Shudan: public TriggerSkill{
 public:
     Shudan():TriggerSkill("shudan"){
@@ -579,7 +562,7 @@ public:
         if(player->getPhase() != Player::NotActive)
             return false;
         if(event == Damaged){
-            room->setTag("Shudan", player->objectName());
+            room->setPlayerFlag(player, "%Shudan");
             room->playSkillEffect(objectName(), 1);
 
             LogMessage log;
@@ -588,10 +571,10 @@ public:
             room->sendLog(log);
 
         }else if(event == CardEffected){
-            if(room->getTag("Shudan").toString() != player->objectName())
+            if(!player->hasFlag("%Shudan"))
                 return false;
             CardEffectStruct effect = data.value<CardEffectStruct>();
-            if(effect.card->inherits("Slash") || effect.card->isNDTrick()){
+            if(effect.card->isKindOf("Slash") || effect.card->isNDTrick()){
                 room->playSkillEffect(objectName(), 2);
                 LogMessage log;
                 log.type = "#ShudanAvoid";
@@ -904,8 +887,6 @@ RatPackage::RatPackage()
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Xiayao);
     baisheng->addSkill(new Shudan);
-    baisheng->addSkill(new ShudanClear);
-    related_skills.insertMulti("shudan", "#shudan_clear");
 
     General *shiqian = new General(this, "shiqian", "kou", 3);
     shiqian->addSkill(new Feiyan);

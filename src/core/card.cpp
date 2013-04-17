@@ -218,7 +218,7 @@ QString Card::getEffectPath(bool is_male) const{
 }
 
 bool Card::isNDTrick() const{
-    return getTypeId() == Trick && !inherits("DelayedTrick");
+    return getTypeId() == Trick && !isKindOf("DelayedTrick");
 }
 
 QString Card::getEffectPath() const{
