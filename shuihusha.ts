@@ -576,6 +576,11 @@
         <translation>势力</translation>
     </message>
     <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="346"/>
+        <source>HpSlot</source>
+        <translation>体力</translation>
+    </message>
+    <message>
         <location filename="src/dialog/cheatdialog.cpp" line="347"/>
         <source>Role</source>
         <translation>身份</translation>
@@ -609,6 +614,21 @@
         <location filename="src/dialog/cheatdialog.cpp" line="358"/>
         <source>Tie</source>
         <translation>紧缚状态</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="358"/>
+        <source>Add skills</source>
+        <translation>添加技能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="358"/>
+        <source>Add history</source>
+        <translation>添加历史</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="362"/>
+        <source>Equiped one</source>
+        <translation>安装装备</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="359"/>

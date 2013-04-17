@@ -50,8 +50,9 @@ private:
 
     QTabWidget *tab_state;
     QComboBox *target;
-    QLineEdit *general, *kingdom, *role, *sex;
+    QLineEdit *general, *kingdom, *hpslot, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank, *shutup;
+    QLineEdit *skill_history;
     QPushButton *extra_button, *clear_button;
     QButtonGroup *conjur_group;
     QAbstractButton *poison, *sleep, *dizzy, *petro;
@@ -76,8 +77,11 @@ private slots:
     void loadBase();
     void clearBase();
     void fillBase();
+    void equipIt();
     void loseSkill();
     void clearHistory();
+    void addSkill();
+    void addHistory();
     void drawOne();
     void discardOne();
     void setGray(int);

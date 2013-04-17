@@ -241,6 +241,8 @@ const QString CheatDialog::makeData(){
     strs << str;
     str = QString("kingdom:%1").arg(kingdom->text());
     strs << str;
+    str = QString("hp:%1").arg(hpslot->text());
+    strs << str;
     str = QString("role:%1").arg(role->text());
     strs << str;
     str = QString("sex:%1").arg(sex->text());
@@ -294,6 +296,9 @@ QWidget *CheatDialog::createSetStateTab(){
     general->setPlaceholderText("songjiang|lujunyi");
     kingdom = new QLineEdit();
     kingdom->setPlaceholderText("guan");
+    hpslot = new QLineEdit();
+    hpslot->setValidator(new QIntValidator(0, 998, hpslot));
+    hpslot->setPlaceholderText("4");
     role = new QLineEdit();
     role->setPlaceholderText("lord");
     sex = new QLineEdit();
@@ -337,19 +342,15 @@ QWidget *CheatDialog::createSetStateTab(){
         connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
     }
 
-    QPushButton *draw_one = new QPushButton(tr("Draw One"));
-    QPushButton *discard_one = new QPushButton(tr("Discard One"));
-    connect(draw_one, SIGNAL(clicked()), this, SLOT(drawOne()));
-    connect(discard_one, SIGNAL(clicked()), this, SLOT(discardOne()));
     QPushButton *load_base = new QPushButton(tr("Load Base"));
     QPushButton *clear_base = new QPushButton(tr("Clear Base"));
     connect(load_base, SIGNAL(clicked()), this, SLOT(loadBase()));
     connect(clear_base, SIGNAL(clicked()), this, SLOT(clearBase()));
     base_layout->addRow(tr("General"), general);
+    base_layout->addRow(tr("HpSlot"), hpslot);
     base_layout->addRow(tr("Kingdom"), HLay(kingdom, kingdom_option));
     base_layout->addRow(tr("Role"), HLay(role, role_option));
     base_layout->addRow(tr("Sex"), HLay(sex, sex_option));
-    base_layout->addRow(QString(), HLay(draw_one, discard_one));
     base_layout->addRow(QString(), HLay(load_base, clear_base));
     base->setLayout(base_layout);
 
@@ -360,12 +361,35 @@ QWidget *CheatDialog::createSetStateTab(){
     ecst = new QCheckBox(tr("Ecst"));
     drank = new QCheckBox(tr("Drank"));
     shutup = new QCheckBox(tr("Tie"));
+    QPushButton *draw_one = new QPushButton(tr("Draw One"));
+    QPushButton *discard_one = new QPushButton(tr("Discard One"));
+    skill_history = new QLineEdit();
+    QPushButton *skill_button = new QPushButton(tr("Add skills"));
+    QPushButton *history_button = new QPushButton(tr("Add history"));
     extra_button = new QPushButton(tr("Remove extra skills"));
     clear_button = new QPushButton(tr("Clear History"));
+    QPushButton *equiped = new QPushButton(tr("Equiped one"));
+    QMenu *equiped_menu = new QMenu(equiped);
+    equiped->setMenu(equiped_menu);
+    QStringList equips;
+    equips << "weapon" << "armor" << "offensive_horse" << "defensive_horse";
+    foreach(QString eq, equips){
+        QAction *action = new QAction(equiped_menu);
+        action->setText(Sanguosha->translate(eq));
+        action->setData("equip:" + eq);
+        equiped_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(equipIt()));
+    }
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
     adhere_layout->addRow(HLay(shutup, new QLabel));
+    adhere_layout->addRow(HLay(draw_one, equiped, discard_one));
+    adhere_layout->addRow(HLay(skill_history, skill_button, history_button));
     adhere_layout->addRow(HLay(extra_button, clear_button));
+    connect(draw_one, SIGNAL(clicked()), this, SLOT(drawOne()));
+    connect(discard_one, SIGNAL(clicked()), this, SLOT(discardOne()));
+    connect(skill_button, SIGNAL(clicked()), this, SLOT(addSkill()));
+    connect(history_button, SIGNAL(clicked()), this, SLOT(addHistory()));
     adhere->setLayout(adhere_layout);
 
     QWidget *conjur = new QWidget;
@@ -544,6 +568,7 @@ void CheatDialog::loadBase(){
     else
         general->setText(player->getGeneralName());
     kingdom->setText(player->getKingdom());
+    hpslot->setText(QString::number(player->getMaxHp()));
     role->setText(player->getRole());
     sex->setText(player->getGenderString());
 }
@@ -551,6 +576,7 @@ void CheatDialog::loadBase(){
 void CheatDialog::clearBase(){
     general->clear();
     kingdom->clear();
+    hpslot->clear();
     role->clear();
     sex->clear();
 }
@@ -596,6 +622,16 @@ void CheatDialog::fillBase(){
     }
 }
 
+void CheatDialog::equipIt(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action){
+        QString item = action->data().toString();
+        //equip:weapon
+        ClientInstance->requestCheatState(getPlayerString(), item);
+        //"weapon" << "armor" << "offensive_horse" << "defensive_horse";
+    }
+}
+
 void CheatDialog::loseSkill(){
     QAction *action = qobject_cast<QAction *>(sender());
     if(action){
@@ -614,9 +650,22 @@ void CheatDialog::clearHistory(){
         QString item = QString("history:-%1").arg(action->text());
         if(action->data().toString() == "histall")
             item = "history:-";
-        qDebug("item: %s", qPrintable(item));
         ClientInstance->requestCheatState(getPlayerString(), item);
     }
+}
+
+void CheatDialog::addSkill(){
+    //skill:baoguo
+    QString item = QString("skill:%1").arg(skill_history->text());
+    ClientInstance->requestCheatState(getPlayerString(), item);
+    skill_history->clear();
+}
+
+void CheatDialog::addHistory(){
+    //history:Slash
+    QString item = QString("history:%1").arg(skill_history->text());
+    ClientInstance->requestCheatState(getPlayerString(), item);
+    skill_history->clear();
 }
 
 void CheatDialog::doClearExpert(){
