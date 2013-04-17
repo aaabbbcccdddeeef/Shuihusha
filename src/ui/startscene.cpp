@@ -32,17 +32,18 @@ StartScene::StartScene()
 */
     server_log = NULL;
 
-    button_group = new Pixmap();
+    QString sryle = QString();
     if(Config.value("UI/ButtonStyle", false).toBool()){
         //Provide coordinates for the button
 #ifdef USE_RCC
-        button_group->setPixmap(QPixmap(":plate/background.png"));
+        sryle = ":plate/background.png";
 #else
-        button_group->setPixmap(QPixmap("image/system/button/plate/background.png"));
+        sryle = "image/system/button/plate/background.png";
 #endif
-        button_group->shift();
-        //button_group->moveBy(0, -Config.Rect.height()/10);
     }
+    button_group = new Pixmap(sryle);
+    button_group->shift();
+    //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
 }
 
