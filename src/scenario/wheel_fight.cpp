@@ -142,4 +142,113 @@ WheelFightScenario::WheelFightScenario()
     rule = new WheelFightScenarioRule(this);
 }
 
+#include "maneuvering.h"
+class FuckGuanyuScenarioRule: public ScenarioRule{
+public:
+    FuckGuanyuScenarioRule(Scenario *scenario)
+        :ScenarioRule(scenario){
+        events << GameStart << GameOverJudge << Death;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return 1;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        switch(event){
+        case GameStart:{
+            if(!player->isLord()){
+                QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+                qShuffle(all_generals);
+                QStringList choices = all_generals.mid(0, Config.value("MaxChoice", 5).toInt());
+                QString name = room->askForGeneral(player, choices, choices.first());
+                room->transfigure(player, name);
+            }
+            break;
+        }
+        case GameOverJudge:{
+            foreach(ServerPlayer *channer, room->getAllPlayers(true))
+                if(channer->getState() != "robot")
+                    player = channer;
+            if(player->askForSkillInvoke("retry")){
+                room->setTag("Retry", true);
+                return true;
+            }
+            break;
+        }
+        case Death:{
+            if(!room->getTag("Retry").toBool())
+                return false;
+            ServerPlayer *guanyu = room->getLord();
+            ServerPlayer *challanger = guanyu;
+            foreach(ServerPlayer *channer, room->getAllPlayers(true)){
+                if(!channer->isLord())
+                    challanger = channer;
+            }
+
+            room->setPlayerProperty(guanyu, "maxhp", 4);
+            room->setPlayerProperty(guanyu, "hp", 4);
+            guanyu->throwAllCards();
+            guanyu->drawCards(4);
+            challanger->throwAllCards();
+            QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+            qShuffle(all_generals);
+            QStringList choices = all_generals.mid(0, Config.value("MaxChoice", 5).toInt());
+            QString name = room->askForGeneral(challanger, choices, choices.first());
+            room->transfigure(challanger, name);
+            challanger->drawCards(4);
+            room->revivePlayer(player);
+            if(room->getCurrent() != guanyu)
+                challanger->setFlags("ShutUp");
+            else
+                guanyu->drawCards(2);
+            return true;
+        }
+        default:
+            break;
+        }
+        return false;
+    }
+};
+
+void FuckGuanyuScenario::assign(QStringList &generals, QStringList &roles) const{
+    roles << "lord" << "renegade";
+    qShuffle(roles);
+    if(roles[0] == "lord")
+        generals << "nicholas" << "anjiang";
+    else
+        generals << "anjiang" << "nicholas";
+}
+
+int FuckGuanyuScenario::getPlayerCount() const{
+    return 2;
+}
+
+void FuckGuanyuScenario::getRoles(char *roles) const{
+    strcpy(roles, "ZN");
+}
+
+bool FuckGuanyuScenario::generalSelection(Room *) const{
+    return false;
+}
+
+bool FuckGuanyuScenario::setCardPiles(const Card *card) const{
+    return card->getPackage() != objectName();
+}
+
+int FuckGuanyuScenario::swapCount() const{
+    return 998;
+}
+
+FuckGuanyuScenario::FuckGuanyuScenario()
+    :Scenario("fuck_guanyu"){
+    rule = new FuckGuanyuScenarioRule(this);
+
+    for(int i = 0; i < 26; i ++){
+        Card *card = new FireAttack(Card::Diamond, i % 13 + 1);
+        card->setParent(this);
+    }
+}
+
 ADD_SCENARIO(WheelFight)
+ADD_SCENARIO(FuckGuanyu)

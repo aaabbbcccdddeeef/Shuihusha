@@ -277,7 +277,7 @@ function SmartAI:getUseValue(card)
 		if not self:hasTrickEffective(card) then v = 0 end
 	end
 
-	if self:hasSkills(sgs.need_kongcheng) then
+	if self:needKongcheng() then
 		if self.player:getHandcardNum() == 1 then v = 10 end
 	end
 	if self:hasSkill("halberd") and card:isKindOf("Slash") and self.player:getHandcardNum() == 1 then v = 10 end
@@ -2199,10 +2199,14 @@ function sgs.ai_cardneed.equip(to, card, self)
 end
 
 function SmartAI:needKongcheng(player)
+	player = player or self.player
 	if player:isWounded() and player:hasSkill("ganlin") then
 		return true
 	end
-	return self:hasSkills(sgs.need_kongcheng,player)
+	if self.room:getMode() == "fuck_guanyu" then
+		return true
+	end
+	return self:hasSkills(sgs.need_kongcheng, player)
 end
 
 function SmartAI:getCardNeedPlayer(cards)
@@ -2445,7 +2449,7 @@ function SmartAI:getTurnUse()
 		local dummy_use = {}
 		dummy_use.isDummy = true
 		local hp = self.player:getHp()
-		if not self:hasSkills(sgs.need_kongcheng) then
+		if not self:needKongcheng() then
 			if (i >= (self.player:getHandcardNum()-hp+self.retain)) and (self:getUseValue(card) < self.retain_thresh) then
 				return turnUse
 			end
@@ -3465,7 +3469,7 @@ function SmartAI:useEquipCard(card, use)
 		use.card = card
 		return
 	end
-	if self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng) and self:evaluateArmor(card)>-5 then
+	if self.player:getHandcardNum() == 1 and self:needKongcheng() and self:evaluateArmor(card)>-5 then
 		use.card = card
 		return
 	end

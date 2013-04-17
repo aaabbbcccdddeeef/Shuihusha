@@ -4063,6 +4063,10 @@ void Room::makeState(const QString &name, const QString &str){
         }
         else if(key == "kingdom")
             setPlayerProperty(player, "kingdom", value);
+        else if(key == "hp"){
+            setPlayerProperty(player, "maxhp", value);
+            setPlayerProperty(player, "hp", value);
+        }
         else if(key == "role"){
             player->setRole(value);
             broadcastProperty(player, "role");
@@ -4070,12 +4074,6 @@ void Room::makeState(const QString &name, const QString &str){
         else if(key == "sex"){
             General *general = (General *)Sanguosha->getGeneral(player->getGeneralName());
             general->setGenderString(value);
-        }
-        else if(key == "dod"){
-            if(value == "1")
-                player->drawCards(1);
-            else if(!player->isKongcheng())
-                throwCard(player->getRandomHandCardId(), player);
         }
         else if(key == "turned"){
             if((value == "1" && player->faceUp()) ||
@@ -4095,16 +4093,42 @@ void Room::makeState(const QString &name, const QString &str){
             setPlayerFlag(player, value == "1" ? "drank" : "-drank");
         else if(key == "tie")
             setPlayerFlag(player, value == "1" ? "ShutUp" : "-ShutUp");
+        else if(key == "dod"){
+            if(value == "1")
+                player->drawCards(1);
+            else if(!player->isKongcheng())
+                throwCard(player->getRandomHandCardId(), player);
+        }
+        else if(key == "equip"){
+            foreach(Card *card, Sanguosha->getCards()){
+                if(card->getSubtype() != value)
+                    continue;
+                Player::Place place = getCardPlace(card->getEffectiveId());
+                if(place != Player::DiscardedPile && place != Player::DrawPile)
+                    continue;
+                const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
+                equipped->use(this, player, QList<ServerPlayer *>());
+                break;
+            }
+        }
         else if(key == "skill"){
             if(value.startsWith("-")){
                 value.remove("-");
                 detachSkillFromPlayer(player, value);
             }
+            else
+                acquireSkill(player, value);
         }
         else if(key == "history"){
-            value.remove("-");
-            player->clearHistory(value);
-            player->invoke("clearHistory", value);
+            if(value.startsWith("-")){
+                value.remove("-");
+                player->clearHistory(value);
+                player->invoke("clearHistory", value);
+            }
+            else{
+                player->addHistory(value);
+                player->invoke("addHistory", value);
+            }
         }
         else if(key.endsWith("_jur"))
             player->gainJur(key, value.toInt());

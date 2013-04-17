@@ -61,4 +61,11 @@ return {
 	["change"] = "嫦娥",
 	[":change"] = "你可以将红桃牌当【月饼】使用。",
 
+	["$nicholas"] = "T05",
+	["#nicholas"] = "",
+	["nicholas"] = "烨子风暴",
+	["designer:nicholas"] = "宇文天启 [测试专用]",
+	["coder:nicholas"] = "宇文天启",
+	["wusheng"] = "武圣",
+	[":wusheng"] = "你可以将一张♥或♦牌当【杀】使用或打出。",
 }

@@ -317,6 +317,7 @@ ArthurFerrisScenario::ArthurFerrisScenario()
     :Scenario("arthur_ferris")
 {
     rule = new ArthurFerrisScenarioRule(this);
+    skills << new Youxia;
 }
 
 ADD_SCENARIO(Warlords)

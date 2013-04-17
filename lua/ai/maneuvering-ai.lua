@@ -199,7 +199,6 @@ function SmartAI:isGoodChainTarget(who)
 	return good > bad
 end
 
-
 function SmartAI:useCardIronChain(card, use)
 	use.card = card
 	if #self.enemies == 1 and #(self:getChainedFriends()) <= 1 then return end
@@ -260,6 +259,15 @@ sgs.ai_use_priority.IronChain = 2.8
 sgs.dynamic_value.benefit.IronChain = true
 
 function SmartAI:useCardFireAttack(fire_attack, use)
+	if self.room:getMode() == "fuck_guanyu" then
+		local targe = self.enemies[1]
+		if not targe:isKongcheng() and not self.room:isProhibited(self.player, targe, fire_attack) then
+			use.card = fire_attack
+			if use.to then use.to:append(targe) end
+		end
+		return
+	end
+
 	if self.player:hasSkill("wuyan") then return end
 	local lack = {
 		spade = true,
@@ -351,4 +359,38 @@ sgs.ai_use_priority.FireAttack = 2
 sgs.ai_card_intention.FireAttack = function(card, from, tos, self)
 	self:speakTrigger(card,from,tos[1])
 	sgs.updateIntentions(from, tos, 80)
+end
+
+sgs.ai_view_as.wusheng = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:isRed() then
+		return ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
+	end
+end
+
+local wusheng_skill={}
+wusheng_skill.name="wusheng"
+table.insert(sgs.ai_skills,wusheng_skill)
+wusheng_skill.getTurnUseCard=function(self,inclusive)
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	local red_card
+	self:sortByUseValue(cards,true)
+	for _,card in ipairs(cards) do
+		if card:isRed() and not card:isKindOf("FireAttack") then
+			red_card = card
+			break
+		end
+	end
+	if red_card then
+		local suit = red_card:getSuitString()
+		local number = red_card:getNumberString()
+		local card_id = red_card:getEffectiveId()
+		local card_str = ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
+		local slash = sgs.Card_Parse(card_str)
+		assert(slash)
+		return slash
+	end
 end

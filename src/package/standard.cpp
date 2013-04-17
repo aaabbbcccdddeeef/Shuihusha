@@ -660,7 +660,6 @@ public:
 TestPackage::TestPackage()
     :GeneralPackage("test")
 {
-    skills << new Wusheng;
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
@@ -681,8 +680,11 @@ TestPackage::TestPackage()
 
     General *catty = new General(this, "catty", "god", 2, false, true, true);
     catty->addSkill("change");
-    catty->addSkill("ubunf");
+    catty->addSkill("youxia");
     catty->addSkill("#ubuna");
+
+    General *nicholas = new General(this, "nicholas", "god", 4, true, true, true);
+    nicholas->addSkill(new Wusheng);
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
