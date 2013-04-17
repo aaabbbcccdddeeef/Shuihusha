@@ -147,7 +147,7 @@ class FuckGuanyuScenarioRule: public ScenarioRule{
 public:
     FuckGuanyuScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario){
-        events << GameStart << GameOverJudge << Death;
+        events << GameStart;
     }
 
     virtual int getPriority(TriggerEvent) const{
@@ -158,57 +158,12 @@ public:
         switch(event){
         case GameStart:{
             if(!player->isLord()){
-                QStringList all_generals = Sanguosha->getLimitedGeneralNames();
-                qShuffle(all_generals);
-                QStringList choices = all_generals.mid(0, Config.value("MaxChoice", 5).toInt());
+                QStringList choices = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()));
                 QString name = room->askForGeneral(player, choices, choices.first());
                 room->transfigure(player, name);
                 room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
             }
             break;
-        }
-        case GameOverJudge:{
-            foreach(ServerPlayer *channer, room->getAllPlayers(true))
-                if(channer->getState() != "robot")
-                    player = channer;
-            if(player->askForSkillInvoke("retry")){
-                room->setTag("Retry", true);
-                return true;
-            }
-            break;
-        }
-        case Death:{
-            if(!room->getTag("Retry").toBool())
-                return false;
-            ServerPlayer *guanyu = room->getLord();
-            ServerPlayer *challanger = guanyu;
-            foreach(ServerPlayer *channer, room->getAllPlayers(true)){
-                if(!channer->isLord())
-                    challanger = channer;
-            }
-
-            room->setPlayerProperty(guanyu, "maxhp", 4);
-            room->setPlayerProperty(guanyu, "hp", 4);
-            guanyu->throwAllCards();
-            guanyu->drawCards(4);
-            challanger->throwAllCards();
-            QStringList all_generals = Sanguosha->getLimitedGeneralNames();
-            qShuffle(all_generals);
-            QStringList choices = all_generals.mid(0, Config.value("MaxChoice", 5).toInt());
-            QString name = room->askForGeneral(challanger, choices, choices.first());
-            room->transfigure(challanger, name);
-            room->setPlayerProperty(challanger, "kingdom", challanger->getGeneral()->getKingdom());
-            challanger->drawCards(4);
-            room->revivePlayer(player);
-            if(room->getCurrent() != guanyu)
-                challanger->setFlags("ShutUp");
-            else{
-                guanyu->drawCards(2);
-                guanyu->clearFlags();
-                guanyu->clearHistory();
-                guanyu->invoke("clearHistory");
-            }
-            return true;
         }
         default:
             break;

@@ -261,7 +261,7 @@ sgs.dynamic_value.benefit.IronChain = true
 function SmartAI:useCardFireAttack(fire_attack, use)
 	if self.room:getMode() == "fuck_guanyu" then
 		local targe = self.enemies[1]
-		if not targe:isKongcheng() and not self.room:isProhibited(self.player, targe, fire_attack) then
+		if targe and not targe:isKongcheng() and not self.room:isProhibited(self.player, targe, fire_attack) then
 			use.card = fire_attack
 			if use.to then use.to:append(targe) end
 		end

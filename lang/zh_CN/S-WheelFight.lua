@@ -7,5 +7,4 @@ return {
 	["#VictimC"] = "本局阵亡上限为 %arg ，%from 请注意，若再阵亡 %arg2 次，您就输了",
 
 	["fuck_guanyu"] = "火攻关羽",
-	["retry"] = "再试一次",
 }

@@ -117,9 +117,9 @@ Photo::Photo()
 
     emotion_item = new QGraphicsPixmapItem(this);
     settings->beginGroup("emotion_item");
-    coord = settings->value("moveby").toList();
-    emotion_item->moveBy(coord.first().toReal(), coord.last().toReal());
-    emotion_item->setZValue(settings->value("zvalue").toReal());
+    coord = settings->value("pos").toList();
+    emotion_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    emotion_item->setZValue(coord.at(2).toReal());
     emotion_item->setOpacity(settings->value("opacity").toReal());
     settings->endGroup();
 
@@ -769,14 +769,16 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     int n = player->getHandcardNum();
     if(n > 0){
         settings->beginGroup("handcard_item");
-        //QList<QVariant> coord = settings->value("pos").toList();
-        //painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), handcard);
-        QList<QVariant> coord = settings->value("text_pos").toList();
+        QList<QVariant> coord = settings->value("pos").toList();
         qreal xo = n < 10 ? coord.first().toReal() : coord.first().toReal()-5;
         QFont serifFont("Georgia", 16, QFont::Bold);
-        painter->setPen(Qt::yellow);
+        painter->setPen(Qt::black);
         painter->setFont(serifFont);
         painter->drawText(xo, coord.last().toReal(), QString::number(n));
+
+        painter->setPen(Qt::yellow);
+        painter->setFont(serifFont);
+        painter->drawText(xo-2, coord.last().toReal()-2, QString::number(n));
         settings->endGroup();
     }
 
