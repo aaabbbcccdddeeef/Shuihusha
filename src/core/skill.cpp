@@ -51,10 +51,6 @@ int Skill::getEffectIndex(const ServerPlayer *, const Card *) const{
     return -1;
 }
 
-QList<int> Skill::getWakePoint() const{
-    return QList<int>();
-}
-
 void Skill::initMediaSource(){
     sources.clear();
 

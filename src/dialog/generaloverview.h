@@ -20,7 +20,7 @@ public:
     GeneralOverview(QWidget *parent = 0);
     ~GeneralOverview();
     void fillGenerals(const QList<const General *> &generals);
-    bool isInvisibleSkill(const Skill *skill, int index);
+    bool isInvisibleSkill(const QString &skill_name, int index);
     bool singleSkillFineTuning(const QString &general_name, const QString &skill_name, int index);
 
 private:

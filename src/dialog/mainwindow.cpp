@@ -152,6 +152,7 @@ void MainWindow::restoreFromConfig(){
     ui->actionPause->setChecked(false);
     ui->actionAutoSave->setChecked(Config.value("AutoSave", false).toBool());
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
+    ui->actionCircular_view->setChecked(Config.CircularView);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
     ui->actionDraw_indicator->setChecked(!Config.value("UI/NoIndicator", false).toBool());
     ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", true).toBool());
@@ -365,6 +366,8 @@ void MainWindow::enterRoom(){
     ui->actionJoin_Game->setEnabled(false);
     ui->actionStart_Game->setEnabled(false);
     ui->actionAI_Melee->setEnabled(false);
+    ui->actionCircular_view->setEnabled(false);
+    ui->actionButton_style->setEnabled(false);
 
     RoomScene *room_scene = new RoomScene(this);
 
@@ -737,6 +740,13 @@ void MainWindow::on_actionAcknowledgement_triggered()
 void MainWindow::on_actionScript_editor_triggered()
 {
     QMessageBox::information(this, tr("Warning"), tr("This function is not implemented yet!"));
+}
+
+void MainWindow::on_actionCircular_view_toggled(bool checked)
+{
+    if(Config.CircularView != checked)
+        Config.CircularView = checked;
+        Config.setValue("CircularView", checked);
 }
 
 void MainWindow::on_actionDraw_indicator_toggled(bool checked)

@@ -41,7 +41,6 @@ public:
 
     virtual QString getDefaultChoice(ServerPlayer *player) const;
     virtual int getEffectIndex(const ServerPlayer *player, const Card *card) const;
-    virtual QList<int> getWakePoint() const;
     virtual QDialog *getDialog() const {return NULL;}
 
     virtual Location getLocation() const;

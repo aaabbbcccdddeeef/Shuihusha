@@ -2453,6 +2453,11 @@
         <translation>Ctrl+T</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.ui" line="480"/>
+        <source>Circular view</source>
+        <translation>环状视图</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.ui" line="494"/>
         <source>Draw indicator</source>
         <translation>绘制指示线</translation>

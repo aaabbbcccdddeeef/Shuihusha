@@ -1442,9 +1442,14 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         if(player->getGeneralName().startsWith("sun") ||
            player->getGeneralName().startsWith("moon")){
             if(player->askForSkillInvoke("casket_death")){
-                QStringList genlist = Sanguosha->getLimitedGeneralNames();
-                qShuffle(genlist);
-                genlist = genlist.mid(0, 4);
+                QStringList ban;
+                foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                    if(!ban.contains(tmp->getGeneralName()))
+                        ban << tmp->getGeneralName();
+                    if(!ban.contains(tmp->getGeneral2Name()))
+                        ban << tmp->getGeneral2Name();
+                }
+                QStringList genlist = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
                 QString general = room->askForGeneral(player, genlist);
                 room->setPlayerProperty(player, "general", general);
                 room->revivePlayer(player);

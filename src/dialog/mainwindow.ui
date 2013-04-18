@@ -17,7 +17,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -88,6 +88,7 @@
     <addaction name="actionFullscreen"/>
     <addaction name="actionMinimize_to_system_tray"/>
     <addaction name="separator"/>
+    <addaction name="actionCircular_view"/>
     <addaction name="actionDraw_indicator"/>
     <addaction name="actionDraw_cardname"/>
     <addaction name="actionExpand_dashboard"/>
@@ -583,6 +584,14 @@
   <action name="actionState_control">
    <property name="text">
     <string>State control ...</string>
+   </property>
+  </action>
+  <action name="actionCircular_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Circular view</string>
    </property>
   </action>
  </widget>

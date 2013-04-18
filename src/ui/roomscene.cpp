@@ -3490,11 +3490,8 @@ void RoomScene::moveFocus(const QString &who){
 
 void RoomScene::setEmotion(const QString &who, const QString &emotion){
     QString true_emotion = emotion;
-    bool permanent = false;
-    if(emotion.startsWith("%")){ //% mean keep show for example: "%win"
-        true_emotion.remove("%");
-        permanent = true;
-    }
+    bool permanent = true_emotion.startsWith("%"); //% mean keep show for example: "%win"
+    true_emotion.remove("%");
     if(Config.BanEmotions.contains(true_emotion))
         return;
     Photo *photo = name2photo[who];

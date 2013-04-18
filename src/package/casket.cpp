@@ -119,7 +119,7 @@ bool FanyinCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void FanyinCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->gainJur("sleep_jur", 2);
+    effect.to->gainJur("sleep_jur", 3);
 }
 
 class Fanyin: public ViewAsSkill{
