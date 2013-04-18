@@ -80,4 +80,7 @@ return {
 	["^archery_attack"] = "使用万箭齐发时播放",
 	["^savage_assault"] = "使用猛虎下山时播放",
 	["^inspiration"] = "使用逢凶化吉时播放",
+	["^mastermind"] = "使用摄魂时播放",
+	["^spin_destiny"] = "使用扭转乾坤时播放",
+	["^edo_tensei"] = "使用秽土转生时播放",
 }

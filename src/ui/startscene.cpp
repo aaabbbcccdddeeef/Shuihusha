@@ -32,15 +32,12 @@ StartScene::StartScene()
 */
     server_log = NULL;
 
-    QString sryle = QString();
-    if(Config.value("UI/ButtonStyle", false).toBool()){
-        //Provide coordinates for the button
+    //Provide coordinates for the button
 #ifdef USE_RCC
-        sryle = ":plate/background.png";
+    QString sryle = ":plate/background.png";
 #else
-        sryle = "image/system/button/plate/background.png";
+    QString sryle = "image/system/button/plate/background.png";
 #endif
-    }
     button_group = new Pixmap(sryle);
     button_group->shift();
     //button_group->moveBy(0, -Config.Rect.height()/10);

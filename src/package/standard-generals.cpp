@@ -586,6 +586,12 @@ public:
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
+
+    virtual QList<int> getWakePoint() const{
+        QList<int> wake;
+        wake << 3 << 4;
+        return wake;
+    }
 };
 
 class QimenClear: public TriggerSkill{

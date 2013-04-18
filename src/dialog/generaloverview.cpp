@@ -126,15 +126,18 @@ GeneralOverview::~GeneralOverview()
     delete ui;
 }
 
-bool GeneralOverview::isInvisibleSkill(const QString &skill_name, int index){
+bool GeneralOverview::isInvisibleSkill(const Skill *skill, int index){
     //effect line cut down begin the index
+    QString skill_name = skill->objectName();
     if(skill_name == "yinyu") // for mengshi_wake
         return index > 7;
     if(index > 2){  // butian&qimen for wudao_wake; other for landlord mode
         QStringList skills;
-        skills << "butian" << "qimen" << "linse" << "duoming" << "shemi";
+        skills << "linse" << "duoming" << "shemi";
         return skills.contains(skill_name);
     }
+    if(skill->getWakePoint().contains(index))
+        return true;
     return false;
 }
 
@@ -160,7 +163,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
     }else{
         QRegExp rx(".+/(\\w+\\d?).(\\w+)");
         for(int i = 0; i < sources.length(); i++){
-            if(isInvisibleSkill(skill->objectName(), i + 1))
+            if(isInvisibleSkill(skill, i + 1))
                 break;
             QString general_name = property("GeneralName").toString();
             if(singleSkillFineTuning(general_name, skill->objectName(), i + 1))
