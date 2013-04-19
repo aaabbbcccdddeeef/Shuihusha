@@ -44,7 +44,7 @@ config = {
 		"ArthurFerris",
 		"Contract",
 		"Impasse",
-		"FuckGuanyu",
+--		"FuckGuanyu",
 --		"Changban",
 --[[	"Zombie",
 		"Legend",]]
