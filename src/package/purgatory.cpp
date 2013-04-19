@@ -191,7 +191,10 @@ public:
         if(event == TurnedOver && player->faceUp()){
             log.type = "#ProudBanner1";
             room->sendLog(log);
-            player->playCardEffect("Eproud_banner1");
+            if(player->getGeneral()->isMale())
+                player->playCardEffect("Eproud_banner1", "weapon");
+            else
+                player->playCardEffect("Eproud_banner2", "weapon");
             return true;
         }/*
         else if(event == ChainStateChange && !player->isChained()){
@@ -204,7 +207,10 @@ public:
             log.type = "#ProudBanner3";
             log.arg2 = data.toString();
             room->sendLog(log);
-            player->playCardEffect("Eproud_banner3");
+            if(player->getGeneral()->isMale())
+                player->playCardEffect("Eproud_banner3", "weapon");
+            else
+                player->playCardEffect("Eproud_banner4", "weapon");
             return true;
         }
         return false;

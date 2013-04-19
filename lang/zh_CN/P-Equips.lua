@@ -33,8 +33,9 @@ return {
 	["$gold_armor1"] = "宝甲护身！",
 	["$gold_armor2"] = "你这破刀太钝了！",
 
-	["$proud_banner1"] = "大耳瓜子抽你！",
-	["$proud_banner2"] = "赶紧给我去死",
-	["$proud_banner3"] = "行，你牛逼！",
-	["$lash_gun"] = "在你身上打的炮都够收复钓鱼岛了~",
+	["$proud_banner1"] = "此计安能灭我军威？", -- 一效果男声
+	["$proud_banner2"] = "一战到底！", -- 一效果女声
+	["$proud_banner3"] = "吾命由我不由天！", -- 三效果男声
+	["$proud_banner4"] = "军心不散，以抗天命！", -- 三效果女声
+	["$lash_gun"] = "（炮声）",
 }

@@ -73,7 +73,7 @@ function setInitialTables()
 	sgs.discard_pile =			global_room:getDiscardPile()
 	sgs.draw_pile = 			global_room:getDrawPile()
 	sgs.lose_equip_skill = 		"cuihuo|jiebei"
-	sgs.need_kongcheng = 		"zhiyuan"
+	sgs.need_kongcheng = 		"zhiyuan|beishui|ganlin|kongmen"
 	sgs.masochism_skill = 		"baoguo|fuqin|xiaozai|huatian|heidian|cuju|huanshu"
 	sgs.wizard_skill = 			"zhaixing|butian|shenpan|yixing|yueli|houlue"
 	sgs.wizard_harm_skill = 	"zhaixing|butian|shenpan|yixing"
@@ -2200,8 +2200,8 @@ end
 
 function SmartAI:needKongcheng(player)
 	player = player or self.player
-	if player:isWounded() and player:hasSkill("ganlin") then
-		return true
+	if player:isWounded() then
+		if self:hasSkills("ganlin|kongmen") then return true end
 	end
 	if self.room:getMode() == "fuck_guanyu" then
 		return true
@@ -2631,6 +2631,7 @@ end
 function SmartAI:getRetrialCardId(cards, judge)
 	local can_use = {}
 	for _, card in ipairs(cards) do
+		if type(card) == "number" then card = sgs.Sanguosha:getCard(card) end
 		if judge.reason == "yinyu" then
 			if (self:isEnemy(judge.who) and card:getSuit() ~= sgs.Card_Spade) or
 				(self:isFriend(judge.who) and card:getSuit() == sgs.Card_Spade) then

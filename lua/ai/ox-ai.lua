@@ -269,14 +269,8 @@ sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 end
 sgs.ai_skill_askforag["butian"] = function(self, card_ids)
 	local judge = self.butianjudge
-	local cards = {}
-	local card_id
 	if judge and self:needRetrial(judge) then
-		for _, card_id in ipairs(card_ids) do
-			local card = sgs.Sanguosha:getCard(card_id)
-			table.insert(cards, card)
-		end
-		card_id = self:getRetrialCardId(cards, judge)
+		local card_id = self:getRetrialCardId(card_ids, judge)
 		if card_id ~= -1 then
 			return card_id
 		end

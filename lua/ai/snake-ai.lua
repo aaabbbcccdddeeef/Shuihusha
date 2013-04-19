@@ -93,6 +93,33 @@ sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 end
 
 -- fanrui
+-- hunyuan
+sgs.ai_skill_invoke["hunyuan"] = function(self, data)
+	local damage = data:toDamage()
+	local recover = data:toRecover()
+	if damage or recover then
+		return self.player:getPile("shang"):length() < 2
+	else
+		local judge = data:toJudge()
+		if judge and self:needRetrial(judge) then
+			local shang = self.player:getPile("shang")
+			shang = sgs.QList2Table(shang)
+			local card_id = self:getRetrialCardId(shang, judge)
+			if card_id ~= -1 then
+				self.hunyuancid = card_id
+				return true
+			end
+		end
+	end
+	return false
+end
+sgs.ai_skill_askforag["hunyuan"] = function(self, card_ids)
+	return self.hunyuancid
+end
+
+-- wudao
+-- kongmen
+
 -- jindajian
 -- fangzao
 local fangzao_skill={}
