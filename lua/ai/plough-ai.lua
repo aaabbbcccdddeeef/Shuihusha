@@ -168,6 +168,7 @@ function SmartAI:useCardWiretap(wiretap, use)
 		use.to:append(targets[r])
 		self:speak("wiretap", targets[r])
 	end
+	return targets[r]
 end
 
 sgs.dynamic_value.benefit.Wiretap = true

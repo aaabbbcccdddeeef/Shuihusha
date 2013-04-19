@@ -104,8 +104,20 @@ sgs.ai_use_value =
 	XiashuCard = 5,
 --	YanmoCard = 5,
 
-	-- bwqz
+	-- snake
+--	SinueCard = 9,
+	FangzaoCard = 4,
 	FeizhenCard = 4.3,
+--	JiejiuCard = 5,
+--	XiangmaCard = 5,
+--	SouguaCard = 7,
+	ZhaoanCard = 6,
+
+	-- casket
+--	TumiCard = 7,
+	FanyinCard = 6.5,
+
+	-- bwqz
 	NushaCard = 6.1,
 	QiaogongCard = 2.3,
 	FeiqiangCard = 9.2,
@@ -239,8 +251,20 @@ sgs.ai_use_priority = {
 	XiashuCard = 2.4,
 --	YanmoCard = 5,
 
-	-- bwqz
+	-- snake
+--	SinueCard = 9,
+	FangzaoCard = 7,
 	FeizhenCard = 8.3,
+--	JiejiuCard = 5,
+--	XiangmaCard = 5,
+--	SouguaCard = 7,
+	ZhaoanCard = 6.2,
+
+	-- casket
+--	TumiCard = 7,
+	FanyinCard = 8.4,
+
+	-- bwqz
 	NushaCard = 7.1,
 	QiaogongCard = 3.3,
 	FeiqiangCard = 5.4,
@@ -253,24 +277,6 @@ sgs.ai_use_priority = {
 	ZhangshiCard = 2.4,
 	YinlangCard = 5.9,
 
-	XinzhanCard = 9.2,
-	GuhuoCard = 10,
-	TianyiCard = 4,
-	JieyinCard = 2.5,
-	XianzhenCard = 9.2,
-	XianzhenSlashCard = 2.6,
-	JijiangCard = 2.4,
-	DimengCard=2.3,
-	LijianCard = 4,
-	QingnangCard=4.2,
-	MingceCard=4,
-	JujianCard = 4.5,
-
-	ShenfenCard = 2.3,
-	GreatYeyanCard = 9,
-	MediumYeyanCard = 6,
-	SmallYeyanCard = 2.3,
-	JilveCard = 0.4,
 --
 	Peach = 4.1,
 
@@ -329,7 +335,10 @@ sgs.ai_use_priority = {
 	DoubleWhip = 2.64,
 	MeteorSword = 2.668,
 	SunBow = 2.567,
-	GoldArmor = 2.555,
+	GoldArmor = 0.8,
+
+	ProudBanner = 0.5,
+	LashGun = 2.68,
 }
 
 -- this table stores the chaofeng value for some generals
@@ -342,7 +351,8 @@ sgs.ai_chaofeng = {
 	gongsunsheng = 7,
 	zhangheng = 7,
 	dingdesun = 7,
-	chaijing = 7,
+	chaijin = 7,
+	houjian = 7,
 	songjiang = 6,
 	wangqing = 6,
 	sunerniang = 6,
@@ -357,6 +367,8 @@ sgs.ai_chaofeng = {
 	peixuan = 6,
 	ruanxiaowu = 6,
 	yangchun = 6,
+	huangfuduan = 6,
+	liangshijie = 6,
 	fangla = 5,
 	wuyong = 5,
 	yanxijiao = 5,
@@ -367,6 +379,8 @@ sgs.ai_chaofeng = {
 	haosiwen = 5,
 	lvfang = 5,
 	qiongyaonayan = 5,
+	dengfei = 5,
+	suyuanjing = 5,
 	husanniang = 4,
 	panjinlian = 4,
 	daizong = 4,
@@ -378,6 +392,8 @@ sgs.ai_chaofeng = {
 	shibao = 4,
 	shantinggui = 4,
 	suochao = 4,
+	fanrui = 4,
+	jindajian = 4,
 	likui = 3,
 	zhutong = 3,
 	lishishi = 3,
@@ -389,6 +405,7 @@ sgs.ai_chaofeng = {
 	zhoutong = 3,
 	hantao = 3,
 	luzhishen = 3,
+	baoxu = 3,
 	wusong = 2,
 	liying = 2,
 	huyanzhuo = 2,
@@ -399,6 +416,8 @@ sgs.ai_chaofeng = {
 	tongwei = 2,
 	zhengtianshou = 2,
 	wangpo = 2,
+	muhong = 2,
+	lingzhen = 2,
 	lujunyi = 1,
 	gaoqiu = 1,
 	shijin = 1,
@@ -407,6 +426,8 @@ sgs.ai_chaofeng = {
 	zhugui = 1,
 	zhaoji = 1,
 	liutang = 1,
+	xuanzan = 1,
+	oupeng = 1,
 	huarong = -1,
 	zhuwu = -1,
 	ruanxiaoer = -1,
@@ -426,5 +447,8 @@ sgs.ai_chaofeng = {
 	wuyanguang = -3,
 	zhangshun = -4,
 	qiaodaoqing = -4,
+
+	sun_peiruhai = 8,
+	moon_panqiaoyun = 8,
 }
 

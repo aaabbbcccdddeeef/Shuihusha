@@ -652,15 +652,15 @@ void ServerPlayer::loseAllMarks(const QString &mark_name){
 }
 
 void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
+    int value = getMark(jur) + n;
+    if(n < 1 || !jur.endsWith("_jur"))
+        return;
+    if(!overlying && getMark(jur) > 0) //do not overlying
+        return;
     QVariant data = jur;
     if(room->getThread()->trigger(PreConjuring, room, this, data))
         return;
 
-    int value = getMark(jur) + n;
-    if(n < 1)
-        return;
-    if(!overlying && getMark(jur) > 0) //do not overlying
-        return;
     foreach(QString mark, getAllMarkName(3, "_jur"))
         loseAllMarks(mark);
 
@@ -672,8 +672,10 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
 
     room->setEmotion(this, "conjuring/" + jur.split("_").first());
     room->setPlayerMark(this, jur, value);
+#ifndef QT_DEBUG //@todo: crash in debug
     if(jur.startsWith("dizzy"))
         room->setPlayerProperty(this, "scarecrow", true);
+#endif
 }
 
 void ServerPlayer::removeJur(const QString &jur){
@@ -684,8 +686,10 @@ void ServerPlayer::removeJur(const QString &jur){
     room->sendLog(log);
 
     removeMark(jur);
+#ifndef QT_DEBUG //@todo: crash in debug
     if(jur.startsWith("dizzy"))
         room->setPlayerProperty(this, "scarecrow", false);
+#endif
 }
 
 bool ServerPlayer::isOnline() const {

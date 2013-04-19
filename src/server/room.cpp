@@ -2770,8 +2770,8 @@ void Room::damage(const DamageStruct &damage_data){
 
     do{
         // DamagedProceed
-        bool prevent = thread->trigger(DamagedProceed, this, damage_data.to, data);
-        if(prevent)
+        bool foil = thread->trigger(DamagedProceed, this, damage_data.to, data);
+        if(foil)
             break;
 
         // DamageProceed
