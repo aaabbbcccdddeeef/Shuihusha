@@ -410,7 +410,10 @@ public:
                 log.to << target;
                 log.arg = objectName();
                 room->sendLog(log);
-                player->playCardEffect("Ehalberd", "weapon");
+                if(player->getGeneral()->isMale())
+                    player->playCardEffect("Ehalberd1", "weapon");
+                else
+                    player->playCardEffect("Ehalberd2", "weapon");
 
                 room->slashResult(effect, NULL);
                 return true;

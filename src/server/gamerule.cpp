@@ -1404,6 +1404,8 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                     room->throwCard(card, player);
                 }
             }
+        }
+        else if(player->getPhase() == Player::NotActive){
             QStringList jurs = player->getAllMarkName(3, "_jur");
             foreach(QString jur, jurs){
                 player->loseMark(jur);
@@ -1432,10 +1434,12 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case Dying:{
+#ifndef QT_DEBUG //@todo: crash in debug
         if(player->hasMark("dizzy_jur")){
             room->setPlayerProperty(player, "scarecrow", false);
             player->loseAllMarks("dizzy_jur");
         }
+#endif
         break;
     }
     case Death:{

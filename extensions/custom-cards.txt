@@ -5,4 +5,3 @@ ecstasy diamond 7
 peach no_suit 0
 moonpie heart 6
 zongzi club 5
-shit heart 4

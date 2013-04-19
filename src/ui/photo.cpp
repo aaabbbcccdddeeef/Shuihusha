@@ -116,6 +116,7 @@ Photo::Photo()
     skill_name_item->setGraphicsEffect(drp);
 
     emotion_item = new QGraphicsPixmapItem(this);
+    emotion_item->setParentItem(this);
     settings->beginGroup("emotion_item");
     coord = settings->value("pos").toList();
     emotion_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());

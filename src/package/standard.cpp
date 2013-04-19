@@ -557,7 +557,7 @@ public:
     }
 
     virtual bool isDTE(CardStar card) const{
-        return (card->inherits("DelayedTrick") ||
+        return (card->isKindOf("DelayedTrick") ||
                 card->getTypeId() == Card::Equip);
     }
 
