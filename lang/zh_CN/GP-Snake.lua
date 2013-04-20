@@ -7,6 +7,7 @@ return {
 	["$muhong"] = "024",
 	["#muhong"] = "没遮拦", -- jiang 4hp (ttxd)
 	["muhong"] = "穆弘",
+	["illustrator:muhong"] = "楚河汉界",
 	["cv:muhong"] = "Emiya【心语联盟】",
 	["coder:muhong"] = "roxiel",
 	["wuzu"] = "无阻",
@@ -20,9 +21,10 @@ return {
 	["$oupeng"] = "048",
 	["#oupeng"] = "摩云金翅", -- jiang 4.5hp (qjwm)
 	["oupeng"] = "欧鹏",
-	["zhanchi"] = "展翅",
+	["illustrator:oupeng"] = "黄玉郎",
 	["designer:oupeng"] = "烨子&凌天翼",
 	["cv:oupeng"] = "烨子风暴【天子会工作室】",
+	["zhanchi"] = "展翅",
 	[":zhanchi"] = "<font color=purple><b>限定技</b></font>，你可以跳过你的判定阶段并弃掉你判定区里的所有牌，永久获得技能“腾飞”（<b>锁定技</b>，回合结束后，你须扣减1点体力上限，进行一个额外的回合；你的攻击范围等于你的当前体力值）。",
 	["@wings"] = "翅",
 	["tengfei"] = "腾飞",
@@ -37,6 +39,7 @@ return {
 	["$lingzhen"] = "052",
 	["#lingzhen"] = "轰天雷", -- jiang 4hp (zcyn)
 	["lingzhen"] = "凌振",
+	["illustrator:lingzhen"] = "黑山老妖",
 	["cv:lingzhen"] = "鬼叔【月影配音社团】",
 	["coder:lingzhen"] = "凌天翼",
 	["paohong"] = "炮轰",
@@ -48,6 +51,7 @@ return {
 	["$baoxu"] = "060",
 	["#baoxu"] = "丧门神", -- kou 4hp (ybyt)
 	["baoxu"] = "鲍旭",
+	["illustrator:baoxu"] = "nassery3",
 	["cv:baoxu"] = "鬼叔【月影配音社团】",
 	["coder:baoxu"] = "战栗贵公子",
 	["sinue"] = "肆虐",
@@ -61,6 +65,7 @@ return {
 	["$fanrui"] = "061",
 	["#fanrui"] = "混世魔王", -- kou 3hp (cgdk)
 	["fanrui"] = "樊瑞",
+	["illustrator:fanrui"] = "大唐豪侠",
 	["designer:fanrui"] = "烨子&宇文天启",
 	["cv:fanrui"] = "莫名【忆昔端华工作室】",
 	["hunyuan"] = "混元",
@@ -82,6 +87,7 @@ return {
 	["$jindajian"] = "066",
 	["#jindajian"] = "玉臂匠", -- kou 3hp (ybyt)
 	["jindajian"] = "金大坚",
+	["illustrator:jindajian"] = "大话西游",
 	["cv:jindajian"] = "卡修【天子会工作室】",
 	["coder:jindajian"] = "战栗贵公子",
 	["fangzao"] = "仿造",
@@ -97,6 +103,7 @@ return {
 	["$houjian"] = "071",
 	["#houjian"] = "通臂猿", -- kou 2hp (bwqz)
 	["houjian"] = "侯健",
+	["illustrator:houjian"] = "烨子风暴",
 	["designer:houjian"] = "宇文天启",
 	["cv:houjian"] = "Emiya【心语联盟】",
 	["feizhen"] = "飞针",
@@ -114,6 +121,7 @@ return {
 	["$xuanzan"] = "040",
 	["#xuanzan"] = "丑郡马", -- guan 4hp
 	["xuanzan"] = "宣赞",
+	["illustrator:xuanzan"] = "彭超",
 	["cv:xuanzan"] = "东方胤弘【天子会工作室】",
 	["konghe"] = "恐吓",
 	[":konghe"] = "其他角色的回合开始时，若你的武将牌背面向上，则你可以将你的武将牌翻面，令该角色跳过其该回合的判定阶段和任一其他阶段（回合开始阶段和回合结束阶段除外）；你每受到一次伤害，若你的武将牌正面向上，则你可以将你的武将牌翻面。",
@@ -133,6 +141,7 @@ return {
 	["$dengfei"] = "049",
 	["#dengfei"] = "火眼狻猊", -- kou 4hp
 	["dengfei"] = "邓飞",
+	["illustrator:dengfei"] = "枫",
 	["cv:dengfei"] = "雅策君【忆籁闻声】",
 	["jiejiu"] = "截救",
 	[":jiejiu"] = "当任一角色受到来源不为你的无属性伤害时，你可以和伤害来源拼点。若你赢，则你获得对方拼点的牌且防止该伤害。若你没赢，则你不能发动“截救”，直到你的下一个回合开始。 ",
@@ -147,6 +156,7 @@ return {
 	["$huangfuduan"] = "057",
 	["#huangfuduan"] = "紫髯伯", -- min 3hp
 	["huangfuduan"] = "皇甫端",
+	["illustrator:huangfuduan"] = "三国鼎立",
 	["cv:huangfuduan"] = "大宝今天见【淅雨听风】",
 	["xiangma"] = "相马",
 	[":xiangma"] = "当任一角色进入濒死状态时，你可以弃掉除该角色外的任一角色装备区里的一张坐骑牌，视为你对该濒死角色使用一张【肉】。",
@@ -164,6 +174,7 @@ return {
 	["$suyuanjing"] = "154",
 	["#suyuanjing"] = "文曲星", -- guan 3hp
 	["suyuanjing"] = "宿元景",
+	["illustrator:suyuanjing"] = "战国风云",
 	["cv:suyuanjing"] = "Sin柠檬【月玲珑】",
 	["zhaoan"] = "招安",
 	[":zhaoan"] = "出牌阶段，你可以指定任一与你势力不同的其他角色。若其交给你一张【杀】或武器牌，则其摸两张牌，否则其不能使用【酒】和【肉】，直到回合结束。每阶段限一次。",
@@ -184,6 +195,7 @@ return {
 	["$liangshijie"] = "162",
 	["#liangshijie"] = "梁中书", -- guan 3hp
 	["liangshijie"] = "梁世杰",
+	["illustrator:liangshijie"] = "cabbage0316",
 	["cv:liangshijie"] = "雅策君【忆籁闻声】",
 	["sougua"] = "搜刮",
 	[":sougua"] = "你可以跳过你的摸牌阶段并将你的武将牌翻面，分别获得一至四名其他角色的一张手牌。",

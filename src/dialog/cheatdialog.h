@@ -55,7 +55,7 @@ private:
     QLineEdit *skill_history;
     QPushButton *extra_button, *clear_button;
     QButtonGroup *conjur_group;
-    QAbstractButton *poison, *sleep, *dizzy, *petro;
+    QAbstractButton *poison, *sleep, *dizzy, *stealth;
     QLineEdit *conjur_text;
     QLineEdit *flags, *marks, *propty, *tag;
     QPushButton *flag_option;

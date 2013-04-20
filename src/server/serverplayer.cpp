@@ -464,6 +464,8 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
+    if(room->getCurrent() != this && hasMark("sleep_jur"))
+        return false;
     foreach(const Card *card, handcards){
         if(include_counterplot && card->isKindOf("Nullification"))
             return true; // all trick
@@ -488,9 +490,8 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
 }
 
 void ServerPlayer::kick(){
-    if(socket){
+    if(socket)
         socket->disconnectFromHost();
-    }
 }
 
 bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Card *card1){
@@ -641,6 +642,8 @@ void ServerPlayer::loseMark(const QString &mark, int n){
         room->sendLog(log);
 
     room->setPlayerMark(this, mark, value);
+    if(getMark(mark) < 1 && mark.endsWith("_jur"))
+        removeJur(mark);
 }
 
 void ServerPlayer::loseAllMarks(const QString &mark_name){
@@ -662,7 +665,7 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
         return;
 
     foreach(QString mark, getAllMarkName(3, "_jur"))
-        loseAllMarks(mark);
+        removeJur(mark);
 
     LogMessage log;
     log.type = "#GainJur";
@@ -676,9 +679,12 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
     if(jur.startsWith("dizzy"))
         room->setPlayerProperty(this, "scarecrow", true);
 #endif
+    emit conjuring_changed();
 }
 
 void ServerPlayer::removeJur(const QString &jur){
+    if(getMark(jur) > 0)
+        room->setPlayerMark(this, jur, 0);
     LogMessage log;
     log.type = "#RemoveJur";
     log.from = this;
@@ -690,6 +696,7 @@ void ServerPlayer::removeJur(const QString &jur){
     if(jur.startsWith("dizzy"))
         room->setPlayerProperty(this, "scarecrow", false);
 #endif
+    emit conjuring_changed();
 }
 
 bool ServerPlayer::isOnline() const {

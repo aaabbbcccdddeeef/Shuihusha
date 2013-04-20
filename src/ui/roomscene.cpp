@@ -163,6 +163,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         dashboard->setPlayer(Self);
         connect(Self, SIGNAL(general_changed()), dashboard, SLOT(updateAvatar()));
         connect(Self, SIGNAL(general2_changed()), dashboard, SLOT(updateSmallAvatar()));
+        connect(Self, SIGNAL(conjuring_changed()), dashboard, SLOT(updateSmallAvatar()));
         connect(ClientInstance, SIGNAL(do_filter()), dashboard, SLOT(doFilter()));
         connect(dashboard, SIGNAL(card_selected(const Card*)), this, SLOT(enableTargets(const Card*)));
         connect(dashboard, SIGNAL(card_to_use()), this, SLOT(doOkButton()));

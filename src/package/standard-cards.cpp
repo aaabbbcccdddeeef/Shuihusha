@@ -803,6 +803,10 @@ void ExNihilo::onEffect(const CardEffectStruct &effect) const{
     effect.to->drawCards(2);
 }
 
+bool ExNihilo::isAvailable(const Player *player) const{
+    return !player->isProhibited(player, this);
+}
+
 Duel::Duel(Suit suit, int number)
     :SingleTargetTrick(suit, number, true){
     setObjectName("duel");

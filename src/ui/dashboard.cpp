@@ -269,20 +269,18 @@ void Dashboard::setConjuring(){
     QStringList conjurs = Self->getAllMarkName(3, "_jur");
     if(!conjurs.isEmpty()){
         QString conjur = conjurs.first();
-        if(Self->hasMark(conjur)){
-            conjur_icon->setPixmap(QPixmap(QString("image/system/conjuring/%1_d.png").arg(conjur)));
-            conjur_icon->show();
+        conjur_icon->setPixmap(QPixmap(QString("image/system/conjuring/%1_d.png").arg(conjur)));
+        conjur_icon->show();
 
-            conjur_item->setText(QString("%1 %2 %3")
-                              .arg(Sanguosha->translate(conjur))
-                              .arg(Sanguosha->translate("multiply"))
-                              .arg(Self->getMark(conjur)));
-            conjur_item->show();
-        }
-        else{
-            conjur_icon->hide();
-            conjur_item->hide();
-        }
+        conjur_item->setText(QString("%1 %2 %3")
+                          .arg(Sanguosha->translate(conjur))
+                          .arg(Sanguosha->translate("multiply"))
+                          .arg(Self->getMark(conjur)));
+        conjur_item->show();
+    }
+    else{
+        conjur_icon->hide();
+        conjur_item->hide();
     }
 }
 

@@ -10,6 +10,7 @@ return {
 	["$moon_panqiaoyun"] = "X02",
 	["#moon_panqiaoyun"] = "花开荼蘼", -- 3/3
 	["moon_panqiaoyun"] = "潘巧云",
+	["illustrator:moon_panqiaoyun"] = "征途",
 	["cv:moon_panqiaoyun"] = "绯绡【沉香暖阁工作室】",
 	["qingdu"] = "情毒",
 	[":qingdu"] = "<font color=deeppink><b>咒术技</b></font>，<b>锁定技</b>，你对男性角色造成的伤害附加“中毒”状态。",
@@ -28,6 +29,7 @@ return {
 	["$sun_peiruhai"] = "Y01",
 	["#sun_peiruhai"] = "海阇黎", -- 3/4
 	["sun_peiruhai"] = "裴如海",
+	["illustrator:sun_peiruhai"] = "十虎",
 	["designer:sun_peiruhai"] = "烨子&宇文天启",
 	["cv:sun_peiruhai"] = "鸢飞【天子会工作室】",
 	["fanyin"] = "梵音",

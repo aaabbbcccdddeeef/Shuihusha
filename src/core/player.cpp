@@ -756,11 +756,11 @@ QStringList Player::getAllMarkName(int flag, const QString &part) const{
         QString key = i.key();
         switch(flag){
         case 1:
-            if(key.startsWith(part)) //like "@skull"
+            if(key.startsWith(part) && hasMark(key)) //like "@skull"
                 marknames << key;
             break;
         case 3:
-            if(key.endsWith(part)) //like "aoxiang_wake"
+            if(key.endsWith(part) && hasMark(key)) //like "aoxiang_wake"
                 marknames << key;
             break;
         case 2:
@@ -972,7 +972,13 @@ QString Player::getAllSkillDescription() const{
             }
         }
     }
-    QString fin = QString("%1%2%3").arg(local_desc).arg(local_desc2).arg(acquired_desc);
+    QString conjur_desc = QString();
+    if(!getAllMarkName(3, "_jur").isEmpty()){
+        QString conjur = getAllMarkName(3, "_jur").first();
+        conjur_desc = tr("<font color=deeppink size=4>Conjuring:</font><br/>");
+        conjur_desc.append(QString("<b>%1</b>: %2 <br/> <br/>").arg(Sanguosha->translate(conjur)).arg(Sanguosha->translate(":" + conjur)));
+    }
+    QString fin = QString("%1%2%3%4").arg(local_desc).arg(local_desc2).arg(acquired_desc).arg(conjur_desc);
     fin.replace("<br/> <br/>", "<br/>");
     return fin;
 }

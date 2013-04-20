@@ -1,6 +1,16 @@
 #include "casket.h"
 #include "standard.h"
 
+class Stealth: public ClientSkill{
+public:
+    Stealth():ClientSkill("stealth_jur"){
+    }
+
+    virtual bool isProhibited(const Player *, const Player *to, const Card *) const{
+        return to->hasMark(objectName());
+    }
+};
+
 class Qingdu: public TriggerSkill{
 public:
     Qingdu():TriggerSkill("qingdu"){
@@ -10,7 +20,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room *, ServerPlayer *yunr, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->getGender() == General::Male){
+        if(damage.to->getGender() == General::Male && damage.to->isAlive()){
             LogMessage log;
             log.type = "#TriggerSkill";
             log.from = yunr;
@@ -216,6 +226,7 @@ public:
 CasketPackage::CasketPackage()
     :GeneralPackage("casket")
 {
+    skills << new Stealth;
     General *moon_panqiaoyun = new General(this, "moon_panqiaoyun", "moon", 3, false);
     moon_panqiaoyun->addSkill(new Qingdu);
     moon_panqiaoyun->addSkill(new Tumi);

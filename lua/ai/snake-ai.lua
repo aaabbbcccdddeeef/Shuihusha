@@ -85,8 +85,8 @@ sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, enemy in ipairs(self.enemies) do
-		if self.player:distanceTo(enemy) == 1 then
-			return "@SinueCard=" .. cards[1]:getEffectiveId() .. "->."
+		if self.player:distanceTo(enemy) == 1 and enemy:isAlive() then
+			return "@SinueCard=" .. cards[1]:getEffectiveId() .. "->" .. enemy:objectName()
 		end
 	end
 	return "."

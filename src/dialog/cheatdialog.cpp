@@ -398,18 +398,22 @@ QWidget *CheatDialog::createSetStateTab(){
     conjur_group = new QButtonGroup();
     poison = new QRadioButton(tr("Poison"));
     poison->setObjectName("poison_jur");
+    poison->setToolTip(Sanguosha->translate(":poison_jur"));
     conjur_group->addButton(poison);
     sleep = new QRadioButton(tr("Sleep"));
     sleep->setObjectName("sleep_jur");
+    sleep->setToolTip(Sanguosha->translate(":sleep_jur"));
     conjur_group->addButton(sleep);
     dizzy = new QRadioButton(tr("Dizzy"));
     dizzy->setObjectName("dizzy_jur");
+    dizzy->setToolTip(Sanguosha->translate(":dizzy_jur"));
     conjur_group->addButton(dizzy);
-    petro = new QRadioButton(tr("Petro"));
-    petro->setObjectName("petro_jur");
-    conjur_group->addButton(petro);
+    stealth = new QRadioButton(tr("Stealth"));
+    stealth->setObjectName("stealth_jur");
+    stealth->setToolTip(Sanguosha->translate(":stealth_jur"));
+    conjur_group->addButton(stealth);
     conjur_layout->addRow(HLay(poison, sleep));
-    conjur_layout->addRow(HLay(dizzy, petro));
+    conjur_layout->addRow(HLay(dizzy, stealth));
 
     conjur_text = new QLineEdit();
     conjur_text->setValidator(new QIntValidator(0, 99, conjur_text));

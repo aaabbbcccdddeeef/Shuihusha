@@ -1,4 +1,5 @@
 -- Ai for Casket-package
+sgs.ai_skill_invoke["casket_death"] = true
 
 -- moon_panqiaoyun
 sgs.ai_chaofeng.moon_panqiaoyun = 5
@@ -23,7 +24,7 @@ sgs.ai_skill_use["@@tumi"] = function(self, prompt)
 end
 -- jueyuan
 
--- sun_peiruhai ->getTypeId() == item->getFilteredCard()->getTypeI
+-- sun_peiruhai
 sgs.ai_chaofeng.sun_peiruhai = -1
 -- fanyin
 local fanyin_skill = {}
@@ -72,4 +73,13 @@ sgs.ai_skill_use_func["FanyinCard"] = function(card,use,self)
 end
 -- lichen
 sgs.ai_skill_invoke["lichen"] = true
+sgs.ai_skill_playerchosen["lichen"] = function(self, targets)
+	self:sort(self.enemies)
+	if #self.enemies > 0 then
+		return self.enemies[1]
+	else
+		return targets:first()
+	end
+end
+
 -- lunhui

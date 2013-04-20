@@ -657,8 +657,8 @@
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="381"/>
-        <source>Petro</source>
-        <translation>石化状态</translation>
+        <source>Stealth</source>
+        <translation>隐形状态</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="390"/>
@@ -3637,6 +3637,11 @@
         <location filename="src/core/player.cpp" line="951"/>
         <source>&lt;font color=green size=4&gt;Acquired:&lt;/font&gt;&lt;br/&gt;</source>
         <translation>&lt;font color=green size=4&gt;☻获得技能：&lt;/font&gt;&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/core/player.cpp" line="952"/>
+        <source>&lt;font color=deeppink size=4&gt;Conjuring:&lt;/font&gt;&lt;br/&gt;</source>
+        <translation>&lt;font color=deeppink size=4&gt;♣咒术状态：&lt;/font&gt;&lt;br/&gt;</translation>
     </message>
 </context>
 <context>
