@@ -172,6 +172,7 @@ signals:
     void disconnected();
     void request_got(const QString &request);
     void message_cast(const QString &message) const;
+    void conjuring_changed();
 };
 
 #endif // SERVERPLAYER_H

@@ -371,6 +371,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
+        connect(player, SIGNAL(conjuring_changed()), this, SLOT(updateSmallAvatar()));
 
         mark_item->setDocument(player->getMarkDoc(false));
     }

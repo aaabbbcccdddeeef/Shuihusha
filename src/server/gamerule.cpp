@@ -144,12 +144,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             player->clearFlags();
             player->clearHistory();
 
-            // shengsizhizhan
-            foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                tmp->loseAllMarks("@death");
-                tmp->loseAllMarks("@life");
-            }
-
             return;
         }
     }
@@ -1011,9 +1005,8 @@ bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
                         ces.card->inherits("Slash"))
                 playerShowed(player);
 
-            const ClientSkill* prohibit = room->isProhibited(ces.from,ces.to,ces.card);
-            if(prohibit)
-            {
+            const ClientSkill *prohibit = room->isProhibited(ces.from, ces.to, ces.card);
+            if(prohibit){
                 LogMessage log;
                 log.type = "#SkillAvoid";
                 log.from = ces.to;
@@ -1384,16 +1377,19 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                 log.type = "#Poison";
                 room->sendLog(log);
                 if(player->getMark("poison_jur") <= 2){
-                    if(player->isAllNude() || room->askForChoice(player, "poison_jur", "hp+cd") == "hp")
+                    if(room->askForChoice(player, "poison_jur", "hp+cd") == "hp")
                         room->loseHp(player);
                     else{
-                        int index = qrand() % player->getCards("hej").length();
-                        const Card *card = player->getCards("hej").at(index);
-                        room->throwCard(card, player);
+                        int index = -1;
+                        if(!player->isAllNude()){
+                            index = qrand() % player->getCards("hej").length();
+                            const Card *card = player->getCards("hej").at(index);
+                            room->throwCard(card, player);
+                        }
 
                         if(!player->isAllNude()){
                             index = qrand() % player->getCards("hej").length();
-                            card = player->getCards("hej").at(index);
+                            const Card *card = player->getCards("hej").at(index);
                             room->throwCard(card, player);
                         }
                     }
@@ -1406,18 +1402,21 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             }
         }
         else if(player->getPhase() == Player::NotActive){
-            QStringList jurs = player->getAllMarkName(3, "_jur");
-            foreach(QString jur, jurs){
-                player->loseMark(jur);
-                if(player->getMark(jur) == 0)
-                    player->removeJur(jur);
+            // shengsizhizhan
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                tmp->loseAllMarks("@death");
+                tmp->loseAllMarks("@life");
             }
+
+            QStringList jurs = player->getAllMarkName(3, "_jur");
+            foreach(QString jur, jurs)
+                player->loseMark(jur);
         }
         break;
     }
     case Damaged:{
         if(player->hasMark("sleep_jur"))
-            player->loseAllMarks("sleep_jur");
+            player->removeJur("sleep_jur");
         break;
     }
     case CardAsk:
@@ -1437,7 +1436,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
 #ifndef QT_DEBUG //@todo: crash in debug
         if(player->hasMark("dizzy_jur")){
             room->setPlayerProperty(player, "scarecrow", false);
-            player->loseAllMarks("dizzy_jur");
+            player->removeMark("dizzy_jur");
         }
 #endif
         break;

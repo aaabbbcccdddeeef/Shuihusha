@@ -117,8 +117,25 @@ QString GlobalEffect::getSubtype() const{
 }
 
 void GlobalEffect::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *source = card_use.from;
+    QList<ServerPlayer *> targets, other_players = room->getAllPlayers();
+    foreach(ServerPlayer *player, other_players){
+        const ClientSkill *skill = room->isProhibited(source, player, this);
+        if(skill){
+            LogMessage log;
+            log.type = "#SkillAvoid";
+            log.from = player;
+            log.arg = skill->objectName();
+            log.arg2 = objectName();
+            room->sendLog(log);
+
+            room->playSkillEffect(skill->objectName());
+        }else
+            targets << player;
+    }
+
     CardUseStruct use = card_use;
-    use.to = room->getAllPlayers();
+    use.to = targets;
     TrickCard::onUse(room, use);
 }
 
