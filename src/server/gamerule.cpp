@@ -1349,11 +1349,14 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << Damage << Damaged;
+    events << Damaged;
 }
 
-int ConjuringRule::getPriority(TriggerEvent) const{
-    return -1;
+int ConjuringRule::getPriority(TriggerEvent e) const{
+    if(e == DamageDone)
+        return 1;
+    else
+        return -1;
 }
 
 bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -1403,21 +1406,34 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
         break;
     }
-    case Damage:{
+    case DamageDone:{
         //shengsizhizhan
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.to->hasMark("@death") && damage.damage > 0){
-            PlayerStar life = room->findPlayer(damage.to->property("mind").toString());
-            if(life){
-                RecoverStruct recover;
-                recover.who = damage.to;
-                recover.recover = damage.damage;
-                room->recover(life, recover);
-            }
+            PlayerStar life = damage.to->tag["DtoL"].value<PlayerStar>();
+            if(life)
+                room->setPlayerMark(life, "mind", damage.damage);
         }
         break;
     }
     case Damaged:{
+        //shengsizhizhan
+        foreach(ServerPlayer *t, room->getAlivePlayers()){
+            if(t->hasMark("@life") && t->hasMark("mind")){
+                LogMessage log;
+                log.type = "#Mind";
+                log.from = t;
+                log.arg = "mastermind";
+                room->sendLog(log);
+
+                RecoverStruct recover;
+                recover.who = player;
+                recover.recover = t->getMark("mind");
+                room->recover(t, recover);
+                room->setPlayerMark(t, "mind", 0);
+            }
+        }
+
         if(player->hasMark("sleep_jur"))
             player->removeJur("sleep_jur");
         break;

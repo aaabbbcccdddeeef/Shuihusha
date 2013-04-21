@@ -179,9 +179,10 @@ void ContractScenario::assign(QStringList &generals, QStringList &roles) const{
 
     for(int i = 0; i < getPlayerCount(); i++){
         if(i == 0)
-        roles << "rebel";
+            roles << "lord";
+        else
+            roles << "rebel";
     }
-    roles[0] == "lord";
 }
 
 int ContractScenario::getPlayerCount() const{
