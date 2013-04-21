@@ -135,6 +135,8 @@ bool Peach::IsAvailable(const Player *player){
 }
 
 bool Peach::isAvailable(const Player *player) const{
+    if(player->isProhibited(player, this))
+        return false;
     return IsAvailable(player);
 }
 

@@ -1460,3 +1460,38 @@ sgs.ai_skill_invoke["huakui"] = function(self, data)
 	self:speak("huakui")
 	return true
 end
+
+-- wusheng
+sgs.ai_view_as.wusheng = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:isRed() then
+		return ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
+	end
+end
+
+local wusheng_skill={}
+wusheng_skill.name="wusheng"
+table.insert(sgs.ai_skills,wusheng_skill)
+wusheng_skill.getTurnUseCard=function(self,inclusive)
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	local red_card
+	self:sortByUseValue(cards,true)
+	for _,card in ipairs(cards) do
+		if card:isRed() then
+			red_card = card
+			break
+		end
+	end
+	if red_card then
+		local suit = red_card:getSuitString()
+		local number = red_card:getNumberString()
+		local card_id = red_card:getEffectiveId()
+		local card_str = ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
+		local slash = sgs.Card_Parse(card_str)
+		assert(slash)
+		return slash
+	end
+end

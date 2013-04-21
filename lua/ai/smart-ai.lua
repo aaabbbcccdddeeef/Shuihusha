@@ -2661,7 +2661,7 @@ function SmartAI:damageIsEffective(player, nature, source)
 	player = player or self.player
 	source = source or self.player
 	nature = nature or sgs.DamageStruct_Normal
-	if player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName() then
+	if player:hasSkill("shudan") and player:hasFlag("%Shudan") then
 		return false
 	end
 
@@ -3129,7 +3129,7 @@ function SmartAI:aoeIsEffective(card, to)
 		return false
 	end
 	--Baisheng's shudan
-	if (to:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == to:objectName()) then
+	if (to:hasSkill("shudan") and to:hasFlag("%Shudan")) then
 		return false
 	end
 	--Panjinlian's shengui
@@ -3311,7 +3311,7 @@ end
 function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护，锦囊无效
 	if player then
 		if self.room:isProhibited(self.player, player, card) then return false end
-		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
+		if (player:hasSkill("shudan") and player:hasFlag("%Shudan")) or player:hasSkill("wuyan") then
 			if card and not (card:isKindOf("Indulgence") or card:isKindOf("SupplyShortage")) then return false end
 		end
 		if player:hasSkill("shengui") and self.player:isMale() and not player:getArmor() then
@@ -3323,9 +3323,9 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:isKindOf("FireAttack") or card:isKindOf("FireSlash")) then
 			return false
 		end
-		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
-			return false
-		end
+--		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
+--			return false
+--		end
 		if player:hasSkill("qianshui") and not self.player:getWeapon() and card:isKindOf("Assassinate") then
 			return false
 		end

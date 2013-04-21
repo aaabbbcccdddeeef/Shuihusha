@@ -105,7 +105,7 @@ function SmartAI:useCardSupplyShortage(card, use)
 	table.sort(self.enemies, handcard_subtract_hp)
 	local enemies = self:exclude(self.enemies, card)
 	for _, enemy in ipairs(enemies) do
-		if (self:hasSkills("yongsi|haoshi|tuxi", enemy) or (enemy:hasSkill("zaiqi") and enemy:getLostHp() > 1)) and
+		if (self:hasSkills("yongsi|haoshi|tuxi", enemy) or (enemy:hasSkill("zaiqi") and enemy:getLostHp() > 1)) and self:hasTrickEffective(card, enemy) and
 			not enemy:containsTrick("supply_shortage") and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
 			use.card = card
 			if use.to then use.to:append(enemy) end
@@ -114,10 +114,10 @@ function SmartAI:useCardSupplyShortage(card, use)
 		end
 	end
 	for _, enemy in ipairs(enemies) do
-		if ((#enemies == 1) or not self:hasSkills("yueli|qimen",enemy)) and not enemy:containsTrick("supply_shortage") and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
+		if ((#enemies == 1) or not self:hasSkills("yueli|qimen",enemy)) and not enemy:containsTrick("supply_shortage") and
+			self:hasTrickEffective(card, enemy) and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
 			use.card = card
 			if use.to then use.to:append(enemy) end
-
 			return
 		end
 	end
@@ -359,38 +359,4 @@ sgs.ai_use_priority.FireAttack = 2
 sgs.ai_card_intention.FireAttack = function(card, from, tos, self)
 	self:speakTrigger(card,from,tos[1])
 	sgs.updateIntentions(from, tos, 80)
-end
-
-sgs.ai_view_as.wusheng = function(card, player, card_place)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-	if card:isRed() then
-		return ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
-	end
-end
-
-local wusheng_skill={}
-wusheng_skill.name="wusheng"
-table.insert(sgs.ai_skills,wusheng_skill)
-wusheng_skill.getTurnUseCard=function(self,inclusive)
-	local cards = self.player:getCards("he")
-	cards=sgs.QList2Table(cards)
-	local red_card
-	self:sortByUseValue(cards,true)
-	for _,card in ipairs(cards) do
-		if card:isRed() then
-			red_card = card
-			break
-		end
-	end
-	if red_card then
-		local suit = red_card:getSuitString()
-		local number = red_card:getNumberString()
-		local card_id = red_card:getEffectiveId()
-		local card_str = ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
-		local slash = sgs.Card_Parse(card_str)
-		assert(slash)
-		return slash
-	end
 end

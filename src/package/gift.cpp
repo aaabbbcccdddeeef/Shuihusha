@@ -15,7 +15,9 @@ QString Zongzi::getEffectPath(bool) const{
 }
 
 bool Zongzi::isAvailable(const Player *quyuan) const{
-    if(ServerInfo.GameMode != "dusong")
+    if(quyuan->isProhibited(quyuan, this))
+        return false;
+    else if(ServerInfo.GameMode != "dusong")
         return !quyuan->hasMark("HaveEaten");
     else
         return true;

@@ -228,6 +228,7 @@ sgs.dynamic_value.damage_card.Assassinate = true
 
 -- sheng chen gang
 function SmartAI:useCardTreasury(card, use)
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	if not self.player:containsTrick("treasury") then
 		use.card = card
 	end
@@ -238,6 +239,7 @@ sgs.dynamic_value.lucky_chance.Treasury = true
 -- hai xiao
 function SmartAI:useCardTsunami(card, use)
 	if self.player:containsTrick("tsunami") then return end
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	if self.player:hasEquip("haiqiu") then return end
 
 	if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
@@ -277,7 +279,7 @@ sgs.dynamic_value.lucky_chance.Tsunami = true
 -- ji cao tun liang
 function SmartAI:useCardProvistore(provistore, use)
 	for _, friend in ipairs(self.friends) do
-		if not friend:containsTrick("provistore") and friend:getHandcardNum() > 3 then
+		if not friend:containsTrick("provistore") and friend:getHandcardNum() > 3 and self:hasTrickEffective(provistore, friend) then
 			use.card = provistore
 			if use.to then
 				use.to:append(friend)

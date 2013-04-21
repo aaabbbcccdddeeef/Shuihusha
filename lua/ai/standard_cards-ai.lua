@@ -309,6 +309,7 @@ sgs.ai_use_priority.Slash = 2.4
 
 function SmartAI:useCardPeach(card, use)
 	local mustusepeach = false
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	if not self.player:isWounded() then return end
 	local peaches = 0
 	local cards = self.player:getHandcards()
@@ -784,6 +785,7 @@ sgs.ai_skill_cardask["duel-slash"] = function(self, data, pattern, target)
 end
 
 function SmartAI:useCardExNihilo(card, use)
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	use.card = card
 	if not use.isDummy then
 		self:speak("lucky")
@@ -1134,7 +1136,8 @@ function SmartAI:useCardIndulgence(card, use)
 
 	local enemies = self:exclude(self.enemies, card)
 	for _, enemy in ipairs(enemies) do
-		if enemy:hasSkill("baoguo") and not enemy:containsTrick("indulgence") and not enemy:isKongcheng() and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
+		if enemy:hasSkill("baoguo") and not enemy:containsTrick("indulgence") and not enemy:isKongcheng() and
+			self:hasTrickEffective(card, enemy) and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
 			use.card = card
 			if use.to then use.to:append(enemy) end
 			return
@@ -1142,7 +1145,8 @@ function SmartAI:useCardIndulgence(card, use)
 	end
 
 	for _, enemy in ipairs(enemies) do
-		if not enemy:containsTrick("indulgence") and not enemy:hasSkill("shemi") and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
+		if not enemy:containsTrick("indulgence") and not enemy:hasSkill("shemi") and
+			self:hasTrickEffective(card, enemy) and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
 			use.card = card
 			if use.to then use.to:append(enemy) end
 			return
@@ -1161,8 +1165,7 @@ sgs.dynamic_value.control_usecard.Indulgence = true
 
 function SmartAI:useCardLightning(card, use)
 	if self.player:containsTrick("lightning") then return end
-	if self.room:isProhibited(self.player, self.player, card) then end
---	if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	local function hasDangerousFriend()
 		local hashy = false
 		for _, aplayer in ipairs(self.enemies) do

@@ -16,7 +16,7 @@
 		<file>irregular/ok-hover.png</file>
 		<file>irregular/ok-mask.png</file>
 		<file>irregular/ok-normal.png</file>
-<!--		<file>plate/background.png</file>
+		<file>plate/background.png</file>
 		<file>plate/card-down.png</file>
 		<file>plate/card-hover.png</file>
 		<file>plate/card-mask.png</file>
@@ -52,6 +52,6 @@
 		<file>plate/thanks-down.png</file>
 		<file>plate/thanks-hover.png</file>
 		<file>plate/thanks-mask.png</file>
-		<file>plate/thanks-normal.png</file>-->
+		<file>plate/thanks-normal.png</file>
 	</qresource>
 </RCC>
