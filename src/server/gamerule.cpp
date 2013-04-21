@@ -21,7 +21,7 @@ GameRule::GameRule(QObject *)
             << AskForPeaches << Death << Dying << GameOverJudge
             << PreDeath << RewardAndPunish << TurnedOver << ChainStateChange
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
-            << DamageDone << DamageComplete << Damaged
+            << DamageDone << DamageComplete
             << StartJudge << FinishJudge << Pindian;
 }
 
@@ -471,18 +471,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         break;
     }
 
-    case Damaged:{
-        //shensizhizhan
-        if(player->hasMark("@death")){
-            PlayerStar life = player->tag["DtoL"].value<PlayerStar>();
-            RecoverStruct recover;
-            recover.who = player;
-            room->recover(life, recover);
-        }
-        //if(player->getHp() <= 0 && player->isAlive())
-        //    room->enterDying(player, &damage);
-        break;
-    }
     case CardEffected:{
         if(data.canConvert<CardEffectStruct>()){
             CardEffectStruct effect = data.value<CardEffectStruct>();
@@ -1071,7 +1059,7 @@ EventsRule::EventsRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("events_rule");
-    events << Predamaged << DamageProceed << AskForRetrial;
+    events << Predamaged << Damaged << DamageProceed << AskForRetrial;
 }
 
 int EventsRule::getPriority(TriggerEvent event) const{
@@ -1361,6 +1349,7 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
+    events << Damaged;
 }
 
 int ConjuringRule::getPriority(TriggerEvent) const{
@@ -1415,6 +1404,15 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case Damaged:{
+        //shengsizhizhan
+        DamageStruct damage = data.value<DamageStruct>();
+        if(player->hasMark("@death") && damage.damage > 0){
+            PlayerStar life = player->tag["DtoL"].value<PlayerStar>();
+            RecoverStruct recover;
+            recover.who = player;
+            recover.recover = damage.damage;
+            room->recover(life, recover);
+        }
         if(player->hasMark("sleep_jur"))
             player->removeJur("sleep_jur");
         break;

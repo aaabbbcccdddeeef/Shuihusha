@@ -287,8 +287,7 @@ public:
             int card_id = room->askForAG(player, card_ids, false, objectName());
             player->invoke("clearAG");
             if(card_id > 0){
-                //player->obtainCard(judge->card);
-                player->addToPile("shang", judge->card);
+                //player->addToPile("shang", judge->card);
                 judge->card = Sanguosha->getCard(card_id);
                 room->moveCardTo(judge->card, NULL, Player::Special);
 
@@ -324,8 +323,13 @@ public:
 
         room->awake(fanrui, objectName(), "2500", 2500);
 
-        room->loseMaxHp(fanrui);
         room->setPlayerProperty(fanrui, "maxhp", 2);
+        LogMessage log;
+        log.type = "#WudaoWake";
+        log.from = fanrui;
+        log.arg = QString::number(2);
+        room->sendLog(log);
+
         room->drawCards(fanrui, 2);
         room->acquireSkill(fanrui, "qimen");
         room->acquireSkill(fanrui, "kongmen");

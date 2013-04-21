@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
 
-    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool()){
+    if(Config.value("UI/ButtonStyle", true).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
@@ -160,7 +160,7 @@ void MainWindow::restoreFromConfig(){
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
-    ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool());
+    ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", true).toBool());
     ui->actionEquip_style->setChecked(Config.value("UI/EquipStyle", true).toBool());
 }
 
@@ -168,7 +168,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
     Config.beginGroup("UI");
     Config.setValue("WindowSize", size());
     Config.setValue("WindowPosition", pos());
-    if(scene->inherits("StartScene") && Config.value("ButtonStyle", false).toBool()){
+    if(scene->inherits("StartScene") && Config.value("ButtonStyle", true).toBool()){
         StartScene *start_scene = qobject_cast<StartScene *>(scene);
         Config.setValue("PlatePosition", start_scene->button_plate->pos());
     }
@@ -439,7 +439,7 @@ void MainWindow::on_actionReturn_main_triggered(){
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
 
-    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool()){
+    if(Config.value("UI/ButtonStyle", true).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }

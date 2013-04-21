@@ -1050,6 +1050,13 @@ public:
         view_as_skill = new ShemiViewAsSkill;
     }
 
+    virtual int getPriority(TriggerEvent event) const{
+        if(event == TurnedOver)
+            return -1;
+        else
+            return 1;
+    }
+
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
         if(e == PhaseChange){
             return emperor->getPhase() == Player::Discard && !emperor->isNude() &&
