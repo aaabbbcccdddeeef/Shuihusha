@@ -4526,10 +4526,12 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
                 << "savage_assault" << "archery_attack"
                 << "assassinate" << "inspiration"
                 << "spin_destiny";
+        QStringList no_effects;
+        no_effects << "treasury" << "tsunami";
         QString card_name = card_use.card->objectName();
         if(play_card_names.contains(card_name))
             setEmotion(card_use.to, card_name);
-        if(QFile::exists(QString("audio/system/card/%1.ogg").arg(card_name)))
+        if(!no_effects.contains(card_name) && QFile::exists(QString("audio/system/card/%1.ogg").arg(card_name)))
             broadcastInvoke("playAudio", QString("card/%1").arg(card_name));
         if(!card_use.card->isVirtualCard())
             setEmotion(card_use.from, QString("cards/%1").arg(card_name));

@@ -1,8 +1,5 @@
-; 脚本由 Inno Setup 脚本向导 生成！
-; 有关创建 Inno Setup 脚本文件的详细资料请查阅帮助文档！
-
-#define MyAppName "水浒杀愚人节特供版"
-#define MyAppVersion "F4.5"
+#define MyAppName "水浒杀"
+#define MyAppVersion "F5.0"
 #define MyAppPublisher "天子会工作室"
 #define MyAppURL "http://weibo.com/tianzihui"
 #define MyAppExeName "Shuihusha.exe"
@@ -13,17 +10,17 @@
 ; (生成新的GUID，点击 工具|在IDE中生成GUID。)
 AppId={{AA1F59C0-5169-48A5-AD1E-14543EF03130}
 AppName={#MyAppName}
-AppVersion={#MyAppVersion}AppVerName=水浒杀豪华终结版 {#MyAppVersion} 愚人节特供
+AppVersion={#MyAppVersion}AppVerName=水浒杀豪华终结版 {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 ;AppUpdatesURL={#MyAppURL}
 
 AppCopyright=?2011-2013 TianziClub QSanguosha Software
-VersionInfoVersion=4.5.0.0
+VersionInfoVersion=5.0.0.0
 VersionInfoCompany=TianziClub Software
 VersionInfoDescription=天子会水浒杀
-VersionInfoTextVersion=4, 4, 0, 0
+VersionInfoTextVersion=5, 0, 0, 0
 
 DefaultDirName={pf}\Shuihusha
 ;DisableDirPage=yes
@@ -31,11 +28,12 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=readme1.txt
 InfoBeforeFile=readme2.txt
-InfoAfterFile=readme3.txtOutputDir=.
+InfoAfterFile=readme3.txt
+OutputDir=.
 OutputBaseFilename=Shuihusha{#MyAppVersion}-Setup
 SetupIconFile=package.ico
 WizardImageFile=border.bmp
-WizardSmallImageFile=logo.bmp
+;WizardSmallImageFile=logo.bmp
 Compression=lzma
 SolidCompression=yes
 

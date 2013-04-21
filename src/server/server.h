@@ -76,7 +76,7 @@ public:
 
 private:
     QLineEdit *wheel_count;
-    QLineEdit *arthur_count;
+    QLineEdit *arthur_count, *warlords_count, *contract_count;
 
 private slots:
     void save();

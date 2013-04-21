@@ -253,7 +253,7 @@ public:
         if(damage.card->isKindOf("Slash") && damage.nature != DamageStruct::Normal){
             player->playCardEffect("Elash_gun", "weapon");
             LogMessage log;
-            log.type = "#ArmorTrigger";
+            log.type = "#LashGun";
             log.from = player;
             log.arg = objectName();
             player->getRoom()->sendLog(log);

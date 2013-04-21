@@ -1,8 +1,8 @@
 -- ai for purgatory-package
 
-sgs.ai_use_value.Mastermind = 3
-sgs.ai_keep_value.Mastermind = 0
-sgs.ai_use_priority.Mastermind = 3
+sgs.ai_use_value.Mastermind = 5
+sgs.ai_keep_value.Mastermind = 1
+sgs.ai_use_priority.Mastermind = 8
 
 function SmartAI:useCardMastermind(card, use)
 	local en, fr
@@ -14,7 +14,7 @@ function SmartAI:useCardMastermind(card, use)
 	if #self.friends > 0 then
 		fr = self.friends[1]
 	end
-	if en and fr then
+	if en and fr and self:hasTrickEffective(card, en) and self:hasTrickEffective(card, fr) then
 		use.card = card
 		if use.to then
 			use.to:append(fr)
@@ -24,8 +24,8 @@ function SmartAI:useCardMastermind(card, use)
 	end
 end
 
-sgs.ai_use_value.SpinDestiny = 3
-sgs.ai_keep_value.SpinDestiny = 0
+sgs.ai_use_value.SpinDestiny = 8
+sgs.ai_keep_value.SpinDestiny = 1
 sgs.ai_use_priority.SpinDestiny = 3
 
 function SmartAI:useCardSpinDestiny(card, use)
@@ -34,8 +34,32 @@ function SmartAI:useCardSpinDestiny(card, use)
 	end
 end
 
-sgs.ai_use_value.EdoTensei = 3
-sgs.ai_keep_value.EdoTensei = 0
+sgs.ai_use_value.EdoTensei = 9.2
+sgs.ai_keep_value.EdoTensei = 1.5
+
+sgs.ai_skill_use["EdoTensei"] = function(self, prompt)
+	local edo = self:getCard("EdoTensei")
+	local dyed
+	for _, t in sgs.qlist(self.room:getAllPlayers()) do
+		if t:hasFlag("dying") then
+			dyed = t
+		end
+	end
+	if dyed and self:isEnemy(dyed) then
+		return ("%s->."):format(edo:toString())
+	end
+end
+
+sgs.ai_skill_choice["edo_tensei"] = function(self, choices, data)
+	local choice_table = choices:split("+")
+	for _, choice in ipairs(choice_table) do
+		local dead = self.room:findPlayer(choice, true)
+		if self:isFriend(dead) then
+			return choice
+		end
+	end
+	return choice_table[1]
+end
 
 function SmartAI:useCardShit(card, use)
 	if self.player:hasSkill("fushang") and self.player:getMaxHP() > 3 then return end

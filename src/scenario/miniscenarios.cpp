@@ -340,13 +340,12 @@ MiniScene::MiniScene(const QString &name)
 
 void MiniScene::setupCustom(QString name) const
 {
-    if(name == NULL)name = "custom_scenario";
+    if(name == QString())name = "custom_scenario";
     name.prepend("etc/customScenes/");
     name.append(".txt");
 
     MiniSceneRule* arule = qobject_cast<MiniSceneRule*>(this->getRule());
     arule->loadSetting(name);
-
 }
 
 QString MiniScene::setBackgroundMusic() const{
@@ -389,5 +388,10 @@ ADD_CUSTOM_SCENARIO(27)
 ADD_CUSTOM_SCENARIO(28)
 ADD_CUSTOM_SCENARIO(29)
 ADD_CUSTOM_SCENARIO(30)
+ADD_CUSTOM_SCENARIO(31)
+ADD_CUSTOM_SCENARIO(32)
+ADD_CUSTOM_SCENARIO(33)
+ADD_CUSTOM_SCENARIO(34)
+ADD_CUSTOM_SCENARIO(35)
 
 ADD_SCENARIO(Custom)

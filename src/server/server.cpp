@@ -706,6 +706,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     :QDialog(parent)
 {
     setWindowTitle(tr("Scenario Advanced"));
+    setFixedWidth(350);
     //resize(QSize(400, 200));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -720,7 +721,6 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
     wheel_count->setFixedWidth(50);
     page_layout->addRow(tr("Wheel Fight"), wheel_count);
-    //page_layout->addStretch();
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("wheel_fight"));
 
@@ -730,10 +730,29 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     arthur_count->setText(QString::number(Config.value("Scenario/ArthurCount", 3).toInt()));
     arthur_count->setValidator(new QIntValidator(3, 5, arthur_count));
     arthur_count->setFixedWidth(50);
-    page_layout->addRow(tr("Arthur Count"), arthur_count);
-    //page_layout->addStretch();
+    page_layout->addRow(tr("Player Count"), arthur_count);
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("arthur_ferris"));
+
+    apage = new QWidget;
+    page_layout = new QFormLayout;
+    warlords_count = new QLineEdit;
+    warlords_count->setText(QString::number(Config.value("Scenario/WarlordsCount", 8).toInt()));
+    warlords_count->setValidator(new QIntValidator(8, 12, warlords_count));
+    warlords_count->setFixedWidth(50);
+    page_layout->addRow(tr("Player Count"), warlords_count);
+    apage->setLayout(page_layout);
+    tab->addTab(apage, Sanguosha->translate("warlords"));
+
+    apage = new QWidget;
+    page_layout = new QFormLayout;
+    contract_count = new QLineEdit;
+    contract_count->setText(QString::number(Config.value("Scenario/ContractCount", 8).toInt()));
+    contract_count->setValidator(new QIntValidator(8, 12, contract_count));
+    contract_count->setFixedWidth(50);
+    page_layout->addRow(tr("Player Count"), contract_count);
+    apage->setLayout(page_layout);
+    tab->addTab(apage, Sanguosha->translate("contract"));
 /*
     QStringList names = Sanguosha->getScenarioNames();
     foreach(QString name, names){
@@ -757,6 +776,8 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
 void ScenarioDialog::save(){
     Config.setValue("Scenario/WheelCount", wheel_count->text());
     Config.setValue("Scenario/ArthurCount", arthur_count->text());
+    Config.setValue("Scenario/WarlordsCount", warlords_count->text());
+    Config.setValue("Scenario/ContractCount", contract_count->text());
 }
 
 QGroupBox *ServerDialog::create3v3Box(){
