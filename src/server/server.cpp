@@ -730,7 +730,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     arthur_count->setText(QString::number(Config.value("Scenario/ArthurCount", 3).toInt()));
     arthur_count->setValidator(new QIntValidator(3, 5, arthur_count));
     arthur_count->setFixedWidth(50);
-    page_layout->addRow(tr("Arthur Count"), arthur_count);
+    page_layout->addRow(tr("Player Count"), arthur_count);
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("arthur_ferris"));
 
@@ -740,7 +740,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     warlords_count->setText(QString::number(Config.value("Scenario/WarlordsCount", 8).toInt()));
     warlords_count->setValidator(new QIntValidator(8, 12, warlords_count));
     warlords_count->setFixedWidth(50);
-    page_layout->addRow(tr("Warlords Count"), warlords_count);
+    page_layout->addRow(tr("Player Count"), warlords_count);
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("warlords"));
 
@@ -750,7 +750,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     contract_count->setText(QString::number(Config.value("Scenario/ContractCount", 8).toInt()));
     contract_count->setValidator(new QIntValidator(8, 12, contract_count));
     contract_count->setFixedWidth(50);
-    page_layout->addRow(tr("Contract Count"), contract_count);
+    page_layout->addRow(tr("Player Count"), contract_count);
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("contract"));
 /*
