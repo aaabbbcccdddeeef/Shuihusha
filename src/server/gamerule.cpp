@@ -1349,7 +1349,7 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << Damaged;
+    events << Damage << Damaged;
 }
 
 int ConjuringRule::getPriority(TriggerEvent) const{
@@ -1403,16 +1403,21 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
         break;
     }
-    case Damaged:{
+    case Damage:{
         //shengsizhizhan
         DamageStruct damage = data.value<DamageStruct>();
-        if(player->hasMark("@death") && damage.damage > 0){
-            PlayerStar life = player->tag["DtoL"].value<PlayerStar>();
-            RecoverStruct recover;
-            recover.who = player;
-            recover.recover = damage.damage;
-            room->recover(life, recover);
+        if(damage.to->hasMark("@death") && damage.damage > 0){
+            PlayerStar life = room->findPlayer(damage.to->property("mind").toString());
+            if(life){
+                RecoverStruct recover;
+                recover.who = damage.to;
+                recover.recover = damage.damage;
+                room->recover(life, recover);
+            }
         }
+        break;
+    }
+    case Damaged:{
         if(player->hasMark("sleep_jur"))
             player->removeJur("sleep_jur");
         break;

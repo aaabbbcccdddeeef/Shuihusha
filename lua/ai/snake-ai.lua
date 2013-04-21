@@ -80,6 +80,7 @@ end
 
 -- baoxu
 -- sinue
+sgs.ai_card_intention.SinueCard = 100
 sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
@@ -122,6 +123,7 @@ end
 
 -- jindajian
 -- fangzao
+sgs.ai_card_intention.FangzaoCard = math.random(-20, 20)
 local fangzao_skill={}
 fangzao_skill.name = "fangzao"
 table.insert(sgs.ai_skills, fangzao_skill)
@@ -268,6 +270,7 @@ end
 
 -- dengfei
 -- jiejiu
+sgs.ai_card_intention.JiejiuCard = 50
 sgs.ai_skill_use["@@jiejiu"] = function(self, prompt)
 	local damage = self.player:getTag("Jiejiu"):toDamage()
 	local source = damage.from
@@ -323,6 +326,7 @@ end
 
 -- liangshijie
 -- sougua
+sgs.ai_card_intention.SouguaCard = 80
 sgs.ai_skill_use["@@sougua"] = function(self, prompt)
 	local enemies = {}
 	self:sort(self.enemies, "handcard")
@@ -340,6 +344,11 @@ end
 -- liushou
 
 -- suyuanjing
+sgs.suyuanjing_suit_value = 
+{
+	heart = 4,
+	diamond = 4,
+}
 -- zhaoan
 -- fuxu
 sgs.ai_skill_invoke["fuxu"] = function(self, data)

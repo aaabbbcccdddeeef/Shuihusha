@@ -177,18 +177,23 @@ QList<ServerPlayer *> ContractScenario::getComraded(Room *room) const{
 void ContractScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
-    roles << "lord";
-    int i;
-    for(i=0; i<7; i++)
+    for(int i = 0; i < getPlayerCount(); i++){
+        if(i == 0)
         roles << "rebel";
+    }
+    roles[0] == "lord";
 }
 
 int ContractScenario::getPlayerCount() const{
-    return 8;
+    int count = Config.value("Scenario/ContractCount", 8).toInt();
+    return qMin(qMax(count, 8), 12);
 }
 
 void ContractScenario::getRoles(char *roles) const{
-    strcpy(roles, "FFFFFFFF");
+    QString r;
+    for(int i = 0; i < getPlayerCount(); i++)
+        r.append("F");
+    strcpy(roles, r.toLocal8Bit().data());
 }
 
 bool ContractScenario::lordWelfare(const ServerPlayer *) const{

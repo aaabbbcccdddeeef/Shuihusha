@@ -6,8 +6,8 @@ public:
     Stealth():ClientSkill("stealth_jur"){
     }
 
-    virtual bool isProhibited(const Player *, const Player *to, const Card *) const{
-        return to->hasMark(objectName());
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasMark(objectName()) && !card->isKindOf("SkillCard");
     }
 };
 

@@ -279,7 +279,9 @@ sgs.ai_skill_askforag["butian"] = function(self, card_ids)
 end
 
 -- huaxian
-sgs.ai_skill_invoke["huaxian"] = true
+sgs.ai_skill_invoke["huaxian"] = function(self)
+	return self:getCardsNum("Peach") + self:getCardsNum("Analeptic") == 0
+end
 
 -- lili
 sgs.lili_suit_value =

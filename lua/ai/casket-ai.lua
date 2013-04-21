@@ -3,8 +3,14 @@ sgs.ai_skill_invoke["casket_death"] = true
 
 -- moon_panqiaoyun
 sgs.ai_chaofeng.moon_panqiaoyun = 5
+sgs.moon_panqiaoyun_suit_value = 
+{
+	spade = 4,
+	club = 4,
+}
 -- qingdu
 -- tumi
+sgs.ai_card_intention.TumiCard = 80
 sgs.ai_skill_use["@@tumi"] = function(self, prompt)
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	local red = 0
@@ -27,6 +33,7 @@ end
 -- sun_peiruhai
 sgs.ai_chaofeng.sun_peiruhai = -1
 -- fanyin
+sgs.ai_card_intention.FanyinCard = 80
 local fanyin_skill = {}
 fanyin_skill.name = "fanyin"
 table.insert(sgs.ai_skills, fanyin_skill)

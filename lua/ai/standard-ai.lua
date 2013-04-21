@@ -149,10 +149,20 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 						end
 					end
 				end
+			else
+				self:sort(self.enemies, "hp")
+				for _, enemi in ipairs(self.enemies) do
+					if not self:hasSkills("ganlin|binggong|baoguo|haoshen", enemi) then
+						use.card = sgs.Card_Parse("@GanlinCard=" .. hcard:getId())
+						if use.to then use.to:append(enemi) end
+						return
+					end
+				end
 			end
 		end
 	end
 
+--[[
 	local shit
 	shit = self:getCard("Shit")
 	if shit then
@@ -160,7 +170,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 		self:sort(self.enemies,"hp")
 		if use.to then use.to:append(self.enemies[1]) end
 		return
-	end
+	end]]
 
 	if #self.friends == 1 then return end
 
@@ -261,7 +271,17 @@ sgs.ai_skill_invoke["baoguo"] = true
 sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 	if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end
 	local damage = data:toDamage()
-	if self:isFriend(damage.to) and damage.to:getHp() <= 2 and not self.player:isKongcheng() then
+	local invoke = false
+	if damage.damage == 0 then
+		invoke = true
+	elseif self:isEnemy(damage.to) then
+		invoke = false
+	elseif damage.to:getHp() <= 2 then
+		invoke = true
+	else
+		invoke = math.random(1, 3) == 2
+	end
+	if invoke and not self.player:isKongcheng() then
 		local pile = self:getCardsNum("Peach") + self:getCardsNum("Analeptic")
 		local dmgnum = damage.damage
 		if self.player:getHp() + pile - dmgnum > 0 then

@@ -77,7 +77,7 @@ bool Mastermind::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void Mastermind::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    targets.last()->tag["DtoL"] = QVariant::fromValue((PlayerStar)targets.first());
+    room->setPlayerProperty(targets.last(), "mind", QVariant::fromValue(targets.first()->objectName()));
     QList<ServerPlayer *> tgs;
     tgs << targets.last();
     TrickCard::use(room, source, tgs);
@@ -86,7 +86,7 @@ void Mastermind::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
 void Mastermind::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     PlayerStar death = effect.to;
-    PlayerStar life = death->tag["DtoL"].value<PlayerStar>();
+    PlayerStar life = room->findPlayer(death->property("mind").toString());
 
     foreach(ServerPlayer *t, room->getAllPlayers()){
         t->loseAllMarks("@death");
