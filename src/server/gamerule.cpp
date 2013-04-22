@@ -1389,6 +1389,8 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                     room->throwCard(card, player);
                 }
             }
+            if(player->hasMark("sleep_jur"))
+                player->setFlags("ShutUp");
         }
         else if(player->getPhase() == Player::NotActive){
             // shengsizhizhan

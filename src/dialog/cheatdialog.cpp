@@ -411,6 +411,7 @@ QWidget *CheatDialog::createSetStateTab(){
     stealth = new QRadioButton(tr("Stealth"));
     stealth->setObjectName("stealth_jur");
     stealth->setToolTip(Sanguosha->translate(":stealth_jur"));
+    stealth->setEnabled(false);
     conjur_group->addButton(stealth);
     conjur_layout->addRow(HLay(poison, sleep));
     conjur_layout->addRow(HLay(dizzy, stealth));

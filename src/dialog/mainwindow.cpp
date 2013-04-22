@@ -155,7 +155,7 @@ void MainWindow::restoreFromConfig(){
     ui->actionCircular_view->setChecked(Config.CircularView);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
     ui->actionDraw_indicator->setChecked(!Config.value("UI/NoIndicator", false).toBool());
-    ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", true).toBool());
+    ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", false).toBool());
     ui->actionFit_in_view->setChecked(Config.FitInView);
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);

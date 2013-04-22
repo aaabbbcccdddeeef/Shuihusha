@@ -610,10 +610,11 @@ public:
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
         if(selected.isEmpty())
-            return to_select->getCard()->inherits("BasicCard");
+            return to_select->getFilteredCard()->isKindOf("BasicCard");
         else if(selected.length() == 1){
-            const Card *card = selected.first()->getFilteredCard();
-            return to_select->getCard()->inherits("BasicCard") && to_select->getFilteredCard()->isRed() == card->isRed();
+            const Card *card1 = selected.first()->getFilteredCard();
+            const Card *card2 = to_select->getFilteredCard();
+            return card2->isKindOf("BasicCard") && card1->getColor() == card2->getColor();
         }else
             return false;
     }
