@@ -257,7 +257,9 @@ public:
         dummy_skills << "mozhang" << "maidao" << "fengmang" << "shouge" << "jielue"
                      << "qimen" << "wuzhou" << "ganlin" << "beishui" << "huatian"
                      << "fushang" << "zuohua" << "jiuhan" << "lianma" << "zhongjia"
-                     << "huaxian" << "linmo" << "sheyan" << "jiayao";
+                     << "huaxian" << "linmo" << "sheyan" << "jiayao" << "fangzao"
+                     << "liushou" << "xiangma" << "yima"
+                     << "fanyin" << "lichen" << "lunhui" << "qingdu" << "jueyuan";
     }
 
     void getRandomSkill(ServerPlayer *player, bool need_trans = false) const{
@@ -457,6 +459,7 @@ public:
                     QList<ServerPlayer *> others = room->getOtherPlayers(player);
                     player->gainMark("@frantic", others.length());
                     room->setPlayerProperty(player, "maxhp", 3);
+                    room->acquireSkill(player, "wuzu");
                     room->acquireSkill(player, "guzhan");
                     room->acquireSkill(player, "duduan");
                     room->acquireSkill(player, "jizhan");

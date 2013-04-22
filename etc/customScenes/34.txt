@@ -1,0 +1,5 @@
+
+general:select role:loyalist 
+general:shantinggui role:rebel 
+general:guansheng role:lord starter:true maxhp:4 hp:3 
+general:weidingguo role:rebel 

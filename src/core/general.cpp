@@ -11,6 +11,17 @@
 General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
     :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
 {
+    init(name);
+}
+
+General::General(Package *package, const QString &name, const QString &kingdom, const QString &hp_mxhp, Gender gender, bool hidden, bool never_shown)
+    :QObject(package), kingdom(kingdom), max_hp(QString(hp_mxhp.split("/").last()).toInt()), gender(gender), hidden(hidden), never_shown(never_shown)
+{
+    losehp = max_hp - QString(hp_mxhp.split("/").first()).toInt();
+    init(name);
+}
+
+void General::init(const QString &name){
     static QChar lord_symbol('$');
     if(name.contains(lord_symbol)){
         QString copy = name;
@@ -30,6 +41,10 @@ General::General(Package *package, const QString &name, const QString &kingdom, 
 
 int General::getMaxHp() const{
     return max_hp;
+}
+
+int General::getLoseHp() const{
+    return losehp;
 }
 
 QString General::getKingdom(bool unmap) const{

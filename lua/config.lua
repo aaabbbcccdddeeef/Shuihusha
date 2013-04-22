@@ -100,7 +100,7 @@ config = {
 	color_moon = "#2A2A2A",
 	color_sun = "#FC7202",
 
-	mini_max = 30 -- 此处以Config.S_MINI_MAX_COUNT为准
+	mini_max = 35 -- 此处以Config.S_MINI_MAX_COUNT为准
 }
 
 scenario = { -- 非身份局模式下的一些设置

@@ -77,7 +77,7 @@ bool Mastermind::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void Mastermind::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->setPlayerProperty(targets.last(), "mind", QVariant::fromValue(targets.first()->objectName()));
+    targets.last()->tag["DtoL"] = QVariant::fromValue((PlayerStar)targets.first());
     QList<ServerPlayer *> tgs;
     tgs << targets.last();
     TrickCard::use(room, source, tgs);
@@ -86,7 +86,7 @@ void Mastermind::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
 void Mastermind::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     PlayerStar death = effect.to;
-    PlayerStar life = room->findPlayer(death->property("mind").toString());
+    PlayerStar life = death->tag["DtoL"].value<PlayerStar>();
 
     foreach(ServerPlayer *t, room->getAllPlayers()){
         t->loseAllMarks("@death");
@@ -253,7 +253,7 @@ public:
         if(damage.card->isKindOf("Slash") && damage.nature != DamageStruct::Normal){
             player->playCardEffect("Elash_gun", "weapon");
             LogMessage log;
-            log.type = "#ArmorTrigger";
+            log.type = "#LashGun";
             log.from = player;
             log.arg = objectName();
             player->getRoom()->sendLog(log);

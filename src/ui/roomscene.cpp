@@ -2878,7 +2878,7 @@ void RoomScene::doScript(){
 }
 
 void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players){
-    table->setColumnCount(9);
+    table->setColumnCount(10);
     table->setRowCount(players.length());
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -2893,8 +2893,8 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         else
             labels << tr("Role");
 
-        labels << /*tr("Designation") <<*/ tr("Kill")
-                << tr("Save") << tr("Damage") << tr("Recover") << tr("Cheat");
+        labels << /*tr("Designation") <<*/ tr("Kill") << tr("Save")
+                << tr("Damage") << tr("Recover") << tr("Revive") << tr("Cheat");
     }
     table->setHorizontalHeaderLabels(labels);
 
@@ -2951,31 +2951,20 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         designations.remove(designations.length()-3, 2);
         table->setItem(i, 4, item);
         */
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_kill));
-        item->setText(QString::number(statistics->kill));
-        table->setItem(i, 4, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_save));
-        item->setText(QString::number(statistics->save));
-        table->setItem(i, 5, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_damage));
-        item->setText(QString::number(statistics->damage));
-        table->setItem(i, 6, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_recover));
-        item->setText(QString::number(statistics->recover));
-        table->setItem(i, 7, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_cheat));
-        item->setText(QString::number(statistics->cheat));
-        table->setItem(i, 8, item);
+        QList<int> datas;
+        datas
+                << statistics->kill // 4
+                << statistics->save // 5
+                << statistics->damage
+                << statistics->recover // 7
+                << statistics->revive // 8
+                << statistics->cheat; //9
+        for(int ii = 4; ii < 10; ii ++){
+            item = new QTableWidgetItem;
+            //item->setText(QString::number(rec->m_kill));
+            item->setText(QString::number(datas.at(ii - 4)));
+            table->setItem(i, ii, item);
+        }
 
         table->setColumnWidth(0, 85);
         table->setColumnWidth(1, 65);
@@ -2986,6 +2975,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         table->setColumnWidth(6, 37);
         table->setColumnWidth(7, 37);
         table->setColumnWidth(8, 37);
+        table->setColumnWidth(9, 37);
     }
 
     //for (int i = 2; i <= 8; i++)

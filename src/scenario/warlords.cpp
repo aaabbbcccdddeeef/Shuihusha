@@ -155,9 +155,12 @@ QList<ServerPlayer *> WarlordsScenario::getPlayersbyRole(Room *room, const QStri
 void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
-    for(int i = 0; i < getPlayerCount(); i++)
-        roles << "rebel";
-    roles[0] == "lord";
+    for(int i = 0; i < getPlayerCount(); i++){
+        if(i == 0)
+            roles << "lord";
+        else
+            roles << "rebel";
+    }
 }
 
 int WarlordsScenario::getPlayerCount() const{

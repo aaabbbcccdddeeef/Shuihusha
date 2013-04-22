@@ -1,0 +1,5 @@
+
+general:gongsunsheng role:renegade 
+general:likui role:rebel starter:true 
+general:daizong role:rebel 
+general:luozhenren role:lord 

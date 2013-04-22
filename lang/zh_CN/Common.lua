@@ -30,6 +30,7 @@ return {
 	["no"] = "否",
 	["male"] = "男性",
 	["female"] = "女性",
+	["neuter"] = "双性",
 
 	["Pairs"] = "双将",
 	["Cards"] = "卡牌",

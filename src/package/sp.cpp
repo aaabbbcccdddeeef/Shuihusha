@@ -531,7 +531,7 @@ SPPackage::SPPackage()
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
 
-    General *tora = new General(this, "tora", "god", 4, false);
+    General *tora = new General(this, "tora", "god", "4", General::Neuter);
     tora->addSkill(new Strike);
     tora->addSkill(new Lift);
     tora->addSkill(new Exterminate);

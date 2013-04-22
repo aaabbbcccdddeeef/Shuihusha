@@ -24,7 +24,9 @@ class General : public QObject
     Q_PROPERTY(bool hidden READ isHidden CONSTANT)
 
 public:
+    enum Gender {Male = 0, Female = 1, Neuter = 2};
     explicit General(Package *package, const QString &name, const QString &kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
+    explicit General(Package *package, const QString &name, const QString &kingdom, const QString &hp_mxhp, Gender gender = Male, bool hidden = false, bool never_shown = false);
 
     // property getters/setters
     int getMaxHp() const;
@@ -37,11 +39,11 @@ public:
     bool isTotallyHidden() const {return never_shown;}
     bool isLuaGeneral() const;
 
-    enum Gender {Male = 0, Female = 1, Neuter = 2};
     Gender getGender() const {return gender;}
     void setGender(Gender gender);
     void setGenderString(const QString &sex);
     QString getGenderString() const;
+    int getLoseHp() const;
 
     void addSkill(Skill* skill);
     void addSkill(const QString &skill_name);
@@ -71,8 +73,9 @@ public slots:
     void winWord() const;
 
 private:
+    void init(const QString &name);
     QString kingdom;
-    int max_hp;
+    int max_hp, losehp;
     Gender gender;
     bool lord;
     QSet<QString> skill_set;

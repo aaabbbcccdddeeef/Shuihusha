@@ -772,7 +772,8 @@ int ServerPlayer::getGeneralMaxHP() const{
         int second = getGeneral2()->getMaxHp();
 
         int plan = Config.MaxHpScheme;
-        if(Config.GameMode.contains("_mini_"))plan = 1;
+        if(Config.GameMode.contains("_mini_"))
+            plan = 1;
 
         switch(plan){
         case 2: max_hp = (first + second)/2; break;
@@ -793,6 +794,13 @@ int ServerPlayer::getGeneralMaxHP() const{
 
 int ServerPlayer::getGeneralMaxHp() const{
     return getGeneralMaxHP();
+}
+
+int ServerPlayer::getGeneralLoseHp() const{
+    int first = getGeneral()->getLoseHp();
+    if(getGeneral2())
+        first += getGeneral2()->getLoseHp();
+    return first;
 }
 
 QString ServerPlayer::getGameMode() const{
