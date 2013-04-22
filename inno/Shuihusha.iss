@@ -1,4 +1,4 @@
-#define MyAppName "水浒杀"
+#define MyAppName "水浒杀豪华终结版"
 #define MyAppVersion "F5.0"
 #define MyAppPublisher "天子会工作室"
 #define MyAppURL "http://weibo.com/tianzihui"
@@ -10,7 +10,7 @@
 ; (生成新的GUID，点击 工具|在IDE中生成GUID。)
 AppId={{AA1F59C0-5169-48A5-AD1E-14543EF03130}
 AppName={#MyAppName}
-AppVersion={#MyAppVersion}AppVerName=水浒杀豪华终结版 {#MyAppVersion}
+AppVersion={#MyAppVersion}AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -29,7 +29,7 @@ AllowNoIcons=yes
 LicenseFile=readme1.txt
 InfoBeforeFile=readme2.txt
 InfoAfterFile=readme3.txt
-OutputDir=.
+OutputDir=d:\
 OutputBaseFilename=Shuihusha{#MyAppVersion}-Setup
 SetupIconFile=package.ico
 WizardImageFile=border.bmp
@@ -56,8 +56,10 @@ Name: doc; Description: "参考文档"; Types: full;
 Source: "..\Shuihusha.exe"; DestDir: "{app}"; Flags: ignoreversion 
 ;Source: "..\水浒杀介绍&交流群号.txt"; DestDir: "{app}"; Flags: isreadme
 
-Source: "..\*"; DestDir: "{app}"; Excludes: "\inno\*,\swig\*,\extension*\*,lua5*.dll,\config.ini"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
+Source: "..\*"; DestDir: "{app}"; Excludes: "\inno\*,\swig\*,\propagate\*,\extension*\*,lua5*.dll,\config.ini"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main 
+Source: "..\propagate\水浒杀介绍&交流群号.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: main
 Source: "..\extensions\customcards.*"; DestDir: "{app}\extensions"; Flags: ignoreversion ; Components: main
+Source: "..\extensions\custom-cards.txt"; DestDir: "{app}\extensions"; Flags: ignoreversion ; Components: main
  
 Source: "..\extensions\zhangong\*"; DestDir: "{app}\extensions\zhangong"; Excludes: "zhangong.data"; Flags: ignoreversion recursesubdirs createallsubdirs ; Components: zhangong
 Source: "..\extensions\*sqlite*"; DestDir: "{app}\extensions"; Flags: ignoreversion ; Components: zhangong
