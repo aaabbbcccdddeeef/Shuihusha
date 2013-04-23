@@ -116,11 +116,9 @@ Photo::Photo()
     skill_name_item->setGraphicsEffect(drp);
 
     emotion_item = new QGraphicsPixmapItem(this);
-    emotion_item->setParentItem(this);
     settings->beginGroup("emotion_item");
-    coord = settings->value("pos").toList();
-    emotion_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
-    emotion_item->setZValue(coord.at(2).toReal());
+    emotion_item->moveBy(10, 0);
+    emotion_item->setZValue(settings->value("zvalue").toReal());
     emotion_item->setOpacity(settings->value("opacity").toReal());
     settings->endGroup();
 
