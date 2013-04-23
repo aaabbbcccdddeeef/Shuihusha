@@ -26,7 +26,7 @@ class General : public QObject
 public:
     enum Gender {Male = 0, Female = 1, Neuter = 2};
     explicit General(Package *package, const QString &name, const QString &kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
-    explicit General(Package *package, const QString &name, const QString &kingdom, const QString &hp_mxhp, Gender gender = Male, bool hidden = false, bool never_shown = false);
+    explicit General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender = Male, bool hidden = false, bool never_shown = false);
 
     // property getters/setters
     int getMaxHp() const;
@@ -75,7 +75,8 @@ public slots:
 private:
     void init(const QString &name);
     QString kingdom;
-    int max_hp, losehp;
+    int max_hp, lose_hp;
+    QString show_hp;
     Gender gender;
     bool lord;
     QSet<QString> skill_set;

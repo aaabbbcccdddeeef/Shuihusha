@@ -859,8 +859,7 @@ TigerPackage::TigerPackage()
     General *wuyanguang = new General(this, "wuyanguang", "guan");
     wuyanguang->addSkill(new Jintang);
 
-    General *shixiu = new General(this, "shixiu", "jiang", 6);
-    shixiu->addSkill(new CutHpSkill(2));
+    General *shixiu = new General(this, "shixiu", "jiang", "4/6");
     shixiu->addSkill(new Pinming);
     shixiu->addSkill(new PinmingDie);
     related_skills.insertMulti("pinming", "#pinming-die");
@@ -894,8 +893,7 @@ TigerPackage::TigerPackage()
     related_skills.insertMulti("houfa", "#houfa-slash");
     skills << new HoufaSlash2;
 
-    General *lizhong = new General(this, "lizhong", "kou", 4);
-    lizhong->addSkill(new CutHpSkill(1));
+    General *lizhong = new General(this, "lizhong", "kou", "3/4");
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse-effect");

@@ -39,7 +39,9 @@ public:
 class General : public QObject
 {
 public:
+	enum Gender {Male = 0, Female = 1, Neuter = 2};
 	explicit General(Package *package, const char *name, const char *kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
+	explicit General(Package *package, const char *name, const char *kingdom, const char *show_hp, Gender gender = Male, bool hidden = false, bool never_shown = false);
 
 	// property getters/setters
 	int getMaxHp() const;
@@ -51,7 +53,6 @@ public:
 	bool isHidden() const;
 	bool isTotallyHidden() const;
 
-	enum Gender {Male, Female, Neuter};
 	Gender getGender() const;
 	void setGender(Gender gender);
 
@@ -711,7 +712,7 @@ class Engine: public QObject
 {
 public:
 	void addTranslationEntry(const char *key, const char *value);
-	QString translate(const char *to_translate) const;
+	QString translate(const char *to_translate, bool return_null = false) const;
 
 	void addPackage(Package *package);
 	void addBanPackage(const char *package_name);

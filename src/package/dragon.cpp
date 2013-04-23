@@ -976,8 +976,7 @@ DragonPackage::DragonPackage()
     General *shibao = new General(this, "shibao", "jiang");
     shibao->addSkill(new Xiaozhan);
 
-    General *ruanxiaowu = new General(this, "ruanxiaowu", "min");
-    ruanxiaowu->addSkill("#hp-1");
+    General *ruanxiaowu = new General(this, "ruanxiaowu", "min", "3/4");
     ruanxiaowu->addSkill(new Anxi);
     ruanxiaowu->addSkill(new Shuilao);
 

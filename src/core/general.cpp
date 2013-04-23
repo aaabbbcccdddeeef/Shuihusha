@@ -11,13 +11,15 @@
 General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
     :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
 {
+    show_hp = QString::number(max_hp);
     init(name);
 }
 
-General::General(Package *package, const QString &name, const QString &kingdom, const QString &hp_mxhp, Gender gender, bool hidden, bool never_shown)
-    :QObject(package), kingdom(kingdom), max_hp(QString(hp_mxhp.split("/").last()).toInt()), gender(gender), hidden(hidden), never_shown(never_shown)
+General::General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender, bool hidden, bool never_shown)
+    :QObject(package), kingdom(kingdom), show_hp(show_hp), gender(gender), hidden(hidden), never_shown(never_shown)
 {
-    losehp = max_hp - QString(hp_mxhp.split("/").first()).toInt();
+    max_hp = QString(hp_mxhp.split("/").last()).toInt();
+    lose_hp = max_hp - QString(hp_mxhp.split("/").first()).toInt();
     init(name);
 }
 
@@ -44,7 +46,7 @@ int General::getMaxHp() const{
 }
 
 int General::getLoseHp() const{
-    return losehp;
+    return lose_hp;
 }
 
 QString General::getKingdom(bool unmap) const{
@@ -82,10 +84,7 @@ QString General::getGenderString() const{
 }
 
 QString General::getId() const{
-    QString id = Sanguosha->translate("$" + objectName());
-    if(id.startsWith("$"))
-        id = "";
-    return id;
+    return Sanguosha->translate("$" + objectName(), true);
 }
 
 QString General::getNickname(bool full) const{
@@ -98,14 +97,7 @@ QString General::getNickname(bool full) const{
 }
 
 QString General::getShowHp() const{
-    QString max_hp = QString::number(getMaxHp());
-    for(int n = 1; n <= 3; n++){
-        if(hasSkill("#hp-" + QString::number(n))){
-            max_hp = QString::number(getMaxHp() - n) + "/" + QString::number(getMaxHp());
-            break;
-        }
-    }
-    return max_hp;
+    return show_hp;
 }
 
 bool General::isLuaGeneral() const{

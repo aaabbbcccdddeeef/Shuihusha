@@ -220,8 +220,8 @@ bool Engine::isExist(const QString &str){
     return QFile::exists(str);
 }
 
-QString Engine::translate(const QString &to_translate) const{
-    return translations.value(to_translate, to_translate);
+QString Engine::translate(const QString &to_translate, bool return_null) const{
+    return translations.value(to_translate, return_null ? QString() : to_translate);
 }
 
 int Engine::getRoleIndex() const{

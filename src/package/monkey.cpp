@@ -578,8 +578,7 @@ public:
 MonkeyPackage::MonkeyPackage()
     :GeneralPackage("monkey")
 {
-    General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
-    ximenqing->addSkill("#hp-1");
+    General *ximenqing = new General(this, "ximenqing$", "min", "3/4");
     ximenqing->addSkill(new Caiquan);
 
     General *wanglun = new General(this, "wanglun", "kou", 3);

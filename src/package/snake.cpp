@@ -1112,8 +1112,7 @@ SnakePackage::SnakePackage()
     General *xuanzan = new General(this, "xuanzan", "guan");
     xuanzan->addSkill(new Konghe);
 
-    General *oupeng = new General(this, "oupeng", "jiang", 5);
-    oupeng->addSkill("#hp-1");
+    General *oupeng = new General(this, "oupeng", "jiang", "4/5");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");

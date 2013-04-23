@@ -1159,8 +1159,7 @@ HarePackage::HarePackage()
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
 
-    General *zhugui = new General(this, "zhugui", "kou");
-    zhugui->addSkill("#hp-1");
+    General *zhugui = new General(this, "zhugui", "kou", "3/4");
     zhugui->addSkill(new Shihao);
     zhugui->addSkill(new Shihaodo);
     related_skills.insertMulti("shihao", "#shihao-do");

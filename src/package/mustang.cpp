@@ -797,8 +797,7 @@ MustangPackage::MustangPackage()
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
 
-    General *xueyong = new General(this, "xueyong", "min");
-    xueyong->addSkill("#hp-1");
+    General *xueyong = new General(this, "xueyong", "min", "3/4");
     xueyong->addSkill(new Maiyi);
 
     General *zhufu = new General(this, "zhufu", "min", 3);
