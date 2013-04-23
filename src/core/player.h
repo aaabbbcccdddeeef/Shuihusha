@@ -40,6 +40,7 @@ class Player : public QObject
     Q_PROPERTY(bool ready READ isReady WRITE setReady)
     Q_PROPERTY(int atk READ getAttackRange)
     Q_PROPERTY(General::Gender gender READ getGender)
+    Q_PROPERTY(bool scarecrow READ isScareCrow)
 
     Q_PROPERTY(bool kongcheng READ isKongcheng)
     Q_PROPERTY(bool nude READ isNude)
@@ -126,6 +127,7 @@ public:
     const General *getGeneral() const;
 
     bool isLord() const;
+    bool isScareCrow() const;
 
     void acquireSkill(const QString &skill_name);
     void loseSkill(const QString &skill_name);
@@ -251,6 +253,7 @@ private:
     const Weapon *weapon;
     const Armor *armor;
     const Horse *defensive_horse, *offensive_horse;
+    bool scarecrow;
     bool face_up;
     bool chained;
     QList<const Card *> judging_area;

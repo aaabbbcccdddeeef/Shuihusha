@@ -9,7 +9,7 @@ Player::Player(QObject *parent)
     :QObject(parent), owner(false), ready(false), general(NULL), general2(NULL),
     hp(-1), max_hp(-1), state("online"), seat(0), alive(true),
     phase(NotActive),
-    weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
+    weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL), scarecrow(false),
     face_up(true), chained(false), player_statistics(new StatisticsStruct())
 {
 }
@@ -712,6 +712,10 @@ void Player::setChained(bool chained){
     }
 }
 
+bool Player::isScareCrow() const{
+    return scarecrow;
+}
+
 void Player::addMark(const QString &mark){
     int value = marks.value(mark, 0);
     value++;
@@ -1102,6 +1106,7 @@ void Player::copyFrom(Player* p)
     b->offensive_horse  = a->offensive_horse;
     b->face_up          = a->face_up;
     b->chained          = a->chained;
+    b->scarecrow        = a->scarecrow;
     b->judging_area     = QList<const Card *> (a->judging_area);
     b->delayed_tricks   = QList<const DelayedTrick *> (a->delayed_tricks);
     b->fixed_distance   = QHash<const Player *, int> (a->fixed_distance);
