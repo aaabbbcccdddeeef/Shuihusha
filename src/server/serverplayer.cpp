@@ -820,6 +820,8 @@ int ServerPlayer::getGeneralHp() const{
 
         hp = qMax(hp, 1);
     }
+    if(room->hasWelfare(this))
+        hp++;
 
     return hp;
 }
