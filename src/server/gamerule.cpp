@@ -1442,6 +1442,9 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     }
     case CardAsk:
     case CardUseAsk:{
+        QString pattern = data.toString();
+        if(pattern.startsWith("@"))
+            break;
         if(player->hasMark("sleep_jur")){
             if(player->getPhase() == Player::NotActive){
                 LogMessage log;
@@ -1461,8 +1464,8 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case Death:{
-        if(player->getGeneralName().startsWith("sun") ||
-           player->getGeneralName().startsWith("moon")){
+        if(player->getGeneralName().startsWith("sun_") ||
+           player->getGeneralName().startsWith("moon_")){
             if(player->askForSkillInvoke("casket_death")){
                 QStringList ban;
                 foreach(ServerPlayer *tmp, room->getAllPlayers()){

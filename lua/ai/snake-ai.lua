@@ -133,41 +133,33 @@ fangzao_skill.getTurnUseCard = function(self)
 		if #self.enemies == 0 or self.enemies[1]:isKongcheng() then return end
 		return sgs.Card_Parse("@FangzaoCard=.")
 	end
+	if self.player:hasFlag("fangzao") and not self.player:isKongcheng() then return sgs.Card_Parse("@FangzaoCard=.") end
 end
 sgs.ai_skill_use_func["FangzaoCard"] = function(card,use,self)
-	self:sort(self.enemies, "handcard2")
-	if use.to then
-		use.to:append(self.enemies[1])
+	if self.player:hasFlag("fangzao") then
+		local fangzaosrc = sgs.Sanguosha:getCard(self.player:getMark("fangzao"))
+		local cards = sgs.QList2Table(self.player:getHandcards())
+		self:sortByUseValue(cards, true)
+		for _, hcard in ipairs(cards) do
+			local fangzaostr = ("%s:fangzao[%s:%s]=%d"):format(fangzaosrc:objectName(), hcard:getSuitString(), hcard:getNumberString(), hcard:getId())
+			local fangzao = sgs.Card_Parse(fangzaostr)
+			if self:getUseValue(fangzao) > self:getUseValue(hcard) then
+				if fangzaosrc:isKindOf("BasicCard") then
+					self:useBasicCard(fangzaosrc, use)
+					if use.card then use.card = fangzao return end
+				else
+					self:useTrickCard(fangzaosrc, use)
+					if use.card then use.card = fangzao return end
+				end
+			end
+		end
+	else
+		self:sort(self.enemies, "handcard2")
+		if use.to then
+			use.to:append(self.enemies[1])
+		end
+		use.card=card
 	end
-	use.card=card
-end
-
-function fangzao_card(self, card, name)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local id = card:getEffectiveId()
-
-	local card_str = ("%s:fangzao[%s:%s]=%d"):format(name, suit, number, id)
-	local angzao = sgs.Card_Parse(card_str)
-	assert(angzao)
-	return angzao
-end
-
-fangzao2_skill={}
-fangzao2_skill.name = "fangzao"
-table.insert(sgs.ai_skills, fangzao2_skill)
-fangzao2_skill.getTurnUseCard = function(self)
-	if not self.player:hasFlag("fangzao") or self.player:isKongcheng() then return end
-	local card_id = self.player:getMark("fangzao")
-	local copycard = sgs.Sanguosha:getCard(card_id)
-	if not copycard then return end
-
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
-	local card = cards[1]
---	if card:objectName() ~= "peach" then return nil end
-	return fangzao_card(self, card, card:objectName())
 end
 
 -- jiangxin

@@ -129,6 +129,7 @@ CoupleScenario::CoupleScenario()
     //map["wusong"] = "yulan";
     //map["keyin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
+    map["sun_peiruhai"] = "moon_panqiaoyun";
 
     full_map = map;
     full_map["wuda"] = "panjinlian";

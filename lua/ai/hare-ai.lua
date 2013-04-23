@@ -90,7 +90,8 @@ function linmo_card(self, card, name)
 	for _, word in ipairs(zis) do
 		local card = sgs.Sanguosha:getCard(word)
 		if card:objectName() == name then
-			self.room:throwCard(word)
+			self.room:setPlayerMark(self.player, "LinmoZi", word)
+	--		self.room:throwCard(word)
 			break
 		end
 	end

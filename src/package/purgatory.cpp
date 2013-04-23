@@ -80,6 +80,7 @@ void Mastermind::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     targets.last()->tag["DtoL"] = QVariant::fromValue((PlayerStar)targets.first());
     QList<ServerPlayer *> tgs;
     tgs << targets.last();
+    room->setEmotion(targets, "mastermind");
     TrickCard::use(room, source, tgs);
 }
 
@@ -153,6 +154,7 @@ void EdoTensei::onEffect(const CardEffectStruct &effect) const{
     QString hcoi = targets.count() == 1 ? targets.first() :
                    room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
     int index = targets.indexOf(hcoi);
+    room->setEmotion(effect.from, "edo_tensei");
     PlayerStar revivd = room->findPlayer(targets_object.at(index), true);
     room->revivePlayer(revivd);
     room->setPlayerProperty(revivd, "hp", 1);

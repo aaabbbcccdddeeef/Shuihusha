@@ -107,7 +107,7 @@ Photo::Photo()
     skill_name_item = new QGraphicsSimpleTextItem(this);
     skill_name_item->setBrush(Qt::white);
     skill_name_item->setFont(Config.SmallFont);
-    skill_name_item->moveBy(10, 30);
+    skill_name_item->setPos(25, 30);
 
     QGraphicsDropShadowEffect * drp = new QGraphicsDropShadowEffect;
     drp->setBlurRadius(10);
@@ -116,11 +116,9 @@ Photo::Photo()
     skill_name_item->setGraphicsEffect(drp);
 
     emotion_item = new QGraphicsPixmapItem(this);
-    emotion_item->setParentItem(this);
     settings->beginGroup("emotion_item");
-    coord = settings->value("pos").toList();
-    emotion_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
-    emotion_item->setZValue(coord.at(2).toReal());
+    emotion_item->setPos(10, 0);
+    emotion_item->setZValue(settings->value("zvalue").toReal());
     emotion_item->setOpacity(settings->value("opacity").toReal());
     settings->endGroup();
 
@@ -249,7 +247,7 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
         if(emo_sets.contains("x") && emo_sets.contains("y")){
             data1 = emo_sets.value("x", 0).toReal();
             data2 = emo_sets.value("y", 0).toReal();
-            emotion_item->moveBy(data1, data2);
+            emotion_item->setPos(10 + data1, data2);
         }
         if(emo_sets.contains("z")){
             data1 = emo_sets.value("z", 1).toReal();

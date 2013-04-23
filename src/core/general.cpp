@@ -9,7 +9,7 @@
 #include <QFile>
 
 General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
-    :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
+    :QObject(package), kingdom(kingdom), max_hp(max_hp), _hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
 {
     show_hp = QString::number(max_hp);
     init(name);
@@ -18,8 +18,8 @@ General::General(Package *package, const QString &name, const QString &kingdom, 
 General::General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender, bool hidden, bool never_shown)
     :QObject(package), kingdom(kingdom), show_hp(show_hp), gender(gender), hidden(hidden), never_shown(never_shown)
 {
-    max_hp = QString(hp_mxhp.split("/").last()).toInt();
-    lose_hp = max_hp - QString(hp_mxhp.split("/").first()).toInt();
+    max_hp = QString(show_hp.split("/").last()).toInt();
+    _hp = QString(show_hp.split("/").first()).toInt();
     init(name);
 }
 
@@ -39,14 +39,6 @@ void General::init(const QString &name){
     kmap["shu"] = "jiang";
     kmap["wu"] = "min";
     kmap["qun"] = "kou";
-}
-
-int General::getMaxHp() const{
-    return max_hp;
-}
-
-int General::getLoseHp() const{
-    return lose_hp;
 }
 
 QString General::getKingdom(bool unmap) const{
@@ -94,10 +86,6 @@ QString General::getNickname(bool full) const{
     if(full)
         nick.append(Sanguosha->translate(objectName()));
     return nick;
-}
-
-QString General::getShowHp() const{
-    return show_hp;
 }
 
 bool General::isLuaGeneral() const{
