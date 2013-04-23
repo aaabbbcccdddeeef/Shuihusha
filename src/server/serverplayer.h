@@ -98,7 +98,7 @@ public:
 
     int getGeneralMaxHP() const;
     int getGeneralMaxHp() const;
-    int getGeneralLoseHp() const;
+    int getGeneralHp() const;
     virtual QString getGameMode() const;
 
     QString getIp() const;

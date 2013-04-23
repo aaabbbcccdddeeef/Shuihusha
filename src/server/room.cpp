@@ -1601,7 +1601,7 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
     broadcastProperty(player, "maxhp");
 
     if(full_state)
-        player->setHp(player->getMaxHP());
+        player->setHp(player->getGeneralHp());
     broadcastProperty(player, "hp");
 
     resetAI(player);
@@ -1953,6 +1953,7 @@ bool Room::makeSurrender(ServerPlayer* initiator)
         // if everyone give up, then ensure that the initiator doesn't win.
         QString playerRole = initiator->getRole();
         if (playerRole == "lord" || playerRole == "loyalist")
+
         {
             gameOver(renegadeAlive >= rebelAlive ? "renegade" : "rebel");
         }
@@ -2947,8 +2948,7 @@ void Room::startGame(){
 
     foreach(ServerPlayer *player, m_players){
         player->setMaxHP(player->getGeneralMaxHP());
-        //player->setHp(player->getMaxHP());
-        player->setHp(player->getMaxHp() - player->getGeneralLoseHp());
+        player->setHp(player->getGeneralHp());
 
         broadcastProperty(player, "maxhp");
         broadcastProperty(player, "hp");

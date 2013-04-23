@@ -29,7 +29,8 @@ public:
     explicit General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender = Male, bool hidden = false, bool never_shown = false);
 
     // property getters/setters
-    int getMaxHp() const;
+    int getMaxHp() const {return max_hp;}
+    int getHp() const {return _hp;}
     QString getKingdom(bool unmap = false) const;
     bool isMale() const {return gender == Male;}
     bool isFemale() const {return gender == Female;}
@@ -43,7 +44,6 @@ public:
     void setGender(Gender gender);
     void setGenderString(const QString &sex);
     QString getGenderString() const;
-    int getLoseHp() const;
 
     void addSkill(Skill* skill);
     void addSkill(const QString &skill_name);
@@ -62,7 +62,7 @@ public:
     QString getWinword() const;
     QString getId() const;
     QString getNickname(bool full = false) const;
-    QString getShowHp() const;
+    QString getShowHp() const {return show_hp;}
 
     static QSize BigIconSize;
     static QSize SmallIconSize;
@@ -75,7 +75,7 @@ public slots:
 private:
     void init(const QString &name);
     QString kingdom;
-    int max_hp, lose_hp;
+    int max_hp, _hp;
     QString show_hp;
     Gender gender;
     bool lord;

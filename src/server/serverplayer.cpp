@@ -788,6 +788,7 @@ int ServerPlayer::getGeneralMaxHP() const{
 
     if(room->hasWelfare(this))
         max_hp++;
+    max_hp = qMax(max_hp, 1);
 
     return max_hp;
 }
@@ -796,11 +797,31 @@ int ServerPlayer::getGeneralMaxHp() const{
     return getGeneralMaxHP();
 }
 
-int ServerPlayer::getGeneralLoseHp() const{
-    int first = getGeneral()->getLoseHp();
-    if(getGeneral2())
-        first += getGeneral2()->getLoseHp();
-    return first;
+int ServerPlayer::getGeneralHp() const{
+    int hp = 0;
+
+    if(getGeneral2() == NULL)
+        hp = getGeneral()->getHp();
+    else{
+        int first = getGeneral()->getHp();
+        int second = getGeneral2()->getHp();
+
+        int plan = Config.MaxHpScheme;
+        if(Config.GameMode.contains("_mini_"))
+            plan = 1;
+
+        switch(plan){
+        case 2: hp = (first + second)/2; break;
+        case 1: hp = qMin(first, second); break;
+        case 0:
+        default:
+            hp = first + second - 3; break;
+        }
+
+        hp = qMax(hp, 1);
+    }
+
+    return hp;
 }
 
 QString ServerPlayer::getGameMode() const{
