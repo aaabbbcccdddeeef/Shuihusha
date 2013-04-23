@@ -119,7 +119,7 @@ ViewAsSkill::ViewAsSkill(const QString &name)
 
 bool ViewAsSkill::isAvailable() const{
     switch(ClientInstance->getStatus()){
-    case Client::Playing: return !Self->property("scarecrow").toBool() && isEnabledAtPlay(Self);
+    case Client::Playing: return !Self->hasMark("scarecrow") && isEnabledAtPlay(Self);
     case Client::Responsing: return isEnabledAtResponse(Self, ClientInstance->getPattern());
     default:
         return false;

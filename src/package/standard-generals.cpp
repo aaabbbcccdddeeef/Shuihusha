@@ -473,9 +473,7 @@ void QimenCard::willCry(Room *room, ServerPlayer *target) const{
     QVariant data = QVariant::fromValue(skills.join("+"));
     target->tag["QimenStore"] = data;
 
-#ifndef QT_DEBUG //@todo: crash in debug
-    room->setPlayerProperty(target, "scarecrow", true);
-#endif
+    room->setPlayerMark(target, "scarecrow", 1);
     target->gainMark("@shut");
 }
 
@@ -552,9 +550,7 @@ public:
             room->acquireSkill(player, skill_name);
         player->tag.remove("QimenStore");
 
-#ifndef QT_DEBUG //@todo: crash in debug
-        room->setPlayerProperty(player, "scarecrow", false);
-#endif
+        room->setPlayerMark(player, "scarecrow", 0);
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{

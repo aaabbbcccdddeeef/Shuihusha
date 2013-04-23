@@ -735,7 +735,7 @@ bool Room::getResult(ServerPlayer* player, time_t timeOut){
 bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data){
     bool invoked = false;
     const Skill *skill = Sanguosha->getSkill(skill_name);
-    if(player->property("scarecrow").toBool() && skill->getFrequency() != Skill::NotSkill)
+    if(player->hasMark("scarecrow") && skill->getFrequency() != Skill::NotSkill)
         return false;
     AI *ai = player->getAI();
     if(ai){
@@ -968,7 +968,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
                              bool is_skill, const QVariant &data, TriggerEvent trigger_event){
     if(player->isDead())
         return NULL;
-    if(is_skill && player->property("scarecrow").toBool())
+    if(is_skill && player->hasMark("scarecrow"))
         return NULL;
 
     const Card *card = NULL;
@@ -1062,7 +1062,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
     if(player->isDead())
         return NULL;
-    if(is_skill && player->property("scarecrow").toBool())
+    if(is_skill && player->hasMark("scarecrow"))
         return NULL;
 
     QVariant asked = pattern;

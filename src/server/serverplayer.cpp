@@ -675,10 +675,8 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
 
     room->setEmotion(this, "conjuring/" + jur.split("_").first());
     room->setPlayerMark(this, jur, value);
-#ifndef QT_DEBUG //@todo: crash in debug
     if(jur.startsWith("dizzy"))
-        room->setPlayerProperty(this, "scarecrow", true);
-#endif
+        room->setPlayerMark(this, "scarecrow", 1);
     emit conjuring_changed();
 }
 
@@ -692,10 +690,8 @@ void ServerPlayer::removeJur(const QString &jur){
     room->sendLog(log);
 
     removeMark(jur);
-#ifndef QT_DEBUG //@todo: crash in debug
     if(jur.startsWith("dizzy"))
-        room->setPlayerProperty(this, "scarecrow", false);
-#endif
+        room->setPlayerMark(this, "scarecrow", 0);
     emit conjuring_changed();
 }
 
