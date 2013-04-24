@@ -72,7 +72,7 @@ sgs.ai_skill_playerchosen["shunshui"] = function(self, targets)
 	local targetlist = sgs.QList2Table(targets)
 	self:sort(targetlist)
 	for _, target in ipairs(targetlist) do
-		if self:isEnemy(target) then
+		if self:isEnemy(target) and not self:slashProhibit(target) then
 			return target
 		end
 	end

@@ -329,7 +329,7 @@ sgs.ai_skill_cardask["@jianwu-slash"] = function(self, data)
 	local target = data:toPlayer()
 	local card = self:getCard("Slash")
 	if self:isEnemy(target) and card then
-		if not self:slashProhibit(card, target, self.lizhu) and self:slashIsEffective(card, target, self.lizhu) then
+		if not self:slashProhibit(target, card, self.lizhu) then
 			return card:getEffectiveId()
 		end
 	end

@@ -5,7 +5,7 @@
 class Xixue: public TriggerSkill{
 public:
     Xixue():TriggerSkill("xixue"){
-        events << Predamage << Death;
+        events << DamageProceed << Death;
         frequency = Compulsory;
     }
 

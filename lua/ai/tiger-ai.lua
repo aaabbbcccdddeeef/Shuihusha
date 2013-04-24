@@ -154,10 +154,9 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	if #enemies < 2 and self.room:getPlayers():length() > 2 then return "." end
 
 	self:sort(enemies)
-	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	local targets = {}
 	for _, enemy in ipairs(enemies) do
-		if not self:slashProhibit(slash, enemy) then
+		if not self:slashProhibit(enemy) then
 			table.insert(targets, enemy:objectName())
 		end
 		if #targets == 2 then break end

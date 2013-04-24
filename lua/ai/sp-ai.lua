@@ -95,8 +95,13 @@ sgs.ai_skill_use["@@luanjun"] = function(self, prompt)
 end
 
 -- qingshang
-sgs.ai_skill_invoke["qingshang"] = true
-sgs.ai_skill_playerchosen["qingshang"] = sgs.ai_skill_playerchosen["shunshui"]
+sgs.ai_skill_use["@@qingshang"] = function(self, prompt)
+	self:sort(self.enemies)
+	if #self.enemies > 0 then
+		return "@QingshangCard=.->" .. self.enemies[1]:objectName()
+	end
+	return "."
+end
 
 -- yuzhong
 sgs.ai_skill_choice["yuzhong"] = function(self, choice)
