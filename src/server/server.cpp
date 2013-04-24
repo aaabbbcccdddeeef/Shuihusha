@@ -255,9 +255,8 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addRow(scene_checkbox); //changjing
     layout->addRow(HLay(anzhan_checkbox, anzhan_equal_checkbox));
     layout->addRow(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
-    layout->addRow(announce_ip_checkbox);
     layout->addRow(HLay(new QLabel(tr("Address")), address_edit, new QLabel(tr("Port")), port_edit));
-    layout->addRow(detect_button);
+    layout->addRow(HLay(announce_ip_checkbox, detect_button));
     //layout->addStretch();
 
     QWidget *widget = new QWidget;

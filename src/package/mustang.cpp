@@ -744,41 +744,9 @@ public:
     }
 };
 
-class Tuzai: public TriggerSkill{
-public:
-    Tuzai():TriggerSkill("tuzai"){
-        events << Damage;
-        frequency = Frequent;
-    }
-
-    virtual int getPriority(TriggerEvent) const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") &&
-           damage.to && !damage.to->isKongcheng()
-            && player->askForSkillInvoke(objectName(), data)){
-            room->playSkillEffect(objectName());
-            int dust = damage.to->getRandomHandCardId();
-            room->showCard(damage.to, dust);
-
-            if(Sanguosha->getCard(dust)->isRed()){
-                room->throwCard(dust, damage.to, player);
-                player->drawCards(1);
-            }
-        }
-        return false;
-    }
-};
-
 MustangPackage::MustangPackage()
     :GeneralPackage("mustang")
 {
-    General *qinming = new General(this, "qinming", "guan");
-    qinming->addSkill(new Hengsao);
-/*
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
@@ -788,11 +756,11 @@ MustangPackage::MustangPackage()
 
     General *guosheng = new General(this, "guosheng", "jiang");
     guosheng->addSkill(new Bingji);
-*/
+
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-/*
+
     General *yuehe = new General(this, "yuehe", "min", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
@@ -805,17 +773,14 @@ MustangPackage::MustangPackage()
     zhufu->addSkill(new Guitai);
 
     General *duansanniang = new General(this, "duansanniang", "min", 4, false);
-    duansanniang->addSkill(new Zishi);*/
-/*
-    General *caozheng = new General(this, "caozheng", "min");
-    caozheng->addSkill(new Tuzai);
-*/
+    duansanniang->addSkill(new Zishi);
+
     addMetaObject<HengsaoCard>();
-/*addMetaObject<HuazhuCard>();
+    addMetaObject<HuazhuCard>();
     addMetaObject<BingjiCard>();
     addMetaObject<MaiyiCard>();
     addMetaObject<HunjiuCard>();
-    addMetaObject<ZishiCard>();*/
+    addMetaObject<ZishiCard>();
 }
 
 //ADD_PACKAGE(Mustang)

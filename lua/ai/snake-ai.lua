@@ -135,6 +135,7 @@ function fangzao_viewas(self, fangzaosrc)
 			return fangzao
 		end
 	end
+	return nil
 end
 local fangzao_skill={}
 fangzao_skill.name = "fangzao"
@@ -146,7 +147,7 @@ fangzao_skill.getTurnUseCard = function(self)
 		return sgs.Card_Parse("@FangzaoCard=.")
 	elseif self.player:hasFlag("fangzao") and not self.player:isKongcheng() then
 		local fangzaocard = fangzao_viewas(self, sgs.Sanguosha:getCard(self.player:getMark("fangzao")))
-		return fangzaocard
+		if fangzaocard then return fangzaocard end
 	end
 end
 sgs.ai_skill_use_func["FangzaoCard"] = function(card,use,self)

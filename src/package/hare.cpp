@@ -265,7 +265,7 @@ public:
                 CardUseStruct use = data.value<CardUseStruct>();
                 if(use.card->getSkillName() == "linmo"){
                     int zid = player->getMark("LinmoZi");
-                    room->throwCard(zid, player);
+                    room->throwCard(zid);
                 }
             }
             return false;

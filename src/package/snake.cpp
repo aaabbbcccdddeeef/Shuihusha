@@ -385,9 +385,9 @@ void FangzaoCard::onEffect(const CardEffectStruct &effect) const{
         room->setPlayerFlag(effect.from, "-fangzao");
 }
 
-class Fangzao: public ViewAsSkill{
+class FangzaoViewAsSkill: public ViewAsSkill{
 public:
-    Fangzao():ViewAsSkill("fangzao"){
+    FangzaoViewAsSkill():ViewAsSkill("fangzao"){
     }
 
     virtual int getEffectIndex(ServerPlayer *, const Card *card) const{
@@ -431,6 +431,21 @@ public:
             return new_card;
         }else
             return new FangzaoCard;
+    }
+};
+
+class Fangzao: public TriggerSkill{
+public:
+    Fangzao():TriggerSkill("fangzao"){
+        view_as_skill = new FangzaoViewAsSkill;
+        events << CardUsed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *jindajian, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->getSkillName() == "fangzao")
+            room->setPlayerFlag(jindajian, "-fangzao");
+        return false;
     }
 };
 

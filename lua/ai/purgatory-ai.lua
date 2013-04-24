@@ -11,8 +11,11 @@ function SmartAI:useCardMastermind(card, use)
 		en = self.enemies[1]
 	end
 	self:sort(self.friends, "hp")
-	if #self.friends > 0 then
-		fr = self.friends[1]
+	for _, f in ipairs(self.friends) do
+		if f:isWounded() then
+			fr = f
+			break
+		end
 	end
 	if en and fr and self:hasTrickEffective(card, en) and self:hasTrickEffective(card, fr) then
 		use.card = card

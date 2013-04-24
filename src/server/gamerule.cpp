@@ -1010,7 +1010,7 @@ bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
     }
 
     case PhaseChange:{
-        if(player->getPhase() == Player::Start)
+        if(player->getPhase() == Player::RoundStart)
             playerShowed(player);
 
         break;
