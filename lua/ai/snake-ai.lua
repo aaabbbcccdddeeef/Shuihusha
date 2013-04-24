@@ -124,6 +124,18 @@ end
 -- jindajian
 -- fangzao
 sgs.ai_card_intention.FangzaoCard = math.random(-20, 20)
+function fangzao_viewas(self, fangzaosrc)
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, true)
+	for _, hcard in ipairs(cards) do
+		local fangzaostr = ("%s:fangzao[%s:%s]=%d"):format(fangzaosrc:objectName(), hcard:getSuitString(), hcard:getNumberString(), hcard:getId())
+		local fangzao = sgs.Card_Parse(fangzaostr)
+		if self:getUseValue(fangzao) > self:getUseValue(hcard) then
+			assert(fangzao)
+			return fangzao
+		end
+	end
+end
 local fangzao_skill={}
 fangzao_skill.name = "fangzao"
 table.insert(sgs.ai_skills, fangzao_skill)
@@ -132,34 +144,17 @@ fangzao_skill.getTurnUseCard = function(self)
 		self:sort(self.enemies, "handcard2")
 		if #self.enemies == 0 or self.enemies[1]:isKongcheng() then return end
 		return sgs.Card_Parse("@FangzaoCard=.")
+	elseif self.player:hasFlag("fangzao") and not self.player:isKongcheng() then
+		local fangzaocard = fangzao_viewas(self, sgs.Sanguosha:getCard(self.player:getMark("fangzao")))
+		return fangzaocard
 	end
-	if self.player:hasFlag("fangzao") and not self.player:isKongcheng() then return sgs.Card_Parse("@FangzaoCard=.") end
 end
 sgs.ai_skill_use_func["FangzaoCard"] = function(card,use,self)
-	if self.player:hasFlag("fangzao") then
-		local fangzaosrc = sgs.Sanguosha:getCard(self.player:getMark("fangzao"))
-		local cards = sgs.QList2Table(self.player:getHandcards())
-		self:sortByUseValue(cards, true)
-		for _, hcard in ipairs(cards) do
-			local fangzaostr = ("%s:fangzao[%s:%s]=%d"):format(fangzaosrc:objectName(), hcard:getSuitString(), hcard:getNumberString(), hcard:getId())
-			local fangzao = sgs.Card_Parse(fangzaostr)
-			if self:getUseValue(fangzao) > self:getUseValue(hcard) then
-				if fangzaosrc:isKindOf("BasicCard") then
-					self:useBasicCard(fangzaosrc, use)
-					if use.card then use.card = fangzao return end
-				else
-					self:useTrickCard(fangzaosrc, use)
-					if use.card then use.card = fangzao return end
-				end
-			end
-		end
-	else
-		self:sort(self.enemies, "handcard2")
-		if use.to then
-			use.to:append(self.enemies[1])
-		end
-		use.card=card
+	self:sort(self.enemies, "handcard2")
+	if use.to then
+		use.to:append(self.enemies[1])
 	end
+	use.card=card
 end
 
 -- jiangxin

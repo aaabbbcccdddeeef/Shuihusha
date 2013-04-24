@@ -381,15 +381,13 @@ void FangzaoCard::onEffect(const CardEffectStruct &effect) const{
     if(card->getTypeId() == Card::Basic || card->isNDTrick()){
         room->setPlayerMark(effect.from, "fangzao", card->getEffectiveId());
         room->setPlayerFlag(effect.from, "fangzao");
-    }else{
+    }else
         room->setPlayerFlag(effect.from, "-fangzao");
-    }
 }
 
-class FangzaoViewAsSkill: public ViewAsSkill{
+class Fangzao: public ViewAsSkill{
 public:
-    FangzaoViewAsSkill():ViewAsSkill("fangzao"){
-
+    Fangzao():ViewAsSkill("fangzao"){
     }
 
     virtual int getEffectIndex(ServerPlayer *, const Card *card) const{
@@ -406,21 +404,6 @@ public:
             return card->isAvailable(player);
         }else
             return true;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        if(player->getPhase() == Player::NotActive)
-            return false;
-
-        if(!player->hasFlag("fangzao"))
-            return false;
-
-        if(player->hasUsed("FangzaoCard")){
-            int card_id = player->getMark("fangzao");
-            const Card *card = Sanguosha->getCard(card_id);
-            return pattern.contains(card->objectName());
-        }else
-            return false;
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
@@ -446,25 +429,8 @@ public:
             new_card->addSubcards(cards);
             new_card->setSkillName(objectName());
             return new_card;
-        }else{
+        }else
             return new FangzaoCard;
-        }
-    }
-};
-
-class Fangzao: public TriggerSkill{
-public:
-    Fangzao():TriggerSkill("fangzao"){
-        view_as_skill = new FangzaoViewAsSkill;
-        events << CardUsed;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *jindajian, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->getSkillName() == "fangzao"){
-            room->setPlayerFlag(jindajian, "-fangzao");
-        }
-        return false;
     }
 };
 

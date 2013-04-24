@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130421",
-	version_name = "F4.9.5",
+	version = "20130425",
+	version_name = "F5.0",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
@@ -120,8 +120,6 @@ scenario = { -- 非身份局模式下的一些设置
 
 ban_list = { -- 初始禁表设置
 	roles_ban = { -- 身份局单禁
-		"gongsunsheng",
-		"jindajian",
 	},
 	kof_ban = { -- 1v1模式
 		"andaoquan",
@@ -205,6 +203,10 @@ ban_list = { -- 初始禁表设置
 --		"pangwanchun+tora",
 		"tongguan+suochao",
 
+		"zhaoji+xuanzan",
+		"zhaoji+liangshijie",
+		"liangshijie+xuanzan",
+		"pangwanchun+xuanzan",
 		"fangjie+songjiang",
 		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",
