@@ -408,6 +408,10 @@ public:
         return card;
     }
 
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
     virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
         return pattern == "@@qi6ing";
     }

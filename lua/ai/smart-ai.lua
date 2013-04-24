@@ -3323,15 +3323,12 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:isKindOf("FireAttack") or card:isKindOf("FireSlash")) then
 			return false
 		end
-		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
-			return false
-		end
 		if player:hasSkill("qianshui") and not self.player:getWeapon() and card:isKindOf("Assassinate") then
 			return false
 		end
-		if player:hasEquip("proud_banner") and not player:isChained() and card:isKindOf("IronChain") then
-			return false
-		end
+--		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
+--			return false
+--		end
 	end
 	return true
 end

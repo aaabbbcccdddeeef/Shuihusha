@@ -175,7 +175,7 @@ sgs.dynamic_value.benefit.Wiretap = true
 
 -- xing ci
 function SmartAI:useCardAssassinate(ass, use)
-	if #self.enemies == 0 then return "." end
+	if #self.enemies == 0 then return end
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			if self:hasTrickEffective(ass, enemy) then
@@ -203,17 +203,10 @@ function SmartAI:useCardAssassinate(ass, use)
 			end
 		end
 	end
-
-	self:sort(self.enemies)
+	if not target then return end
 	use.card = ass
-	if target then
-		if use.to then
-			use.to:append(target)
-		end
-	else
-		if use.to then
-			use.to:append(self.enemies[1])
-		end
+	if use.to then
+		use.to:append(target)
 	end
 end
 
