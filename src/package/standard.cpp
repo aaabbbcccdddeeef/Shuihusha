@@ -680,7 +680,7 @@ TestPackage::TestPackage()
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
-    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
+    General *ubuntenkei = new General(this, "ubuntenkei", "god", "4", General::Female, General::Hidden);
     ubuntenkei->addSkill(new Ubuna);
     ubuntenkei->addSkill(new Qiapai);
     addMetaObject<QiapaiCard>();
@@ -695,17 +695,17 @@ TestPackage::TestPackage()
     addMetaObject<UbundCard>();
     ubuntenkei->addSkill(new Ubunf);
 
-    General *catty = new General(this, "catty", "god", 2, false, true, true);
+    General *catty = new General(this, "catty", "god", "2/3", General::Female, General::NeverShown);
     catty->addSkill("change");
     catty->addSkill("youxia");
     catty->addSkill("#ubuna");
 
-    General *nicholas = new General(this, "nicholas", "god", 4, true, true, true);
+    General *nicholas = new General(this, "nicholas", "god", "4", General::Male, General::NeverShown);
     nicholas->addSkill(new Wusheng);
 
-    new General(this, "sujiang", "god", 5, true, true);
-    new General(this, "sujiangf", "god", 5, false, true);
-    new General(this, "anjiang", "god", 4, true, true, true);
+    new General(this, "sujiang", "god", "5", General::Male, General::Hidden);
+    new General(this, "sujiangf", "god", "5", General::Female, General::Hidden);
+    new General(this, "anjiang", "god", "4", General::Neuter, General::NeverShown);
     addMetaObject<FreeRegulateCard>();
 
     patterns["."] = new ExpPattern(".|.|.|hand");

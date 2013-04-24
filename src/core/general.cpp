@@ -9,14 +9,20 @@
 #include <QFile>
 
 General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
-    :QObject(package), kingdom(kingdom), max_hp(max_hp), _hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
+    :QObject(package), kingdom(kingdom), max_hp(max_hp), _hp(max_hp), gender(male ? Male : Female)
 {
     show_hp = QString::number(max_hp);
+    if(never_shown)
+        attrib = NeverShown;
+    else if(hidden)
+        attrib = Hidden;
+    else
+        attrib = Shown;
     init(name);
 }
 
-General::General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender, bool hidden, bool never_shown)
-    :QObject(package), kingdom(kingdom), show_hp(show_hp), gender(gender), hidden(hidden), never_shown(never_shown)
+General::General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender, Attrib attrib)
+    :QObject(package), kingdom(kingdom), show_hp(show_hp), gender(gender), attrib(attrib)
 {
     max_hp = QString(show_hp.split("/").last()).toInt();
     _hp = QString(show_hp.split("/").first()).toInt();
@@ -80,9 +86,7 @@ QString General::getId() const{
 }
 
 QString General::getNickname(bool full) const{
-    QString nick = Sanguosha->translate("#" + objectName());
-    if(nick.startsWith("#"))
-        nick = "";
+    QString nick = Sanguosha->translate("#" + objectName(), true);
     if(full)
         nick.append(Sanguosha->translate(objectName()));
     return nick;

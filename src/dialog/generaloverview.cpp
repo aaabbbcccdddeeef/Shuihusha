@@ -55,7 +55,7 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         package = Sanguosha->translate(general->getPackage());
         id = general->getId();
 
-        if(nickname == "")
+        if(nickname.isNull())
             nickname = Sanguosha->translate("UnknowNick");
         QTableWidgetItem *nickname_item = new QTableWidgetItem(nickname);
         nickname_item->setData(Qt::UserRole, general->objectName());
@@ -389,7 +389,7 @@ void GeneralOverview::addChangeAction(QPushButton *button){
         QAction *action4 = new QAction(menu4);
         action4->setData(QString("general:%1").arg(player->objectName()));
         action4->setText(QString("%1 %2%3").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneralName()))
-                         .arg(player->isDead() ? tr("(dead)") : ""));
+                         .arg(player->isDead() ? tr("(dead)") : QString()));
         action4->setIcon(QIcon(player->getGeneral()->getPixmapPath("tiny")));
         menu4->addAction(action4);
         connect(action4, SIGNAL(triggered()), this, SLOT(askChange()));

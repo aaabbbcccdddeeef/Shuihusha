@@ -25,8 +25,9 @@ class General : public QObject
 
 public:
     enum Gender {Male = 0, Female = 1, Neuter = 2};
+    enum Attrib {Shown = 1, Hidden = 0, NeverShown = -1};
     explicit General(Package *package, const QString &name, const QString &kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
-    explicit General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender = Male, bool hidden = false, bool never_shown = false);
+    explicit General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender = Male, Attrib attrib = Shown);
 
     // property getters/setters
     int getMaxHp() const {return max_hp;}
@@ -36,8 +37,8 @@ public:
     bool isFemale() const {return gender == Female;}
     bool isNeuter() const {return gender == Neuter;}
     bool isLord() const {return lord;}
-    bool isHidden() const {return hidden;}
-    bool isTotallyHidden() const {return never_shown;}
+    bool isHidden() const {return attrib == Hidden || attrib == NeverShown;}
+    bool isTotallyHidden() const {return attrib == NeverShown;}
     bool isLuaGeneral() const;
 
     Gender getGender() const {return gender;}
@@ -82,6 +83,7 @@ private:
     QSet<QString> skill_set;
     QSet<QString> extra_set;
     QStringList related_skills;
+    Attrib attrib;
     bool hidden;
     bool never_shown;
     QMap<QString, QString> kmap;

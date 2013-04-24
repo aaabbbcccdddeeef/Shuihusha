@@ -40,8 +40,9 @@ class General : public QObject
 {
 public:
 	enum Gender {Male = 0, Female = 1, Neuter = 2};
+	enum Attrib {Shown = 1, Hidden = 0, NeverShown = -1};
 	explicit General(Package *package, const char *name, const char *kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
-	explicit General(Package *package, const char *name, const char *kingdom, const char *show_hp, Gender gender = Male, bool hidden = false, bool never_shown = false);
+	explicit General(Package *package, const char *name, const char *kingdom, const char *show_hp, Gender gender = Male, Attrib attrib = Shown);
 
 	// property getters/setters
 	int getMaxHp() const;
