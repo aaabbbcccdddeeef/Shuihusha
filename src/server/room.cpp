@@ -654,8 +654,8 @@ ServerPlayer* Room::getRaceResult(QList<ServerPlayer*> &players, QSanProtocol::C
         }
         else
         {
-            if (_m_raceWinner != NULL) // Don't give this player any more chance for this race
-                _m_raceWinner->m_isWaitingReply = false;
+            // Don't give this player any more chance for this race
+            _m_raceWinner->m_isWaitingReply = false;
             _m_raceWinner = NULL;
             _m_semRoomMutex.release();
         }
@@ -1830,10 +1830,8 @@ void Room::reportDisconnection(){
         }
     }else{
         // fourth case
-        if (player->m_isWaitingReply)
-        {
+        if(player->m_isWaitingReply)
             player->releaseLock(ServerPlayer::SEMA_COMMAND_INTERACTIVE);
-        }
         setPlayerProperty(player, "state", "offline");
 
         bool someone_is_online = false;
@@ -1863,16 +1861,14 @@ void Room::reportDisconnection(){
 
 void Room::trustCommand(ServerPlayer *player, const QString &){
     player->acquireLock(ServerPlayer::SEMA_MUTEX);
-    if (player->isOnline()){
+    if(player->isOnline()){
         player->setState("trust");
-        if (player->m_isWaitingReply) {
+        if(player->m_isWaitingReply){
             player->releaseLock(ServerPlayer::SEMA_MUTEX);
             player->releaseLock(ServerPlayer::SEMA_COMMAND_INTERACTIVE);
         }
     }else
-    {
         player->setState("online");
-    }
     player->releaseLock(ServerPlayer::SEMA_MUTEX);
     broadcastProperty(player, "state");
 }
@@ -1891,22 +1887,23 @@ bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGen
     return true;
 }
 
-bool Room::makeSurrender(ServerPlayer* initiator)
-{
-    bool loyalGiveup = true; int loyalAlive = 0;
-    bool renegadeGiveup = true; int renegadeAlive = 0;
-    bool rebelGiveup = true; int rebelAlive = 0;
+bool Room::makeSurrender(ServerPlayer *initiator) {
+    bool loyalGiveup = true;
+    int loyalAlive = 0;
+    bool renegadeGiveup = true;
+    int renegadeAlive = 0;
+    bool rebelGiveup = true;
+    int rebelAlive = 0;
 
     // broadcast polling request
-    QList<ServerPlayer*> playersAlive;
-    foreach(ServerPlayer *player, m_players)
-    {
+    QList<ServerPlayer *> playersAlive;
+    foreach (ServerPlayer *player, m_players) {
         QString playerRole = player->getRole();
         if ((playerRole == "loyalist" || playerRole == "lord") && player->isAlive()) loyalAlive++;
         else if (playerRole == "rebel" && player->isAlive()) rebelAlive++;
         else if (playerRole == "renegade" && player->isAlive()) renegadeAlive++;
-        if (player != initiator && player->isAlive() && player->isOnline())
-        {
+
+        if (player != initiator && player->isAlive() && player->isOnline()) {
             player->m_commandArgs = toJsonString(initiator->getGeneral()->objectName());
             playersAlive << player;
         }
@@ -1914,28 +1911,21 @@ bool Room::makeSurrender(ServerPlayer* initiator)
     doBroadcastRequest(playersAlive, S_COMMAND_SURRENDER);
 
     // collect polls
-    foreach (ServerPlayer* player, playersAlive)
-    {
+    foreach (ServerPlayer *player, playersAlive) {
         bool result = false;
-        if (!player->m_isClientResponseReady
-            || !player->getClientReply().isBool())
+        if (!player->m_isClientResponseReady || !player->getClientReply().isBool())
             result = !player->isOnline();
         else
             result = player->getClientReply().asBool();
 
         QString playerRole = player->getRole();
-        if (playerRole == "loyalist" || playerRole == "lord")
-        {
+        if (playerRole == "loyalist" || playerRole == "lord") {
             loyalGiveup &= result;
             if (player->isAlive()) loyalAlive++;
-        }
-        else if (playerRole == "rebel")
-        {
+        } else if (playerRole == "rebel") {
             rebelGiveup &= result;
             if (player->isAlive()) rebelAlive++;
-        }
-        else if (playerRole == "renegade")
-        {
+        } else if (playerRole == "renegade") {
             renegadeGiveup &= result;
             if (player->isAlive()) renegadeAlive++;
         }
@@ -1948,40 +1938,30 @@ bool Room::makeSurrender(ServerPlayer* initiator)
         gameOver("renegade");
     else if (!loyalGiveup && renegadeGiveup && rebelGiveup)
         gameOver("lord+loyalist");
-    else if (loyalGiveup && renegadeGiveup && rebelGiveup)
-    {
+    else if (loyalGiveup && renegadeGiveup && rebelGiveup) {
         // if everyone give up, then ensure that the initiator doesn't win.
         QString playerRole = initiator->getRole();
         if (playerRole == "lord" || playerRole == "loyalist")
-
-        {
             gameOver(renegadeAlive >= rebelAlive ? "renegade" : "rebel");
-        }
         else if (playerRole == "renegade")
-        {
             gameOver(loyalAlive >= rebelAlive ? "loyalist+lord" : "rebel");
-        }
         else if (playerRole == "rebel")
-        {
             gameOver(renegadeAlive >= loyalAlive ? "renegade" : "loyalist+lord");
-        }
     }
+
 
     return true;
 }
 
-bool Room::processRequestSurrender(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket *)
-{
+bool Room::processRequestSurrender(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket *) {
     //@todo: Strictly speaking, the client must be in the PLAY phase
     //@todo: return false for 3v3 and 1v1!!!
     if (player == NULL || !player->m_isWaitingReply)
         return false;
     if (!_m_isFirstSurrenderRequest
         && _m_timeSinceLastSurrenderRequest.elapsed() <= Config.S_SURRNDER_REQUEST_MIN_INTERVAL)
-    {
-        //@todo: warn client here after new protocol has been enacted on the warn request
-        return false;
-    }
+        return false; //@todo: warn client here after new protocol has been enacted on the warn request
+
     _m_isFirstSurrenderRequest = false;
     _m_timeSinceLastSurrenderRequest.restart();
     m_surrenderRequestReceived = true;
@@ -2009,9 +1989,7 @@ void Room::processClientPacket(const QString &request){
             if (!callback) return;
             (this->*callback)(player, &packet);
         }
-    }
-    else
-    {
+    } else {
         QStringList args = request.split(" ");
         QString command = args.first();
         ServerPlayer *player = qobject_cast<ServerPlayer*>(sender());
@@ -2582,10 +2560,10 @@ void Room::processResponse(ServerPlayer *player, const QSanGeneralPacket *packet
         emit room_message(tr("Reply command should be %1 instead of %2")
             .arg(player->m_expectedReplyCommand).arg(packet->getCommandType()));
     }
-    else if ((int)packet->m_localSerial != player->m_expectedReplySerial)
+    else if (packet->m_localSerial != player->m_expectedReplySerial)
     {
         emit room_message(tr("Reply serial should be %1 instead of %2")
-            .arg(player->m_expectedReplySerial).arg((int)packet->m_localSerial));
+            .arg(player->m_expectedReplySerial).arg(packet->m_localSerial));
     }
     else success = true;
 

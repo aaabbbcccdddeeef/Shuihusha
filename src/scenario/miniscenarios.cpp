@@ -334,8 +334,10 @@ MiniScene::MiniScene(const QString &name)
     int stage = name.right(2).toInt();
     QStringList usernames;
     usernames << "Tenkei" << "1";
-    bool show = usernames.contains(qgetenv("USERNAME"));
-    addGenerals(stage, !show);
+    General::Attrib trib = General::Shown;
+    if(!usernames.contains(qgetenv("USERNAME")))
+        trib = General::NeverShown;
+    addGenerals(stage, trib);
 }
 
 void MiniScene::setupCustom(QString name) const

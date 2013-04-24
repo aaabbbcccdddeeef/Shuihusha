@@ -535,42 +535,42 @@ public:
     }
 };
 
-void MiniScene::addGenerals(int stage, bool show){
+void MiniScene::addGenerals(int stage, General::Attrib trib){
     switch(stage){
     case 21: {
-            General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true, show);
+            General *zhangbao = new General(this, "zhangbao", "jiang", "4", General::Male, trib);
             zhangbao->addSkill(new Fangdiao);
             addMetaObject<FangdiaoCard>();
             break;
         }
     case 22: {
-            General *liruilan = new General(this, "liruilan", "min", 3, false, true, show);
+            General *liruilan = new General(this, "liruilan", "min", "3", General::Female, trib);
             liruilan->addSkill(new Chumai);
             liruilan->addSkill(new Yinlang);
             addMetaObject<YinlangCard>();
             break;
         }
     case 20: {
-            General *fangjie = new General(this, "fangjie", "jiang", 4, true, true, show);
+            General *fangjie = new General(this, "fangjie", "jiang", "4", General::Male, trib);
             fangjie->addSkill(new Beishui);
             addMetaObject<BeishuiCard>();
             break;
         }
     case 23: {
-            General *renyuan = new General(this, "renyuan", "jiang", 4, true, true, show);
+            General *renyuan = new General(this, "renyuan", "jiang", "4", General::Male, trib);
             renyuan->addSkill(new Pushou);
             addMetaObject<PushouCard>();
             break;
         }
     case 24: {
-            General *xisheng = new General(this, "xisheng", "min", 3, true, true, show);
+            General *xisheng = new General(this, "xisheng", "min", "3", General::Male, trib);
             xisheng->addSkill(new Zhengbing);
             xisheng->addSkill(new Qi6ing);
             addMetaObject<Qi6ingCard>();
             break;
         }
     case 42: {
-            General *fuan = new General(this, "fuan", "guan", 3, true, true, show);
+            General *fuan = new General(this, "fuan", "guan", 3, true, true, true);
             fuan->addSkill(new Tongmou);
             fuan->addSkill(new Xianhai);
             addMetaObject<XianhaiCard>();

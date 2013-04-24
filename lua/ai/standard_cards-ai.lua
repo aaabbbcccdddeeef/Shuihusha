@@ -13,7 +13,7 @@ local function hasGoldArmor(self, enemy)
 	return self:isEquip("GoldArmor", enemy)
 end
 
-function SmartAI:slashProhibit(card,enemy,from)
+function SmartAI:slashProhibit(enemy,card,from)
 	from = from or self.player
 	card = card or sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	for _, askill in sgs.qlist(enemy:getVisibleSkillList()) do
@@ -29,15 +29,15 @@ function SmartAI:slashProhibit(card,enemy,from)
 			if self:isEquip("Vine", enemy) and not (enemy:isChained() and self:isGoodChainTarget(enemy)) then return true end
 		end
 		if enemy:isChained() and (card:isKindOf("NatureSlash") or self:hasSkills("fenhui|paohong")) and not self:isGoodChainTarget(enemy) and
-			self:slashIsEffective(card,enemy) then return true end
-		if self:getCardsNum("Jink",enemy) == 0 and enemy:getHp() < 2 and self:slashIsEffective(card,enemy) then return true end
-		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(card,enemy) then return true end
+			self:slashIsEffective(enemy, card) then return true end
+		if self:getCardsNum("Jink",enemy) == 0 and enemy:getHp() < 2 and self:slashIsEffective(enemy, card) then return true end
+		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(enemy, card) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
 		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and (card:isKindOf("NatureSlash") or from:hasWeapon("fan")) then
 			return true
 		end
 	else
-		if enemy:isChained() and not self:isGoodChainTarget(enemy) and self:slashIsEffective(card,enemy)
+		if enemy:isChained() and not self:isGoodChainTarget(enemy) and self:slashIsEffective(enemy, card)
 			and (card:isKindOf("NatureSlash") or from:hasSkill("fenhui")) then
 			return true
 		end
@@ -46,11 +46,12 @@ function SmartAI:slashProhibit(card,enemy,from)
 		end
 	end
 
-	return self.room:isProhibited(from, enemy, card) or not self:slashIsEffective(card, enemy)
+	return self.room:isProhibited(from, enemy, card) or not self:slashIsEffective(enemy, card)
 end
 
-function SmartAI:slashIsEffective(slash, to, from)
+function SmartAI:slashIsEffective(to, slash, from)
 	from = from or self.player
+	slash = slash or sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	if to:hasSkill("jueming") and to:getHp() == 1 then
 		return false
 	end
@@ -111,7 +112,7 @@ function SmartAI:useCardSlash(card, use)
 	if self.player:hasSkill("jishi") and self:isWeak() and self:getOverflow() == 0 then return end
 	for _, friend in ipairs(self.friends_noself) do
 		local slash_prohibit = false
-		slash_prohibit = self:slashProhibit(card,friend)
+		slash_prohibit = self:slashProhibit(friend,card)
 		if (self.player:hasSkill("qiangqu") and friend:isFemale() and friend:isWounded() and not friend:isNude())
 		or (friend:hasSkill("kongying")
 		and (self:getCardsNum("Jink", friend) > 0 or (not self:isWeak(friend) and self:isEquip("EightDiagram",friend)))
@@ -120,7 +121,7 @@ function SmartAI:useCardSlash(card, use)
 			if not slash_prohibit then
 				if ((self.player:canSlash(friend, card, not no_distance)) or
 					(use.isDummy and (self.player:distanceTo(friend) <= self.predictedRange))) and
-					self:slashIsEffective(card, friend) then
+					self:slashIsEffective(friend, card) then
 					use.card = card
 					if use.to then
 						use.to:append(friend)
@@ -134,13 +135,13 @@ function SmartAI:useCardSlash(card, use)
 
 	local targets = {}
 	local ptarget = self:getPriorTarget()
-	if ptarget and not self:slashProhibit(card, ptarget) then
+	if ptarget and not self:slashProhibit(ptarget,card) then
 		table.insert(targets, ptarget)
 	end
 	self:sort(self.enemies, "defense")
 	for _, enemy in ipairs(self.enemies) do
 		local slash_prohibit = false
-		slash_prohibit = self:slashProhibit(card,enemy)
+		slash_prohibit = self:slashProhibit(enemy,card)
 		if not slash_prohibit and enemy:objectName() ~= ptarget:objectName() then
 			table.insert(targets, enemy)
 		end
@@ -153,7 +154,7 @@ function SmartAI:useCardSlash(card, use)
 		if (self.player:canSlash(target, card, not no_distance) or
 		(use.isDummy and self.predictedRange and (self.player:distanceTo(target) <= self.predictedRange))) and
 		self:objectiveLevel(target) > 3
-		and self:slashIsEffective(card, target) then
+		and self:slashIsEffective(target, card) then
 			-- fill the card use struct
 			local usecard = card
 			local mi = self:searchForEcstasy(use,target,card)
@@ -189,15 +190,15 @@ function SmartAI:useCardSlash(card, use)
 					if self:isEquip("Crossbow") and card:isKindOf("NatureSlash") then
 						local slashes = self:getCards("Slash")
 						for _, slash in ipairs(slashes) do
-							if not slash:isKindOf("NatureSlash") and self:slashIsEffective(slash, target)
-								and not self:slashProhibit(slash, target) then
+							if not slash:isKindOf("NatureSlash") and self:slashIsEffective(target, slash)
+								and not self:slashProhibit(target, slash) then
 								usecard = slash
 								break
 							end
 						end
 					elseif not card:isKindOf("NatureSlash") then
 						local slash = self:getCard("NatureSlash")
-						if slash and self:slashIsEffective(slash, target) and not self:slashProhibit(slash, target) then usecard = slash end
+						if slash and self:slashIsEffective(target, slash) and not self:slashProhibit(target, slash) then usecard = slash end
 					end
 				end
 			end
@@ -217,7 +218,7 @@ function SmartAI:useCardSlash(card, use)
 			if not slash_prohibit then
 				if ((self.player:canSlash(friend, card, not no_distance)) or
 					(use.isDummy and (self.player:distanceTo(friend) <= self.predictedRange))) and
-					self:slashIsEffective(card, friend) then
+					self:slashIsEffective(friend, card) then
 					use.card = card
 					if use.to then
 						use.to:append(friend)
@@ -234,7 +235,7 @@ sgs.ai_skill_use.slash = function(self, prompt)
 	local slash = self:getCard("Slash")
 	if not slash then return "." end
 	for _, enemy in ipairs(self.enemies) do
-		if self.player:canSlash(enemy, slash, true) and not self:slashProhibit(slash, enemy) and self:slashIsEffective(slash, enemy) then
+		if self.player:canSlash(enemy, slash, true) and not self:slashProhibit(enemy, slash) and self:slashIsEffective(enemy, slash) then
 			return ("%s->%s"):format(slash:toString(), enemy:objectName())
 		end
 	end
@@ -242,16 +243,15 @@ sgs.ai_skill_use.slash = function(self, prompt)
 end
 
 sgs.ai_skill_playerchosen.zero_card_as_slash = function(self, targets)
-	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	local targetlist=sgs.QList2Table(targets)
 	self:sort(targetlist, "defense")
 	for _, target in ipairs(targetlist) do
-		if self:isEnemy(target) and not self:slashProhibit(slash ,target) and self:slashIsEffective(slash,target) then
+		if self:isEnemy(target) and not self:slashProhibit(target) and self:slashIsEffective(target) then
 			return target
 		end
 	end
 	for i=#targetlist, 1, -1 do
-		if not self:slashProhibit(slash, targetlist[i]) then
+		if not self:slashProhibit(targetlist[i]) then
 			return targetlist[i]
 		end
 	end
@@ -477,7 +477,7 @@ sgs.ai_skill_cardask["blade-slash"] = function(self, data, pattern, target)
 		return "."
 	end
 	for _, slash in ipairs(self:getCards("Slash")) do
-		if self:slashIsEffective(slash, target) then
+		if self:slashIsEffective(target, slash) then
 			return slash:toString()
 		end
 	end
@@ -1103,14 +1103,14 @@ sgs.dynamic_value.control_card.Collateral = true
 sgs.ai_skill_cardask["collateral-slash"] = function(self, data, pattern, target, target2)
 	if target and target2 and not self:hasSkills(sgs.lose_equip_skill) and self:isEnemy(target2) then
 		for _, slash in ipairs(self:getCards("Slash")) do
-			if self:slashIsEffective(slash, target2) then
+			if self:slashIsEffective(target2, slash) then
 				return slash:toString()
 			end
 		end
 	end
 	if target and target2 and not self:hasSkills(sgs.lose_equip_skill) and self:isFriend(target2) then
 		for _, slash in ipairs(self:getCards("Slash")) do
-			if not self:slashIsEffective(slash, target2) then
+			if not self:slashIsEffective(target2, slash) then
 				return slash:toString()
 			end
 		end

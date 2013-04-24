@@ -3323,10 +3323,13 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:isKindOf("FireAttack") or card:isKindOf("FireSlash")) then
 			return false
 		end
---		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
---			return false
---		end
+		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
+			return false
+		end
 		if player:hasSkill("qianshui") and not self.player:getWeapon() and card:isKindOf("Assassinate") then
+			return false
+		end
+		if player:hasEquip("proud_banner") and not player:isChained() and card:isKindOf("IronChain") then
 			return false
 		end
 	end
@@ -3540,7 +3543,7 @@ function SmartAI:damageMinusHp(self, enemy, type)
 					end
 				end
 				trick_effectivenum = trick_effectivenum + 1
-			elseif acard:isKindOf("Slash") and self:slashIsEffective(acard, enemy) and ( slash_damagenum == 0 or self:isEquip("Crossbow", self.player))
+			elseif acard:isKindOf("Slash") and self:slashIsEffective(enemy, acard) and ( slash_damagenum == 0 or self:isEquip("Crossbow", self.player))
 				and (self.player:distanceTo(enemy) <= self.player:getAttackRange()) then
 				if not (enemy:hasSkill("xiangle") and basicnum < 2) then slash_damagenum = slash_damagenum + 1 end
 				if self:getCardsNum("Analeptic") > 0 and analepticpowerup == 0 and

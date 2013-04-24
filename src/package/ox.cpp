@@ -693,13 +693,16 @@ public:
             return false;
         QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *lili, lily){
-            if(lili != player && lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
-                DamageStruct damage;
-                damage.from = lili;
-                damage.to = player;
-                room->setPlayerFlag(player, "Duoming");
-                room->damage(damage);
-                room->setPlayerFlag(player, "-Duoming");
+            RecoverStruct rec = data.value<RecoverStruct>();
+            for(int i = rec.recover; i > 0; i--){
+                if(lili != player && lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
+                    DamageStruct damage;
+                    damage.from = lili;
+                    damage.to = player;
+                    room->setPlayerFlag(player, "Duoming");
+                    room->damage(damage);
+                    room->setPlayerFlag(player, "-Duoming");
+                }
             }
         }
         return false;

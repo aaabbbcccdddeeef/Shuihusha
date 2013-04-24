@@ -420,7 +420,7 @@ void Client::onPlayerChooseGeneral(const QString &item_name){
     setStatus(Client::NotActive);
     if(!item_name.isEmpty()){
         replyToServer(S_COMMAND_CHOOSE_GENERAL, toJsonString(item_name));
-        Sanguosha->playAudio("choose-item");
+        playAudio("choose-item");
     }
 }
 
@@ -945,7 +945,7 @@ void Client::askForChoice(const Json::Value &ask_str){
     }
 
     ask_dialog = dialog;
-    Sanguosha->playAudio("pop-up");
+    playAudio("pop-up");
     setStatus(ExecDialog);
 }
 
@@ -1071,9 +1071,9 @@ void Client::trust(){
     request("trust .");
 
     if(Self->getState() == "trust")
-        Sanguosha->playAudio("untrust");
+        playAudio("untrust");
     else
-        Sanguosha->playAudio("trust");
+        playAudio("trust");
 
     setStatus(NotActive);
 }
@@ -1600,7 +1600,7 @@ QList<const ClientPlayer*> Client::getPlayers() const{
 void Client::clearTurnTag(){
     switch(Self->getPhase()){
     case Player::Start:{
-            Sanguosha->playAudio("your-turn");
+            playAudio("your-turn");
             QApplication::alert(QApplication::focusWidget());
             break;
     }
