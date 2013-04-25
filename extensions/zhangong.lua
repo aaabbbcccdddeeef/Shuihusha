@@ -5549,9 +5549,6 @@ zgzhangong1 = sgs.CreateTriggerSkill{
 			end
 		end
 
-		if event ==sgs.Death then
-			if owner then askForGiveUp(room,player) end
-		end
 		return false
 	end,
 }
@@ -5592,45 +5589,6 @@ zgzhangong2 = sgs.CreateTriggerSkill{
 		return false
 	end,
 }
-
-function askForGiveUp(room,owner)
-	local mode=room:getMode()
-	local role=owner:getRole()
-
-	if mode=="02_1v1" or not owner:askForSkillInvoke("giveup") then return false end
-
-	if getGameData("hegemony")==1 then
-		for _, p in sgs.qlist(room:getAlivePlayers()) do
-			if p:getRole()==role then room:killPlayer(p) end
-		end
-		local alives=sgs.QList2Table(room:getAlivePlayers())
-		local winner=alives[#alives]
-		if winner:getGeneralName()=="anjiang" then
-			local names= room:getTag(winner:objectName()):toStringList()
-			room:changeHero(winner, names[1], false, false, false, false)
-			if #names==2 then
-				room:changeHero(winner, names[2], false, false, true, false)
-			end
-			room:setPlayerProperty(winner, "kingdom", sgs.QVariant(winner:getGeneral():getKingdom()))
-			room:removeTag(winner:objectName())
-		end
-		for i=1,#alives-1,1 do
-			room:killPlayer(alives[i])
-		end
-		room:getThread():trigger(sgs.GameOverJudge, room, owner)
-		return false
-	end
-
-	if role=="loyalist" or role=="renegade" then
-		room:killPlayer(room:getLord())
-	elseif role=="rebel" then
-		for _, p in sgs.qlist(room:getAlivePlayers()) do
-			if not p:isLord() then room:killPlayer(p) end
-		end
-	end
-	room:getThread():trigger(sgs.GameOverJudge, room, owner)
-end
-
 
 function getWinner(room,victim)
 	local mode=room:getMode()
@@ -5838,7 +5796,6 @@ sgs.LoadTranslationTable {
 	["#gsyNum"]="%from清除了【%arg】盘逃跑记录",
 	["@chooseskill"]="流失体力获得技能",
 	["cancel"] = "取消",
-	["giveup"] = "立即认输并结束游戏",
 	["#enableZhangong"]="【<b><font color='green'>提示</font></b>】: 本局游戏开启了战功统计",
 	["#disableZhangong"]="【<b><font color='red'>提示</font></b>】: 本局游戏禁止了战功统计",
 	["useLuckyCard"]  ="手气卡",
