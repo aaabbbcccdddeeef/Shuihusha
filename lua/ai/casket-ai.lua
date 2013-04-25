@@ -39,7 +39,7 @@ fanyin_skill.name = "fanyin"
 table.insert(sgs.ai_skills, fanyin_skill)
 fanyin_skill.getTurnUseCard = function(self)
 	if self.player:hasUsed("FanyinCard") then return end
-	local cards = self.player:getCards("he")
+	local cards = self.player:getCards("h")
 	cards=sgs.QList2Table(cards)
 	if #cards < 2 or #self.enemies < 2 then return end
 	self:sortByUseValue(cards, true)

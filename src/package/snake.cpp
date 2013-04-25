@@ -1011,6 +1011,7 @@ void ZhaoanCard::onEffect(const CardEffectStruct &effect) const{
     const Card *resp = room->askForCard(effect.to, "Slash,Weapon", "@zhaoan:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(resp){
         room->playSkillEffect(skill_name, 2);
+        effect.from->obtainCard(resp);
         effect.to->drawCards(2);
     }
     else{

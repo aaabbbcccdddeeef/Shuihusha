@@ -129,7 +129,7 @@ bool FanyinCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void FanyinCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->gainJur("sleep_jur", 3);
+    effect.to->gainJur("sleep_jur", 2);
 }
 
 class Fanyin: public ViewAsSkill{
@@ -143,6 +143,8 @@ public:
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
         foreach(CardItem *item, selected){
+            if(to_select->isEquipped())
+                return false;
             if(to_select->getFilteredCard()->getTypeId() == item->getFilteredCard()->getTypeId())
                 return false;
         }
