@@ -450,6 +450,7 @@ public:
 
             room->sendJudgeResult(player);
         }
+        player->tag.remove("Judge");
         return false;
     }
 };

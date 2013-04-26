@@ -96,12 +96,16 @@ end
 -- fanrui
 -- hunyuan
 sgs.ai_skill_invoke["hunyuan"] = function(self, data)
-	local damage = data:toDamage()
-	local recover = data:toRecover()
-	if damage or recover then
-		return self.player:getPile("shang"):length() < 2
+--	local damage = data:toDamage()
+--	local recover = data:toRecover()
+--	if damage or recover then
+	local hunyuan_data = data:toInt()
+	if hunyuan_data > 0 then
+		if self.player:getMaxHp() < 3 then return true end
+		if self.player:getMaxHp() == 3 then return math.random(1, 3) == 2 end
+		return not self.player:hasMark("wudao_wake") and self.player:getPile("shang"):length() < 2
 	else
-		local judge = data:toJudge()
+		local judge = self.player:getTag("Judge"):toJudge()
 		if judge and self:needRetrial(judge) then
 			local shang = self.player:getPile("shang")
 			shang = sgs.QList2Table(shang)

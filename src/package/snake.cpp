@@ -253,6 +253,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        QVariant hunyuan_data = -1;
         if(event != AskForRetrial){
             int number = 0;
             if(data.canConvert<DamageStruct>()){
@@ -263,43 +264,50 @@ public:
                 RecoverStruct reco = data.value<RecoverStruct>();
                 number = reco.recover;
             }
-            if(number < 1 || !player->askForSkillInvoke(objectName(), data))
+            if(number < 1)
                 return false;
-            room->playSkillEffect(objectName());
-            for(int i = 0; i < number; i++){
-                if(player->isDead())
-                    break;
-                const Card *card = room->peek();
-                room->showCard(player, card->getEffectiveId());
-                room->getThread()->delay();
-                player->addToPile("shang", card);
+            hunyuan_data = number;
+            if(player->askForSkillInvoke(objectName(), hunyuan_data)){
+                room->playSkillEffect(objectName());
+                for(int i = 0; i < number; i++){
+                    if(player->isDead())
+                        break;
+                    const Card *card = room->peek();
+                    room->showCard(player, card->getEffectiveId());
+                    room->getThread()->delay();
+                    player->addToPile("shang", card);
+                }
             }
         }
         else{
+            if(player->getPile("shang").isEmpty())
+                return false;
             JudgeStar judge = data.value<JudgeStar>();
             player->tag["Judge"] = data;
-            if(player->getPile("shang").isEmpty() || !player->askForSkillInvoke(objectName(), data))
-                return false;
 
-            room->playSkillEffect(objectName());
-            QList<int> card_ids = player->getPile("shang");
-            room->fillAG(card_ids, player);
-            int card_id = room->askForAG(player, card_ids, false, objectName());
-            player->invoke("clearAG");
-            if(card_id > 0){
-                //player->addToPile("shang", judge->card);
-                judge->card = Sanguosha->getCard(card_id);
-                room->moveCardTo(judge->card, NULL, Player::Special);
+            if(player->askForSkillInvoke(objectName(), hunyuan_data)){
+                room->playSkillEffect(objectName());
+                QList<int> card_ids = player->getPile("shang");
+                room->fillAG(card_ids, player);
+                int card_id = room->askForAG(player, card_ids, false, objectName());
+                player->invoke("clearAG");
+                if(card_id > 0){
+                    player->addToPile("shang", judge->card);
+                    judge->card = Sanguosha->getCard(card_id);
+                    room->moveCardTo(judge->card, NULL, Player::Special);
 
-                LogMessage log;
-                log.type = "$ChangedJudge";
-                log.from = player;
-                log.to << judge->who;
-                log.card_str = QString::number(card_id);
-                room->sendLog(log);
+                    LogMessage log;
+                    log.type = "$ChangedJudge";
+                    log.from = player;
+                    log.to << judge->who;
+                    log.card_str = QString::number(card_id);
+                    room->sendLog(log);
 
-                room->sendJudgeResult(player);
+                    room->sendJudgeResult(player);
+                }
             }
+
+            player->tag.remove("Judge");
         }
         return false;
     }

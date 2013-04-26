@@ -839,7 +839,8 @@ function SmartAI:getValuableCard(who)
 
 	local equips = sgs.QList2Table(who:getEquips())
 	for _,equip in ipairs(equips) do
-		if self:hasSkills("xiagu|zhiqu-n|zhiqu-c|huxiao|shexin|maiyi", who) then return equip:getEffectiveId() end
+		if who:hasSkill("liushou") and not who:faceUp() and not who:isKongcheng() then return who:getRandomHandCardId() end
+		if self:hasSkills("xiagu|wuzhou|huxiao|shexin|maiyi", who) then return equip:getEffectiveId() end
 		if self:hasSkills("feiqiang|maidao|yinlang", who) and equip:isKindOf("Weapon") then return equip:getEffectiveId() end
 	end
 
@@ -859,13 +860,10 @@ function SmartAI:getValuableCard(who)
 	end
 
 	if offhorse then
-		if who:hasSkill("xiaoji") and who:getHandcardNum() >= who:getHp() then
-		else
-			for _,friend in ipairs(self.friends) do
-				if who:distanceTo(friend) == who:getAttackRange() and
-				who:getAttackRange() > 1 then
-					return offhorse:getEffectiveId()
-				end
+		for _,friend in ipairs(self.friends) do
+			if who:distanceTo(friend) == who:getAttackRange() and
+			who:getAttackRange() > 1 then
+				return offhorse:getEffectiveId()
 			end
 		end
 	end

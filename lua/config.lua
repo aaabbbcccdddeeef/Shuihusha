@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130425",
-	version_name = "F5.0",
+	version = "20130427",
+	version_name = "F5.1",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
@@ -52,7 +52,7 @@ config = {
 	},
 
 	ai_names = {
-		"太阳神的三国杀",
+		"太阳神Style",
 		"启姐的小雏田",
 		"海泡叉的乱码",
 		"威廉古堡",
@@ -60,9 +60,6 @@ config = {
 		"donle的最后之作",
 		"安歧的小黑屋",
 		"战栗的乐谱",
-		"中国的钓鱼岛",
-		"科比挂的柯南",
-		"贝克街的亡灵",
 		"导线的电阻",
 		"QB的契约",
 		"吉祥物小萨",
@@ -78,6 +75,8 @@ config = {
 		"裤衩反穿",
 		"活泼的P仔",
 		"趴趴走的呼呼",
+		"笛声悠扬",
+		"鬼心巧克力",
 		"小爺綠豆沙",
 		"单身的活宝",
 		"超级无敌小柴进",
@@ -89,7 +88,9 @@ config = {
 		"爱上小衣的殃",
 		"纠结的金田一君",
 		"小辰的超兽伪画",
+		"第十一根草花",
 		"肉酱茧",
+		"客串的冰爷",
 	},
 
 	color_guan = "#547998",

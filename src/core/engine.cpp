@@ -662,12 +662,12 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
     Q_ASSERT(all_generals.count() >= count);
 
     if(Config.EnableBasara)
-        general_set = general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
+        general_set = general_set.subtract(Config.value("Banlist/Basara", QStringList()).toStringList().toSet());
     if(Config.EnableHegemony)
-        general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
+        general_set = general_set.subtract(Config.value("Banlist/Hegemony", QStringList()).toStringList().toSet());
 
     if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd") || ServerInfo.GameMode.endsWith("pz"))
-        general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
+        general_set.subtract(Config.value("Banlist/Roles", QStringList()).toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();
 
@@ -685,7 +685,7 @@ QList<int> Engine::getRandomCards() const{
     foreach(Card *card, cards){
         card->clearFlags();
 
-        QStringList bancards = Config.value("Banlist/Cards", "").toStringList();
+        QStringList bancards = Config.value("Banlist/Cards", QStringList()).toStringList();
         if(bancards.contains(card->objectName()) || bancards.contains(card->getSubtype()))
             continue;
 
