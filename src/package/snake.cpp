@@ -496,25 +496,24 @@ bool FeizhenCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void FeizhenCard::onUse(Room *room, const CardUseStruct &card_use) const{
     QList<ServerPlayer *> targets = card_use.to;
-    PlayerStar target; PlayerStar source = card_use.from;
+    PlayerStar source = card_use.from;
     if(targets.length() > 1)
-        target = targets.at(1);
-    else if(targets.length() == 1 && source->canSlash(targets.first())){
-        target = targets.first();
-    }
+        targets.removeFirst();
+    else if(targets.length() == 1 && source->canSlash(targets.first()))
+        targets = card_use.to;
     else
         return;
 
-    const Card *weapon = target->getWeapon();
+    const Card *weapon = card_use.to.first()->getWeapon();
     if(weapon){
         Slash *slash = new Slash(weapon->getSuit(), weapon->getNumber());
         slash->setSkillName(skill_name);
-        slash->addSubcard(weapon);
-        room->throwCard(weapon->getId(), target, source);
+        slash->addSubcard(weapon->getEffectiveId());
+        //room->throwCard(weapon->getEffectiveId(), target, source);
         CardUseStruct use;
         use.card = slash;
         use.from = source;
-        use.to << target;
+        use.to = targets;
         room->useCard(use);
     }
 }

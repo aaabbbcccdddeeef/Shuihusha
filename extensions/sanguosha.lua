@@ -1,8 +1,8 @@
 module("extensions.sanguosha", package.seeall)
 extension = sgs.Package("sanguosha")
 
-miheng = sgs.General(extension, "miheng", "god", 3)
-xiahoudun = sgs.General(extension, "xiahoudun", "god", 10)
+miheng = sgs.General(extension, "miheng", "god", "3/4")
+xiahoudun = sgs.General(extension, "xiahoudun", "god", "10/13", sgs.General_Neuter)
 
 jieao=sgs.CreateTriggerSkill{
 	name="jieao",

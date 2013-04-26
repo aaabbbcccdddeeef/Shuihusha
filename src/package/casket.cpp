@@ -234,7 +234,7 @@ CasketPackage::CasketPackage()
     moon_panqiaoyun->addSkill(new Tumi);
     moon_panqiaoyun->addSkill(new Jueyuan);
 
-    General *sun_peiruhai = new General(this, "sun_peiruhai", "sun", "3/4");
+    General *sun_peiruhai = new General(this, "sun_peiruhai", "sun", 3);
     sun_peiruhai->addSkill(new Fanyin);
     sun_peiruhai->addSkill(new Lichen);
     sun_peiruhai->addSkill(new Lunhui);

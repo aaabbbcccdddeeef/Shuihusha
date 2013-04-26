@@ -167,53 +167,31 @@ local feizhen_skill = {}
 feizhen_skill.name = "feizhen"
 table.insert(sgs.ai_skills, feizhen_skill)
 feizhen_skill.getTurnUseCard = function(self)
-	if not self:slashIsAvailable(self.player) then return end
-	for _, enemy in ipairs(self.enemies) do
-		local weapon = enemy:getWeapon()
-		if weapon then
-			return sgs.Card_Parse("@FeizhenCard=.")
-		end
-	end
-end
-sgs.ai_skill_use_func["FeizhenCard"] = function(card, use, self)
+--	if not self:slashIsAvailable() then return end
+	local weapon
 	self:sort(self.enemies, "threat")
-
 	for _, friend in ipairs(self.friends_noself) do
 		if friend:getWeapon() and self:hasSkills(sgs.lose_equip_skill, friend) then
-			for _, enemy in ipairs(self.enemies) do
-				if self.player:canSlash(enemy) then
-					use.card = card
-					if use.to then
-						use.to:append(friend)
-						use.to:append(enemy)
-					end
-					return
-				end
-			end
+			weapon = friend:getWeapon()
+			break
 		end
 	end
 	for _, enemy in ipairs(self.enemies) do
-		if not self.room:isProhibited(self.player, enemy, card)
-			and not self:hasSkill(sgs.lose_equip_skill, enemy)
-			and enemy:getWeapon() then
-
-			local enemies = self.enemies
-			self:sort(enemies, "handcard")
-			for _, enemy2 in ipairs(enemies) do
-				if self.player:canSlash(enemy2) then
-					use.card = card
-					if use.to then
-						use.to:append(enemy)
-						if enemy ~= enemy2 then
-							use.to:append(enemy2)
-						end
-					end
-					return
-				end
-			end
+		if not self:hasSkill(sgs.lose_equip_skill, enemy) and enemy:getWeapon() and not weapon then
+			weapon = enemy:getWeapon()
+			break
 		end
 	end
-	return "."
+
+	if weapon then
+		local suit = weapon:getSuitString()
+		local number = weapon:getNumberString()
+		local card_id = weapon:getEffectiveId()
+		local card_str = ("slash:feizhen[%s:%s]=%d"):format(suit, number, card_id)
+		local slash = sgs.Card_Parse(card_str)
+		assert(slash)
+		return slash
+	end
 end
 
 -- feizhen-slash&jink

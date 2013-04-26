@@ -2222,9 +2222,9 @@ void Room::chooseGenerals(){
 
     // for lord.
     const int nonlord_prob = 5;
+    ServerPlayer *the_lord = getLord();
     if(!Config.EnableHegemony){
         QStringList lord_list;
-        ServerPlayer *the_lord = getLord();
         if(Config.EnableSame){
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
             the_lord = getOwner();
@@ -2251,9 +2251,10 @@ void Room::chooseGenerals(){
         if(!Config.EnableBasara)
             broadcastProperty(the_lord, "general", general);
         if(Config.EnableSame){ //@todo: crash and the lord different
-            foreach(ServerPlayer *p, m_players)
+            foreach(ServerPlayer *p, m_players){
                 if(p != the_lord)
                     p->setGeneralName(general);
+            }
             if(Config.Enable2ndGeneral){
                 QStringList bans;
                 bans << general;
@@ -2263,19 +2264,18 @@ void Room::chooseGenerals(){
                 foreach(ServerPlayer *p, m_players)
                     p->setGeneral2Name(general);
             }
-            //getLord()->setGeneralName(getOwner()->getGeneralName());
+            //transfigure(getLord(), getOwner()->getGeneralName());
             return;
         }
     }
     QList<ServerPlayer *> to_assign = m_players;
-    if(!Config.EnableHegemony)to_assign.removeOne(getLord());
+    if(!Config.EnableHegemony)
+        to_assign.removeOne(the_lord);
     assignGeneralsForPlayers(to_assign);
-    foreach(ServerPlayer *player, to_assign){
+    foreach(ServerPlayer *player, to_assign)
         _setupChooseGeneralRequestArgs(player);
-    }
     doBroadcastRequest(to_assign, S_COMMAND_CHOOSE_GENERAL);
-    foreach (ServerPlayer *player, to_assign)
-    {
+    foreach(ServerPlayer *player, to_assign){
         if (player->getGeneral() != NULL) continue;
         Json::Value generalName = player->getClientReply();
         if (!player->m_isClientResponseReady || !generalName.isString()

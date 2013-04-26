@@ -1540,7 +1540,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *nana, QVariant &data) const{
-        if(nana->getHp() == 1 && nana->getPhase() == Player::NotActive)
+        if(nana->getHp() == 1)
             room->playSkillEffect("jueming");
         return false;
     }
