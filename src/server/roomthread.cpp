@@ -191,8 +191,18 @@ void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
     foreach(const TriggerSkill *skill, player->getTriggerSkills()){
         addTriggerSkill(skill);
 
-        if(invoke_game_start && skill->getTriggerEvents().contains(GameStart))
-            skill->trigger(GameStart, room, player, void_data);
+        if(invoke_game_start){
+            foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
+                QList<const Skill *> vis_skill = tmp->getVisibleSkillList();
+                foreach(const Skill *skill, vis_skill){
+                    const GameStartSkill *start_skill = qobject_cast<const GameStartSkill*>(skill);
+                    if(start_skill)
+                        start_skill->onGameStart(tmp);
+                }
+            }
+            if(skill->getTriggerEvents().contains(GameStart))
+                skill->trigger(GameStart, room, player, void_data);
+        }
     }
 }
 

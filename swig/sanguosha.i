@@ -292,7 +292,7 @@ public:
 	bool hasNullification(bool include_counterplot = false) const;
 	void kick();
 	bool pindian(ServerPlayer *target, const char *reason, const Card *card1 = NULL);
-	void turnOver();
+	bool turnOver();
 	void play(QList<Player::Phase> set_phases = QList<Player::Phase>());
 
 	QList<Player::Phase> &getPhases();

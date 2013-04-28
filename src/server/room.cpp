@@ -340,9 +340,8 @@ void Room::sendJudgeResult(ServerPlayer *moder){
 
 QList<int> Room::getNCards(int n, bool update_pile_number){
     QList<int> card_ids;
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < n; i++)
         card_ids << drawCard();
-    }
 
     if(update_pile_number)
         broadcastInvoke("setPileNumber", QString::number(draw_pile->length()));
@@ -997,8 +996,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         }
     }
 
-    if(card == NULL)
-    {
+    if(card == NULL){
         QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+"nil"+"_");
         thread->trigger(ChoiceMade, this, player, decisionData);
         return NULL;
@@ -1020,6 +1018,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             moveCardTo(card, NULL, Player::DiscardedPile, true);
             //throwCard(card, trigger_event == CardDiscarded ? player: NULL);
 
+        if(Config.EnableSkillEmotion){
+            QString skill_name = prompt.split(":").first();
+            skill_name.remove("@");
+            setEmotion(player, "skill/" + skill_name);
+        }
         if(card->getSkillName() == "spear")
             player->playCardEffect("Espear", "weapon");
 
