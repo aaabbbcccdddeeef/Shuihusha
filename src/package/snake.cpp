@@ -182,13 +182,6 @@ bool SinueCard::targetFilter(const QList<const Player *> &targets, const Player 
 void SinueCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
 
-    LogMessage log;
-    log.type = "#UseSkill";
-    log.from = effect.from;
-    log.to << effect.to;
-    log.arg = "sinue";
-    room->sendLog(log);
-
     DamageStruct damage;
     damage.damage = 2;
     damage.from = effect.from;
@@ -292,7 +285,8 @@ public:
                 int card_id = room->askForAG(player, card_ids, false, objectName());
                 player->invoke("clearAG");
                 if(card_id > 0){
-                    player->addToPile("shang", judge->card);
+                    if(!player->hasMark("wudao_wake"))
+                        player->addToPile("shang", judge->card);
                     judge->card = Sanguosha->getCard(card_id);
                     room->moveCardTo(judge->card, NULL, Player::Special);
 

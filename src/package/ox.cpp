@@ -443,14 +443,15 @@ LianzhuCard::LianzhuCard(){
 }
 
 void LianzhuCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    card_use.from->turnOver();
-    ArcheryAttack *ar = new ArcheryAttack(Card::NoSuit, 0);
-    ar->setSkillName("lianzhu");
-    CardUseStruct use;
-    use.card = ar;
-    use.from = card_use.from;
-    use.to = card_use.to;
-    room->useCard(use);
+    if(!card_use.from->turnOver()){
+        ArcheryAttack *ar = new ArcheryAttack(Card::NoSuit, 0);
+        ar->setSkillName("lianzhu");
+        CardUseStruct use;
+        use.card = ar;
+        use.from = card_use.from;
+        use.to = card_use.to;
+        room->useCard(use);
+    }
 }
 
 class Lianzhu: public ZeroCardViewAsSkill{
@@ -616,15 +617,8 @@ public:
             judge.who = ren;
 
             room->judge(judge);
-            if(judge.isGood()){
-                RecoverStruct rev;
-                rev.card = judge.card;
-                rev.recover = ren->getLostHp(false) - ren->getMaxHp() + 1;
-                rev.who = ren;
-                room->recover(ren, rev);
-                if(ren->getHp() != 1)
-                    room->setPlayerProperty(ren, "hp", 1);
-            }
+            if(judge.isGood())
+                room->setPlayerProperty(ren, "hp", 1);
         }
         return false;
     }
@@ -633,6 +627,7 @@ public:
 DuomingCard::DuomingCard(){
     target_fixed = true;
     mute = true;
+    will_throw = false;
 }
 
 void DuomingCard::use(Room *m, ServerPlayer *source, const QList<ServerPlayer *> &) const{

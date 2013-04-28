@@ -142,13 +142,10 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        foreach(CardItem *item, selected){
-            if(to_select->isEquipped())
-                return false;
+        foreach(CardItem *item, selected)
             if(to_select->getFilteredCard()->getTypeId() == item->getFilteredCard()->getTypeId())
                 return false;
-        }
-        return true;
+        return !to_select->isEquipped();
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
