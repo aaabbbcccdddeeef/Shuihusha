@@ -39,6 +39,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->nullificationSpinBox->setValue(Config.NullificationCountDown);
     ui->gameStartSpinBox->setValue(Config.CountDownSeconds);
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
+    ui->showResume->setChecked(Config.value("ShowResume", true).toBool());
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->enableLua->setChecked(Config.EnableLua);
     ui->muteLoad->setChecked(Config.value("MuteLoad", false).toBool());
@@ -199,6 +200,7 @@ void ConfigDialog::saveConfig()
     Config.EnableLua = ui->enableLua->isChecked();
     Config.setValue("EnableLua", Config.EnableLua);
 
+    Config.setValue("ShowResume", ui->showResume->isChecked());
     Config.setValue("MuteLoad", ui->muteLoad->isChecked());
 
     Config.EnableSkillEmotion = ui->skillEmotionBox->isChecked();

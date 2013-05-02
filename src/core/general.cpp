@@ -276,15 +276,17 @@ QString General::getWinword() const{
 }
 
 QString General::getResume() const{
+    if(!Config.value("ShowResume", true).toBool())
+        return QString();
     QFile file("etc/resume.txt");
     if(file.open(QIODevice::ReadOnly)){
         QTextStream stream(&file);
         while(!stream.atEnd()){
-            //QString line = stream.readLine();
-            QString name;
-            QString resume;
-
-            stream >> name >> resume;
+            QString line = stream.readLine();
+            QString name = line.split(" ").first();
+            if(name.startsWith("--"))
+                continue;
+            QString resume = line.split(" ").last();
 
             if(objectName() == name){
                 file.close();

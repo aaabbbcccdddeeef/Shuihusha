@@ -549,7 +549,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>110</y>
+       <y>140</y>
        <width>239</width>
        <height>16</height>
       </rect>
@@ -565,7 +565,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>140</y>
+       <y>170</y>
        <width>239</width>
        <height>16</height>
       </rect>
@@ -584,7 +584,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>170</y>
+       <y>200</y>
        <width>239</width>
        <height>16</height>
       </rect>
@@ -665,6 +665,22 @@
        </widget>
       </item>
      </layout>
+    </widget>
+    <widget class="QCheckBox" name="showResume">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>239</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show resume</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_2">

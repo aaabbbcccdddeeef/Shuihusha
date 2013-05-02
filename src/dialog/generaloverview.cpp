@@ -245,11 +245,11 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 
     QString resum = general->getResume();
     if(!resum.isNull()){
-        QString resume = Sanguosha->translate("resume::");
-        if(general_name == "tora")
-            resume = Sanguosha->translate("resume:;");
-        for(int i=0; i < resum.length();i ++){
-            resume.append(resum.at(i));
+        QString resume = Sanguosha->translate("resume:human");
+        if(general->isNeuter())
+            resume = Sanguosha->translate("resume:animal");
+        for(int i=0; i < resum.length();i += 25){
+            resume.append(resum.mid(i, 25));
             if((i + 1) % 25 == 0)
                 resume.append("<br />");
         }
