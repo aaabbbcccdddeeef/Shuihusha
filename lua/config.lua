@@ -203,11 +203,16 @@ ban_list = { -- 初始禁表设置
 		"zhaoji+andaoquan",
 --		"pangwanchun+tora",
 		"tongguan+suochao",
-
-		"zhaoji+xuanzan",
 		"zhaoji+liangshijie",
+		"zhaoji+xuanzan",
 		"liangshijie+xuanzan",
-		"pangwanchun+xuanzan",
+--		"pangwanchun+xuanzan",
+--		"pangwanchun+liangshijie",
+
+--		"tongguan+liangshijie",
+		"suyuanjing+peixuan",
+		"moon_panqiaoyun+qiongyaonayan",
+
 		"fangjie+songjiang",
 		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",
