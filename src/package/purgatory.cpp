@@ -118,9 +118,11 @@ void SpinDestiny::onUse(Room *room, const CardUseStruct &card_use) const{
     }
     TrickCard::onUse(room, use);
     foreach(ServerPlayer *dead, deads){
-        room->revivePlayer(dead);
         if(dead->getMaxHp() <= 0)
-            room->setPlayerProperty(dead, "maxhp", 1);
+            continue;
+        room->revivePlayer(dead);
+        //if(dead->getMaxHp() <= 0)
+        //    room->setPlayerProperty(dead, "maxhp", 1);
         room->setPlayerProperty(dead, "hp", 1);
     }
 }
@@ -156,6 +158,8 @@ void EdoTensei::onEffect(const CardEffectStruct &effect) const{
     int index = targets.indexOf(hcoi);
     room->setEmotion(effect.from, "edo_tensei");
     PlayerStar revivd = room->findPlayer(targets_object.at(index), true);
+    if(revivd->getMaxHp() <= 0)
+        return;
     room->revivePlayer(revivd);
     room->setPlayerProperty(revivd, "hp", 1);
     revivd->drawCards(3);
@@ -241,7 +245,7 @@ public:
         targets << target->getNextAlive();
         if(target->getRoom()->getAlivePlayers().count() > 2){
             foreach(ServerPlayer *tmp, target->getRoom()->getOtherPlayers(target)){
-                if(tmp->getNextAlive() == target){
+                if(tmp->getNext() == target){
                     targets << tmp;
                     break;
                 }

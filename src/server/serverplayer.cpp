@@ -540,8 +540,8 @@ bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Ca
     return success;
 }
 
-void ServerPlayer::turnOver(){
-    room->getThread()->trigger(TurnedOver, room, this);
+bool ServerPlayer::turnOver(){
+    return room->getThread()->trigger(TurnedOver, room, this);
 }
 
 void ServerPlayer::play(QList<Player::Phase> set_phases){

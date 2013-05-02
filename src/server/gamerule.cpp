@@ -1353,7 +1353,7 @@ ConjuringRule::ConjuringRule(QObject *parent)
 }
 
 int ConjuringRule::getPriority(TriggerEvent e) const{
-    if(e == DamageDone)
+    if(e == DamageDone || e == AskForPeaches)
         return 1;
     else
         return -1;
@@ -1440,6 +1440,18 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             player->removeJur("sleep_jur");
         break;
     }
+    case AskForPeaches:{
+        if(player->hasMark("sleep_jur")){
+            if(player->getPhase() == Player::NotActive){
+                LogMessage log;
+                log.from = player;
+                log.type = "#Sleep";
+                room->sendLog(log);
+                return true;
+            }
+        }
+        break;
+    }
     case CardAsk:
     case CardUseAsk:{
         QString pattern = data.toString();
@@ -1481,6 +1493,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                 room->setPlayerProperty(player, "maxhp", 1);
                 room->setPlayerProperty(player, "hp", 1);
                 player->drawCards(3);
+                return true;
             }
         }
         break;

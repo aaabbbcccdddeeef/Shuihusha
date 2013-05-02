@@ -242,11 +242,11 @@ void General::winWord() const{
 QString General::getLastword() const{
     QString general_name = objectName();
     QString last_word = Sanguosha->translate("~" + general_name);
-    if(last_word.startsWith("~")){
+    /*if(last_word.startsWith("~")){
         QStringList origin_generals = general_name.split("_");
         if(origin_generals.length()>1)
             last_word = Sanguosha->translate(("~") +  origin_generals.at(1));
-    }
+    }*/
 
     if(last_word.startsWith("~") && general_name.endsWith("f")){
         QString origin_general = general_name;
@@ -273,6 +273,27 @@ QString General::getWinword() const{
             win_word = Sanguosha->translate(("`") + origin_general);
     }
     return win_word;
+}
+
+QString General::getResume() const{
+    QFile file("etc/resume.txt");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        while(!stream.atEnd()){
+            //QString line = stream.readLine();
+            QString name;
+            QString resume;
+
+            stream >> name >> resume;
+
+            if(objectName() == name){
+                file.close();
+                return resume;
+            }
+        }
+        file.close();
+    }
+    return QString();
 }
 
 QSize General::BigIconSize(94, 96);

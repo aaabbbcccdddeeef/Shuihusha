@@ -243,8 +243,8 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     else
         ui->changeGeneralButton->hide();
 
-    QString resum = Sanguosha->translate("resume:" + general->objectName());
-    if(!resum.startsWith("resume:")){
+    QString resum = general->getResume();
+    if(!resum.isNull()){
         QString resume = Sanguosha->translate("resume::");
         if(general_name == "tora")
             resume = Sanguosha->translate("resume:;");
@@ -257,6 +257,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     }
     else
         ui->generalPhoto->setToolTip(QString());
+
     ui->generalPhoto->setWhatsThis("FAQ:"); //@todo
 
     QList<const Skill *> skills = general->getVisibleSkillList();
@@ -276,7 +277,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 
     addWakeLines(general_name);
 
-    QString last_word = Sanguosha->translate("~" + general->objectName());
+    QString last_word = general->getLastword();
     if(!last_word.startsWith("~")){
         QCommandLinkButton *death_button = new QCommandLinkButton(tr("Death"), last_word);
         button_layout->addWidget(death_button);
