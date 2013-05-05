@@ -260,6 +260,7 @@ private:
     QSet<QString> jilei_set;
     QSet<QString> lock_card;
 
+    //QString conjur;
     StatisticsStruct *player_statistics;
 
 signals:

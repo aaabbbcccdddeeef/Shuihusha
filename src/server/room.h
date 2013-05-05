@@ -39,6 +39,7 @@ public:
     const Scenario *getScenario() const;
     RoomThread *getThread() const;
     void playSkillEffect(const QString &skill_name, int index = -1);
+    void playSpecializationEffect(const QString &base_skill, const QString &parent, int index = -1);
     void playExtra(TriggerEvent event, const QVariant &data = QVariant());
     ServerPlayer *getCurrent() const;
     void setCurrent(ServerPlayer *current);

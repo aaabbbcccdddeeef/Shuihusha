@@ -3368,6 +3368,11 @@ void Room::playSkillEffect(const QString &skill_name, int index){
     broadcastInvoke("playSkillEffect", QString("%1:%2").arg(skill_name).arg(index));
 }
 
+void Room::playSpecializationEffect(const QString &base_skill, const QString &parent, int index){
+    QString skill_name = QString("%1@%2").arg(base_skill).arg(parent);
+    broadcastInvoke("playSkillEffect", QString("%1:%2").arg(skill_name).arg(index));
+}
+
 void Room::startTest(const QString &to_test){
     fillRobotsCommand(NULL, ".");
     setProperty("to_test", to_test);

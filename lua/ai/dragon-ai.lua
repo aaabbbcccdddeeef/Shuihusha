@@ -17,7 +17,10 @@ xiashu_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["XiashuCard"]=function(card,use,self)
 	self:sort(self.friends)
-	if use.to then use.to:append(self.friends[1]) end
+	if use.to then
+		self:speak("xiashu")
+		use.to:append(self.friends[1])
+	end
 	use.card=card
 end
 
@@ -50,8 +53,11 @@ sgs.ai_skill_use_func["TaolueCard"]=function(card,use,self)
 	self:sort(self.enemies, "handcard")
 	for _, enemy in ipairs(self.enemies) do
 		if not enemy:isKongcheng() and not enemy:getEquips():isEmpty() then
-			if use.to then use.to:append(enemy) end
 			use.card=card
+			if use.to then
+				self:speak("taolue")
+				use.to:append(enemy)
+			end
 			return
 		end
 	end
@@ -72,6 +78,7 @@ sgs.ai_skill_cardask["@xiaozhan"] = function(self, data)
 		if enemy:getHandcardNum() > 0 and enemy:getHandcardNum() < 2 then
 			local cards = sgs.QList2Table(self.player:getCards("he"))
 			self:sortByUseValue(cards, true)
+			self:speak("xiaozhan")
 			return cards[1]:getEffectiveId()
 		end
 	end
@@ -103,6 +110,7 @@ sgs.ai_skill_use["@@anxi"] = function(self, prompt)
 	self:sort(self.enemies, "hp2")
 	for _, enemy in ipairs(self.enemies) do
 		if enemy:getHp() >= self.player:getHp() then
+			self:speak("anxi")
 			return "@AnxiCard=" .. card:getEffectiveId() .. "->" .. enemy:objectName()
 		end
 	end
@@ -177,6 +185,7 @@ wugou_skill.getTurnUseCard = function(self)
 		local card_str = ("assassinate:wugou[%s:%s]=%d+%d"):format(first_suit, first_number, first_id, second_id)
 		local assassinate = sgs.Card_Parse(card_str)
 		assert(assassinate)
+		self:speak("wugou")
 		return assassinate
 	end
 end
@@ -222,6 +231,7 @@ end
 -- gaoyanei
 -- jiandiao
 sgs.ai_skill_choice["jiandiao"] = function(self, choice, data)
+	self:speak("jiandiao")
 	if choice == "diao+nil" then return "diao" end
 	local source = data:toDamage().from
 	if self:isFriend(source) then
@@ -330,6 +340,7 @@ sgs.ai_skill_cardask["@jianwu-slash"] = function(self, data)
 	local card = self:getCard("Slash")
 	if self:isEnemy(target) and card then
 		if not self:slashProhibit(target, card, self.lizhu) then
+			self:speak("jianwu", self.lizhu)
 			return card:getEffectiveId()
 		end
 	end
@@ -352,6 +363,7 @@ shexin_skill.getTurnUseCard = function(self)
 		self:sortByUseValue(cards, true)
 		for _, card in ipairs(cards) do
 			if card:isNDTrick() or card:isKindOf("EquipCard") then
+				self:speak("shexin")
 				return sgs.Card_Parse("@ShexinCard=" .. card:getEffectiveId())
 			end
 		end
@@ -405,6 +417,7 @@ jiaozhen_skill.getTurnUseCard = function(self)
 	local card_str = ("duel:jiaozhen[%s:%s]=%d"):format(suit, number, card_id)
 	local duel = sgs.Card_Parse(card_str)
 	assert(duel)
+	self:speak("jiaozhen")
 	return duel
 end
 
