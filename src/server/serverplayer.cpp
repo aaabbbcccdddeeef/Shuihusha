@@ -660,8 +660,15 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
         return;
     if(!overlying && getMark(jur) > 0) //do not overlying
         return;
+
     QVariant data = jur;
     if(room->getThread()->trigger(PreConjuring, room, this, data))
+        return;
+
+    data = QString("%1*%2").arg(jur).arg(100); //sleep_jur*50
+    room->getThread()->trigger(ConjuringProbability, room, this, data);
+    int percent = QString(data.toString().split("*").last()).toInt();
+    if(qrand() % 100 + 1 > percent)
         return;
 
     foreach(QString mark, getAllMarkName(3, "_jur"))

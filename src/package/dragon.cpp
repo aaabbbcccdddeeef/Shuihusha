@@ -278,10 +278,6 @@ public:
         frequency = Compulsory;
     }
 
-    virtual int getPriority(TriggerEvent) const{
-        return -1;
-    }
-
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }

@@ -89,6 +89,8 @@ config = {
 		"纠结的金田一君",
 		"小辰的超兽伪画",
 		"第十一根草花",
+		"堕入轮回的樊瑞",
+		"虎虎生威",
 		"肉酱茧",
 		"客串的冰爷",
 	},
@@ -203,11 +205,16 @@ ban_list = { -- 初始禁表设置
 		"zhaoji+andaoquan",
 --		"pangwanchun+tora",
 		"tongguan+suochao",
-
-		"zhaoji+xuanzan",
 		"zhaoji+liangshijie",
+		"zhaoji+xuanzan",
 		"liangshijie+xuanzan",
-		"pangwanchun+xuanzan",
+--		"pangwanchun+xuanzan",
+--		"pangwanchun+liangshijie",
+
+--		"tongguan+liangshijie",
+		"suyuanjing+peixuan",
+		"moon_panqiaoyun+qiongyaonayan",
+
 		"fangjie+songjiang",
 		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",

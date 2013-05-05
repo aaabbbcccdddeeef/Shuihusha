@@ -434,6 +434,21 @@ public:
         }else
             return new FangzaoCard;
     }
+
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool include_counterplot) const{
+        if(player->isKongcheng())
+            return false;
+        if(player->getPhase() == Player::Play && !player->hasUsed("FangzaoCard")){
+            int card_id = player->getMark("fangzao");
+            const Card *card = Sanguosha->getCard(card_id);
+
+            if(include_counterplot && card->isKindOf("Nullification"))
+                return true;
+            if(!include_counterplot && card->objectName() == "nullification")
+                return true;
+        }
+        return false;
+    }
 };
 
 class Fangzao: public TriggerSkill{

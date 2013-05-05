@@ -1349,11 +1349,11 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << Damaged;
+    events << Damaged << ConjuringProbability;
 }
 
 int ConjuringRule::getPriority(TriggerEvent e) const{
-    if(e == DamageDone || e == AskForPeaches)
+    if(e == DamageDone || e == AskForPeaches || e == ConjuringProbability)
         return 1;
     else
         return -1;
@@ -1361,6 +1361,17 @@ int ConjuringRule::getPriority(TriggerEvent e) const{
 
 bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
     switch(event){
+    case ConjuringProbability:{
+        QStringList dataa = data.toString().split("*");
+        QString conjur = dataa.first();
+        int percent = QString(dataa.last()).toInt();
+        if(conjur.startsWith("sleep"))
+            percent = 75;
+        else if(conjur.startsWith("dizzy"))
+            percent = 75;
+        data = QString("%1*%2").arg(conjur).arg(percent); //sleep_jur*75
+        break;
+    }
     case PhaseChange:{
         if(player->getPhase() == Player::RoundStart){
             if(player->hasMark("poison_jur")){

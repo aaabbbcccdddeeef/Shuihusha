@@ -64,6 +64,7 @@ public:
     QString getId() const;
     QString getNickname(bool full = false) const;
     QString getShowHp() const {return show_hp;}
+    QString getResume() const;
 
     static QSize BigIconSize;
     static QSize SmallIconSize;

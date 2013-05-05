@@ -167,6 +167,7 @@ enum TriggerEvent{
     TurnedOver,
     ChainStateChange,
     PreConjuring,
+    ConjuringProbability,
 
     Predamage,
     DamagedProceed,
