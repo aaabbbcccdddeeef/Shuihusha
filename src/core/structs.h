@@ -175,7 +175,7 @@ enum TriggerEvent{
     DamageDone,
     Damage,
     Damaged,
-    DamageConclude,
+    //DamageConclude,
     DamageComplete,
 
     Dying,

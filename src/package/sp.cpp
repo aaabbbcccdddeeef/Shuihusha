@@ -207,7 +207,11 @@ public:
 class Exterminate: public TriggerSkill{
 public:
     Exterminate():TriggerSkill("exterminate"){
-        events << DamageConclude;
+        events << Damage;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *hanae, QVariant &data) const{

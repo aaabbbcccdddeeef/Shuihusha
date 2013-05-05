@@ -1086,7 +1086,11 @@ public:
 class Fuhu: public TriggerSkill{
 public:
     Fuhu():TriggerSkill("fuhu"){
-        events << DamageConclude;
+        events << Damage;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{

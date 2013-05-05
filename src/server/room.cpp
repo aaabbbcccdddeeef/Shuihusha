@@ -2779,8 +2779,8 @@ void Room::damage(const DamageStruct &damage_data){
         thread->trigger(Damaged, this, damage_data.to, data);
     }while(false);
 
-    if(damage_data.from)
-        thread->trigger(DamageConclude, this, damage_data.from, data);
+    //if(damage_data.from)
+    //    thread->trigger(DamageConclude, this, damage_data.from, data);
     thread->trigger(DamageComplete, this, damage_data.to, data);
 }
 

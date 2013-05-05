@@ -133,7 +133,7 @@ public:
 	void setAlive(bool alive);
 
 	QString getFlags() const;
-    QStringList getClearFlags() const;
+	QStringList getClearFlags() const;
 	void setFlags(const char *flag);
 	bool hasFlag(const char *flag) const;
 	void clearFlags();
@@ -510,7 +510,6 @@ enum TriggerEvent{
 	DamageDone,
 	Damage,
 	Damaged,
-	DamageConclude,
 	DamageComplete,
 
 	Dying,

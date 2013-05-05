@@ -368,12 +368,16 @@ public:
 class Anxi: public TriggerSkill{
 public:
     Anxi():TriggerSkill("anxi"){
-        events << DamageConclude;
+        events << Damage;
         view_as_skill = new AnxiViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -813,8 +817,12 @@ public:
                 if(target->isDead())
                     return;
                 QString prompt = QString("@jianwu-slash:%1:%2").arg(lizhu->objectName()).arg(target->objectName());
-                const Card *slash = room->askForCard(p, "slash", prompt, false, QVariant::fromValue(target));
-                if(slash){
+                const Card *card = room->askForCard(p, "slash", prompt, false, QVariant::fromValue(target));
+                if(card){
+                    Slash *slash = new Slash(card->getSuit(), card->getNumber());
+                    slash->addSubcard(card);
+                    slash->setSkillName(objectName());
+
                     CardUseStruct use;
                     use.card = slash;
                     use.to << target;

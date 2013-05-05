@@ -225,11 +225,15 @@ public:
 class Pinming: public TriggerSkill{
 public:
     Pinming():TriggerSkill("pinming"){
-        events << DamageConclude;
+        events << Damage;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
