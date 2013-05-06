@@ -418,7 +418,7 @@ public:
 class Shuizhen: public TriggerSkill{
 public:
     Shuizhen():TriggerSkill("shuizhen"){
-        events << DamagedProceed << DamageComplete;
+        events << DamagedProceed << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -426,7 +426,7 @@ public:
     }
 
     virtual int getPriority(TriggerEvent event) const{
-        return event == DamagedProceed ? 2 : -1;
+        return event == DamagedProceed ? 2 : -2;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *, QVariant &data) const{

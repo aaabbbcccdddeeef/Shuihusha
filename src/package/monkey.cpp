@@ -124,11 +124,15 @@ public:
 class Xiaduo: public TriggerSkill{
 public:
     Xiaduo():TriggerSkill("xiaduo"){
-        events << DamageComplete;
+        events << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -2;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{

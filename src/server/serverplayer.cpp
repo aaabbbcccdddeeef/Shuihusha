@@ -232,8 +232,10 @@ void ServerPlayer::getMessage(char *message){
 void ServerPlayer::unicast(const QString &message) const{
     emit message_cast(message);
 
-    if(recorder)
+    if(recorder){
         recorder->recordLine(message);
+        recorder->saveLine();
+    }
 }
 
 void ServerPlayer::startNetworkDelayTest(){

@@ -2656,7 +2656,7 @@ class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
         frequency = Frequent;
-        events << DamageComplete << PreDeath;
+        events << Damaged << PreDeath;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -2673,26 +2673,16 @@ public:
             if(other->getHp() >= (other->getMaxHp()+1) / 2)
                 continue;
             if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
-                //const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 loli->drawCards(1);
-                /*room->getThread()->delay();
-
-                LogMessage log;
-                log.type = "$TakeAG";
-                log.from = loli;
-                log.card_str = card->getEffectIdString();
-                room->sendLog(log);
-
-                room->obtainCard(loli, card);*/
             }
         }
         return false;
     }
 
     virtual int getPriority(TriggerEvent event) const{
-        if(event == DamageComplete)
-            return 1;
+        if(event == Damaged)
+            return -2;
         else
             return 2;
     }
