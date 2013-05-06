@@ -232,8 +232,9 @@ void ServerPlayer::getMessage(char *message){
 void ServerPlayer::unicast(const QString &message) const{
     emit message_cast(message);
 
+    bool forthwith = Config.value("ForthwithSave", true).toBool();
     if(recorder)
-        recorder->recordLine(message);
+        recorder->recordLine(message, forthwith);
 }
 
 void ServerPlayer::startNetworkDelayTest(){

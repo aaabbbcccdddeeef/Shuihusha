@@ -28,6 +28,17 @@ void Recorder::recordLine(const QString &line){
         data.append(QString("%1 %2\n").arg(elapsed).arg(line));
 }
 
+void Recorder::recordLine(const QString &line, bool forthwith)
+{
+    recordLine(line);
+
+    if(forthwith){
+        QFile file("save/auto.txt");
+        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+        file.write(data);
+    }
+}
+
 bool Recorder::save(const QString &filename) const{
     if(filename.endsWith(".txt")){
         QFile file(filename);
@@ -35,9 +46,9 @@ bool Recorder::save(const QString &filename) const{
             return file.write(data) != -1;
         else
             return false;
-    }else if(filename.endsWith(".png")){
+    }else if(filename.endsWith(".png"))
         return TXT2PNG(data).save(filename);
-    }else
+    else
         return false;
 }
 
