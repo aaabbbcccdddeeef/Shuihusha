@@ -18,6 +18,7 @@ Recorder::Recorder(QObject *parent)
 void Recorder::record(char *line)
 {
     recordLine(line);
+    saveLine();
 }
 
 void Recorder::recordLine(const QString &line){
@@ -28,15 +29,10 @@ void Recorder::recordLine(const QString &line){
         data.append(QString("%1 %2\n").arg(elapsed).arg(line));
 }
 
-void Recorder::recordLine(const QString &line, bool forthwith)
-{
-    recordLine(line);
-
-    if(forthwith){
-        QFile file("save/auto.txt");
-        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
-        file.write(data);
-    }
+bool Recorder::saveLine(const QString &path) const{
+    QFile file(path + "/auto.txt");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    file.write(data);
 }
 
 bool Recorder::save(const QString &filename) const{

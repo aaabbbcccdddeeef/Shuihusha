@@ -229,12 +229,18 @@ void ServerPlayer::getMessage(char *message){
     emit request_got(request);
 }
 
+#include <QDir>
 void ServerPlayer::unicast(const QString &message) const{
     emit message_cast(message);
 
-    bool forthwith = Config.value("ForthwithSave", true).toBool();
-    if(recorder)
-        recorder->recordLine(message, forthwith);
+    if(recorder){
+        recorder->recordLine(message);
+        QDir temp;
+        QString path = Config.value("AutoSavePath", "save").toString();
+        if(!temp.exists(path))
+            temp.mkdir(path);
+        recorder->saveLine(path);
+    }
 }
 
 void ServerPlayer::startNetworkDelayTest(){
