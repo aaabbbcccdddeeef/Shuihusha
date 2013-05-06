@@ -31,6 +31,12 @@ void Recorder::record(char *line)
     saveLine();
 }
 
+void Recorder::record(const QString &line)
+{
+    recordLine(line);
+    saveLine();
+}
+
 void Recorder::recordLine(const QString &line){
     int elapsed = watch.elapsed();
     if(line.endsWith("\n"))
@@ -40,10 +46,12 @@ void Recorder::recordLine(const QString &line){
 }
 
 void Recorder::saveLine(){
-    QString path = getPath();
-    QFile file(path + "/auto.txt");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
-    file.write(data);
+    if(Config.value("AutoSave").toBool()){
+        QString path = getPath();
+        QFile file(path + "/auto.txt");
+        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+        file.write(data);
+    }
 }
 
 bool Recorder::save(const QString &filename) const{

@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130427",
-	version_name = "F5.1",
+	version = "20130505",
+	version_name = "F5.2",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
@@ -80,6 +80,7 @@ config = {
 		"小爺綠豆沙",
 		"单身的活宝",
 		"超级无敌小柴进",
+		"超级无敌大李助",
 		"卖萌的豚纸",
 		"江西安义的雷海",
 		"中条老道的大头贴",
@@ -90,6 +91,7 @@ config = {
 		"小辰的超兽伪画",
 		"第十一根草花",
 		"堕入轮回的樊瑞",
+		"莎乐美的优乐美",
 		"虎虎生威",
 		"肉酱茧",
 		"客串的冰爷",

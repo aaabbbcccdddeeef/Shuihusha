@@ -222,6 +222,57 @@ public:
     }
 };
 
+class Gouxian: public TriggerSkill{
+public:
+    Gouxian():TriggerSkill("gouxian"){
+        events << Death;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DamageStar damage = data.value<DamageStar>();
+        ServerPlayer *killer = damage ? damage->from : NULL;
+        if(killer){
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = player;
+            log.arg = objectName();
+            room->sendLog(log);
+            killer->playSkillEffect(objectName(), 1);
+            room->acquireSkill(killer, "rugou");
+        }
+        else
+            room->playSkillEffect(objectName(), 2);
+        return false;
+    }
+};
+
+class Rugou: public TriggerSkill{
+public:
+    Rugou():TriggerSkill("rugou"){
+        events << Predamaged;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.damage > 0){
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = player;
+            log.arg = objectName();
+            room->sendLog(log);
+            player->playSkillEffect(objectName());
+            room->loseMaxHp(player, damage.damage);
+            return true;
+        }
+        return false;
+    }
+};
+
 CasketPackage::CasketPackage()
     :GeneralPackage("casket")
 {
@@ -238,6 +289,13 @@ CasketPackage::CasketPackage()
 
     addMetaObject<TumiCard>();
     addMetaObject<FanyinCard>();
+
+    General *moon_jiashi = new General(this, "moon_jiashi", "moon", 3, false);
+
+    General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
+    sun_ligu->addSkill(new Gouxian);
+    sun_ligu->addRelateSkill("rugou");
+    skills << new Rugou;
 }
 
 ADD_PACKAGE(Casket)
