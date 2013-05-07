@@ -231,7 +231,8 @@ void CheatDialog::doApply(){
         if(id_edit->text().isNull())
             return;
         int card_id = id_edit->text().toInt();
-        int locaindex = locations->checkedButton()->property("index").toInt();
+        int locaindex = locations->buttons().indexOf(locations->checkedButton());
+        qDebug("locaindex: %s", qPrintable(QString(locaindex)));
         QString place = QString("%1@%2").arg(locaindex).arg(move_target->itemData(move_target->currentIndex()).toString());
         if(locaindex == 0 && !pile_name->text().isNull())
             place.append(":" + pile_name->text());
@@ -321,24 +322,19 @@ QWidget *CheatDialog::createCardMoveTab(){
     QVBoxLayout *middle_right = new QVBoxLayout;
 
     locations = new QButtonGroup();
-    QRadioButton *draw_area = new QRadioButton(tr("DrawPile"));
-    draw_area->setProperty("index", 5);
-    locations->addButton(draw_area);
-    QRadioButton *discard_area = new QRadioButton(tr("Discarded"));
-    discard_area->setProperty("index", 4);
-    locations->addButton(discard_area);
+    QRadioButton *pile_area = new QRadioButton(tr("Piles"));
+    locations->addButton(pile_area);
     QRadioButton *hand_area = new QRadioButton(tr("Handcards"));
-    hand_area->setProperty("index", 1);
     locations->addButton(hand_area);
     QRadioButton *equip_area = new QRadioButton(tr("Equips"));
-    equip_area->setProperty("index", 2);
     locations->addButton(equip_area);
     QRadioButton *judge_area = new QRadioButton(tr("Judges"));
-    judge_area->setProperty("index", 3);
     locations->addButton(judge_area);
-    QRadioButton *pile_area = new QRadioButton(tr("Piles"));
-    pile_area->setProperty("index", 0);
-    locations->addButton(pile_area);
+    QRadioButton *discard_area = new QRadioButton(tr("Discarded"));
+    locations->addButton(discard_area);
+    QRadioButton *draw_area = new QRadioButton(tr("DrawPile"));
+    locations->addButton(draw_area);
+    hand_area->setChecked(true);
     pile_name = new QLineEdit();
 
     middle_right->addLayout(HLay(draw_area, discard_area));
@@ -390,12 +386,16 @@ void CheatDialog::loadCard(int index){
         cards << player->getCards();
         cards << player->getEquips(true);
         cards << player->getJudgingArea();
+        foreach(QString pilename, player->getPileNames()){
+            foreach(int pid, player->getPile(pilename))
+                cards << Sanguosha->getCard(pid);
+        }
         foreach(const Card *card, cards){
             QString card_name = Sanguosha->translate(card->objectName());
             QIcon suit_icon = card->getSuitIcon();
             QString point = card->getNumberString();
 
-            QString card_info = point + "  " + card_name + "\t" + Sanguosha->translate(card->getSubtype());
+            QString card_info = QString("%1  %2").arg(point).arg(card_name);
             QListWidgetItem *item = new QListWidgetItem(card_info, cards_list);
             item->setIcon(suit_icon);
             item->setData(Qt::UserRole, card->getId());

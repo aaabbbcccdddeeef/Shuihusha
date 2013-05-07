@@ -4060,6 +4060,7 @@ void Room::makeMove(int card_id, const QString &place){
         const Card *card = Sanguosha->getCard(card_id);
         if(place_on == Player::Judging && !DelayedTrick::CastFrom(card))
             return;
+        //QMessageBox::warning(NULL, tr("Warning"), tr("Location error!"));
         else if(place_on == Player::Equip && !card->isKindOf("EquipCard"))
             return;
         moveCardTo(card, player, place_on);

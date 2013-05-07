@@ -417,7 +417,7 @@
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="70"/>
         <source>Card mover</source>
-        <translation>乾坤挪移</translation>
+        <translation>卡牌挪移</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="71"/>
