@@ -470,7 +470,7 @@ class Jiangxin:public TriggerSkill{
 public:
     Jiangxin():TriggerSkill("jiangxin"){
         frequency = Frequent;
-        events << AskForRetrial;
+        events << FinishJudge;
     }
 
     virtual int getPriority(TriggerEvent) const{

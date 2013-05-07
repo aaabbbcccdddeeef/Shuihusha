@@ -67,6 +67,7 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     tab_widget = new QTabWidget;
     tab_widget->addTab(createDamageMakeTab(), tr("Damage maker"));
     tab_widget->addTab(createDeathNoteTab(), tr("Death note"));
+    tab_widget->addTab(createCardMoveTab(), tr("Card mover"));
     tab_widget->addTab(createSetStateTab(), tr("Set state"));
     connect(tab_widget, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
 
@@ -277,6 +278,82 @@ void CheatDialog::accept(){
 void CheatDialog::disableSource(QAbstractButton* but){
     int nature = damage_nature->buttons().indexOf(but) + 1;
     damage_source->setEnabled(nature < 5);
+}
+
+QWidget *CheatDialog::createCardMoveTab(){
+    QWidget *widget = new QWidget;
+
+    source = new QComboBox;
+    RoomScene::FillPlayerNames(source, false);
+    connect(source, SIGNAL(currentIndexChanged(int)), this, SLOT(loadCard(int)));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addLayout(HLay(new QLabel("Source"), source));
+
+    QWidget *middle = new QWidget;
+    QHBoxLayout *middle_layout = new QHBoxLayout;
+
+    QWidget *middle_left_widget = new QWidget;
+    QVBoxLayout *middle_left = new QVBoxLayout;
+    cards_list = new QListWidget;
+    cards_list->setFixedHeight(100);
+    middle_left->addWidget(cards_list);
+
+    QLineEdit *id_edit = new QLineEdit();
+    id_edit->setPlaceholderText("-1");
+    middle_left->addLayout(HLay(new QLabel("ID"), id_edit));
+    middle_left_widget->setLayout(middle_left);
+    middle_layout->addWidget(middle_left_widget);
+
+    QWidget *middle_right_widget = new QWidget;
+    QVBoxLayout *middle_right = new QVBoxLayout;
+
+    QButtonGroup *locations = new QButtonGroup();
+    QRadioButton *hand_area = new QRadioButton(tr("Hand"));
+    locations->addButton(hand_area);
+    QRadioButton *equip_area = new QRadioButton(tr("Equip"));
+    locations->addButton(equip_area);
+    QRadioButton *judge_area = new QRadioButton(tr("Judge"));
+    locations->addButton(judge_area);
+
+    middle_right->addWidget(hand_area);
+    middle_right->addWidget(equip_area);
+    middle_right->addWidget(judge_area);
+    middle_right_widget->setLayout(middle_right);
+    middle_layout->addWidget(middle_right_widget);
+
+    middle->setLayout(middle_layout);
+    layout->addWidget(middle);
+
+    target = new QComboBox;
+    RoomScene::FillPlayerNames(target, false);
+    layout->addLayout(HLay(new QLabel("Target"), target));
+
+    widget->setLayout(layout);
+    loadCard(0);
+    return widget;
+}
+
+void CheatDialog::loadCard(int index){
+    QString player_obj = source->itemData(index).toString();
+    const Player *player = Self->findPlayer(player_obj);
+    if(player){
+        cards_list->clear();
+        QList<const Card *> cards;
+        cards << player->getEquips(true);
+        cards << player->getJudgingArea();
+        foreach(const Card *card, cards){
+            QString card_name = Sanguosha->translate(card->objectName());
+            QIcon suit_icon = card->getSuitIcon();
+            QString point = card->getNumberString();
+
+            QString card_info = point + "  " + card_name + "\t" + Sanguosha->translate(card->getSubtype());
+            QListWidgetItem *item = new QListWidgetItem(card_info, cards_list);
+            item->setIcon(suit_icon);
+            item->setData(Qt::UserRole, card->getId());
+            cards_list->addItem(item);
+        }
+    }
 }
 
 QWidget *CheatDialog::createSetStateTab(){

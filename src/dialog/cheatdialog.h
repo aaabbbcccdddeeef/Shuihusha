@@ -34,6 +34,7 @@ private:
     ClientPlayer *Self;
     QWidget *createDamageMakeTab();
     QWidget *createDeathNoteTab();
+    QWidget *createCardMoveTab();
     QWidget *createSetStateTab();
     QPushButton *ok_button;
     QPushButton *cancel_button;
@@ -48,8 +49,9 @@ private:
     QButtonGroup *killtype;
     QAbstractButton *revive1, *revive2;
 
+    QListWidget *cards_list;
     QTabWidget *tab_state;
-    QComboBox *target;
+    QComboBox *source, *target;
     QLineEdit *general, *kingdom, *hpslot, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank, *shutup;
     QLineEdit *skill_history;
@@ -74,6 +76,7 @@ private slots:
     void doApplyExpert();
     void doClearExpert();
     void disableSource(QAbstractButton* but);
+    void loadCard(int index);
     void loadState(int index);
     void loadBase();
     void clearBase();

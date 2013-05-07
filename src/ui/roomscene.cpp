@@ -2832,7 +2832,7 @@ void RoomScene::makeState(){
     }
 
     CheatDialog *dialog = new CheatDialog(main_window, Self);
-    dialog->tab_widget->setCurrentIndex(2);
+    dialog->tab_widget->setCurrentIndex(3);
     dialog->exec();
 }
 
