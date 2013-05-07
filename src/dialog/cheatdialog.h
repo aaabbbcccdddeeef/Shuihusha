@@ -49,14 +49,15 @@ private:
     QButtonGroup *killtype;
     QAbstractButton *revive1, *revive2;
 
+    QComboBox *move_target, *move_source;
     QListWidget *cards_list;
     QLineEdit *id_edit;
     QButtonGroup *locations;
     QLineEdit *pile_name;
-    QLabel *see_text;
+    //QLabel *see_text;
 
     QTabWidget *tab_state;
-    QComboBox *source, *target;
+    QComboBox *target;
     QLineEdit *general, *kingdom, *hpslot, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank, *shutup;
     QLineEdit *skill_history;
@@ -82,7 +83,7 @@ private slots:
     void doClearExpert();
     void disableSource(QAbstractButton* but);
     void seeCardID(QListWidgetItem* item);
-    void seeLocation();
+    void seeCard();
     void loadCard(int index);
     void loadState(int index);
     void loadBase();

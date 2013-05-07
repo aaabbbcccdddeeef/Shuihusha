@@ -668,7 +668,9 @@ bool Player::isAllNude() const{
 
 void Player::addDelayedTrick(const Card *trick){
     judging_area << trick;
-    delayed_tricks << DelayedTrick::CastFrom(trick);
+    const DelayedTrick *t_rick = DelayedTrick::CastFrom(trick);
+    if(t_rick)
+        delayed_tricks << t_rick;
 }
 
 void Player::removeDelayedTrick(const Card *trick){

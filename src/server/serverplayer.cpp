@@ -395,8 +395,10 @@ void ServerPlayer::addCard(const Card *card, Place place){
 
     case Equip: {
             const EquipCard *equip = qobject_cast<const EquipCard *>(card);
-            setEquip(equip);
-            equip->onInstall(this);
+            if(equip){
+                setEquip(equip);
+                equip->onInstall(this);
+            }
             break;
         }
 

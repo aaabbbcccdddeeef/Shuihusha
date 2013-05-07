@@ -4056,8 +4056,14 @@ void Room::makeMove(int card_id, const QString &place){
         QString pile = target.split(":").last();
         player->addToPile(pile, card_id);
     }
-    else
-        moveCardTo(Sanguosha->getCard(card_id), player, place_on);
+    else{
+        const Card *card = Sanguosha->getCard(card_id);
+        if(place_on == Player::Judging && !DelayedTrick::CastFrom(card))
+            return;
+        else if(place_on == Player::Equip && !card->isKindOf("EquipCard"))
+            return;
+        moveCardTo(card, player, place_on);
+    }
 }
 
 void Room::makeState(const QString &name, const QString &str){
