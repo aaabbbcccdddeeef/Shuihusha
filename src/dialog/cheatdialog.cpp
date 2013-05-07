@@ -227,7 +227,17 @@ void CheatDialog::doApply(){
                             victim->itemData(victim->currentIndex()).toString());
         break;
     }
-    case 2:
+    case 2:{
+        int card_id = !id_edit->text().isNull() ? id_edit->text().toInt() :
+                                                  cards_list->currentItem()->data(Qt::UserRole).toInt();
+        int locaindex = locations->checkedButton()->property("index").toInt();
+        QString place = QString("%1@%2").arg(locaindex).arg(target->itemData(target->currentIndex()).toString());
+        if(locaindex == 0 && !pile_name->text().isNull())
+            place.append(":" + pile_name->text());
+        ClientInstance->requestCheatMove(card_id, place);
+        break;
+    }
+    case 3:
         ClientInstance->requestCheatState(getPlayerString(), makeData());
         break;
     default:
@@ -290,40 +300,58 @@ QWidget *CheatDialog::createCardMoveTab(){
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(HLay(new QLabel("Source"), source));
 
-    QWidget *middle = new QWidget;
     QHBoxLayout *middle_layout = new QHBoxLayout;
 
-    QWidget *middle_left_widget = new QWidget;
     QVBoxLayout *middle_left = new QVBoxLayout;
     cards_list = new QListWidget;
     cards_list->setFixedHeight(100);
     middle_left->addWidget(cards_list);
+    connect(cards_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(seeCardID(QListWidgetItem*)));
 
-    QLineEdit *id_edit = new QLineEdit();
+    id_edit = new QLineEdit();
     id_edit->setPlaceholderText("-1");
-    middle_left->addLayout(HLay(new QLabel("ID"), id_edit));
-    middle_left_widget->setLayout(middle_left);
-    middle_layout->addWidget(middle_left_widget);
+    id_edit->setValidator(new QIntValidator(0, Sanguosha->getCardCount(), id_edit));
+    QPushButton *see = new QPushButton(tr("See"));
+    middle_left->addLayout(HLay(new QLabel("ID"), id_edit, see));
+    see_text = new QLabel;
+    middle_left->addWidget(see_text);
+    connect(see, SIGNAL(clicked()), this, SLOT(seeLocation()));
+    middle_layout->addLayout(middle_left);
 
     QWidget *middle_right_widget = new QWidget;
     QVBoxLayout *middle_right = new QVBoxLayout;
 
-    QButtonGroup *locations = new QButtonGroup();
+    locations = new QButtonGroup();
+    QRadioButton *draw_area = new QRadioButton(tr("Draw"));
+    draw_area->setProperty("index", 5);
+    locations->addButton(draw_area);
+    QRadioButton *discard_area = new QRadioButton(tr("Discard"));
+    discard_area->setProperty("index", 4);
+    locations->addButton(discard_area);
     QRadioButton *hand_area = new QRadioButton(tr("Hand"));
+    hand_area->setProperty("index", 1);
     locations->addButton(hand_area);
     QRadioButton *equip_area = new QRadioButton(tr("Equip"));
+    equip_area->setProperty("index", 2);
     locations->addButton(equip_area);
     QRadioButton *judge_area = new QRadioButton(tr("Judge"));
+    judge_area->setProperty("index", 3);
     locations->addButton(judge_area);
+    QRadioButton *pile_area = new QRadioButton(tr("Pile"));
+    pile_area->setProperty("index", 0);
+    locations->addButton(pile_area);
+    pile_name = new QLineEdit();
 
+    middle_right->addWidget(draw_area);
+    middle_right->addWidget(discard_area);
     middle_right->addWidget(hand_area);
     middle_right->addWidget(equip_area);
     middle_right->addWidget(judge_area);
+    middle_right->addLayout(HLay(pile_area, pile_name));
     middle_right_widget->setLayout(middle_right);
     middle_layout->addWidget(middle_right_widget);
 
-    middle->setLayout(middle_layout);
-    layout->addWidget(middle);
+    layout->addLayout(middle_layout);
 
     target = new QComboBox;
     RoomScene::FillPlayerNames(target, false);
@@ -334,12 +362,22 @@ QWidget *CheatDialog::createCardMoveTab(){
     return widget;
 }
 
+void CheatDialog::seeLocation(){
+    see_text->setText(getCardPlace(id_edit->text()));
+}
+
+void CheatDialog::seeCardID(QListWidgetItem *item){
+    QVariant id = item->data(Qt::UserRole);
+    id_edit->setText(id.toString());
+}
+
 void CheatDialog::loadCard(int index){
     QString player_obj = source->itemData(index).toString();
-    const Player *player = Self->findPlayer(player_obj);
+    const ClientPlayer *player = ClientInstance->getPlayer(player_obj);
     if(player){
         cards_list->clear();
         QList<const Card *> cards;
+        cards << player->getCards();
         cards << player->getEquips(true);
         cards << player->getJudgingArea();
         foreach(const Card *card, cards){

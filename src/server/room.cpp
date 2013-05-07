@@ -3919,6 +3919,10 @@ bool Room::makeCheat(ServerPlayer* player){
             return false;
         makeReviving(toQString(arg[1]), toQString(arg[2]));
     }
+    else if (code == S_CHEAT_CARD_MOVE){
+        if (!arg[1].isInt()) return false;
+        makeMove(arg[1].asInt(), toQString(arg[2]));
+    }
     else if (code == S_CHEAT_SET_STATE){
         if (!arg[1].isString()) return false;
         makeState(toQString(arg[1]), toQString(arg[2]));
@@ -4029,6 +4033,31 @@ void Room::makeReviving(const QString &name, const QString &flag){
         if(player->getHp() < 1)
             setPlayerProperty(player, "hp", 1);
     }
+}
+
+void Room::makeMove(int card_id, const QString &place){
+    ServerPlayer *player = NULL;
+    //place: equip@sgs2:knife
+    /*
+    Special=0
+    Hand=1
+    Equip=2
+    Judging=3
+    DiscardedPile=4
+    DrawPile=5
+    */
+    int place_index = place.split("@").first().toInt();
+    QString target = place.split("@").last();
+    QString name = target.split(":").first();
+    if(place_index <= 3)
+        player = findChild<ServerPlayer *>(name);
+    Player::Place place_on = static_cast<Player::Place>(place_index);
+    if(place_on == Player::Special && target.contains(":")){
+        QString pile = target.split(":").last();
+        player->addToPile(pile, card_id);
+    }
+    else
+        moveCardTo(Sanguosha->getCard(card_id), player, place_on);
 }
 
 void Room::makeState(const QString &name, const QString &str){

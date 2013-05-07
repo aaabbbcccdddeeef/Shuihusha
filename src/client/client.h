@@ -50,6 +50,7 @@ public:
     void requestCheatKill(const QString& killer, const QString& victim);
     void requestCheatDamage(const QString& source, const QString& target, int nature, int points, int card_id);
     void requestCheatRevive(const QString& name, bool full_state = true, bool invoke_start = false);
+    void requestCheatMove(int card_id, const QString &place);
     void requestCheatState(const QString &target, const QString &data);
     void requestCheatRunScript(const QString& script);
 

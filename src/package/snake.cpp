@@ -477,14 +477,21 @@ public:
         return -2;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *jindajian, QVariant &data) const{
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         JudgeStar judge = data.value<JudgeStar>();
         CardStar card = judge->card;
-
-        if(card->inherits("BasicCard") && jindajian->askForSkillInvoke(objectName(), data)){
-            room->playSkillEffect(objectName());
-            jindajian->drawCards(1);
-            return true;
+        if(!card->isKindOf("BasicCard"))
+            return false;
+        QList<ServerPlayer *> jinzi = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *jindajian, jinzi){
+            if(jindajian->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
+                jindajian->drawCards(1);
+            }
         }
         return false;
     }
