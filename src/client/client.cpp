@@ -468,6 +468,14 @@ void Client::requestCheatKill(const QString& killer, const QString& victim)
     requestToServer(S_COMMAND_CHEAT, cheatArg);
 }
 
+void Client::requestCheatMove(int card_id, const QString &place){
+    Json::Value cheatArg;
+    cheatArg[0] = (int)S_CHEAT_CARD_MOVE;
+    cheatArg[1] = card_id;
+    cheatArg[2] = toJsonString(place);
+    requestToServer(S_COMMAND_CHEAT, cheatArg);
+}
+
 void Client::requestCheatState(const QString &target, const QString &data)
 {
     Json::Value cheatArg;

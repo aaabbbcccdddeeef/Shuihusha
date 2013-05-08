@@ -222,6 +222,48 @@ public:
     }
 };
 
+class Dingxin: public TriggerSkill{
+public:
+    Dingxin():TriggerSkill("dingxin"){
+        events << ConjuringProbability << Death;
+        frequency = Compulsory;
+    }
+
+    virtual int getPriority(TriggerEvent event) const{
+        return event == Death ? 2 : -2;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == Death){
+            if(player->hasSkill(objectName())){
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = player;
+                log.arg = objectName();
+                room->sendLog(log);
+                player->playSkillEffect(objectName());
+                foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                    QStringList jurs = tmp->getAllMarkName(3, "_jur");
+                    if(!jurs.isEmpty())
+                        tmp->removeJur(jurs.first());
+                }
+            }
+        }
+        else{
+            if(room->findPlayerBySkillName(objectName())){
+                QStringList dataa = data.toString().split("*");
+                dataa.replace(1, "100");
+                data = dataa.join("*");
+            }
+        }
+        return false;
+    }
+};
+
 class Gouxian: public TriggerSkill{
 public:
     Gouxian():TriggerSkill("gouxian"){
@@ -291,6 +333,7 @@ CasketPackage::CasketPackage()
     addMetaObject<FanyinCard>();
 
     General *moon_jiashi = new General(this, "moon_jiashi", "moon", 3, false);
+    moon_jiashi->addSkill(new Dingxin);
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
     sun_ligu->addSkill(new Gouxian);

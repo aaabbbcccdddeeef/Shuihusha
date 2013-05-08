@@ -1380,9 +1380,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                 log.type = "#Poison";
                 room->sendLog(log);
                 if(player->getMark("poison_jur") <= 2){
-                    if(room->askForChoice(player, "poison_jur", "hp+cd") == "hp")
-                        room->loseHp(player);
-                    else{
+                    if(player->getCards("hej").length() > 1 && room->askForChoice(player, "poison_jur", "hp+cd") == "cd"){
                         int index = -1;
                         if(!player->isAllNude()){
                             index = qrand() % player->getCards("hej").length();
@@ -1396,6 +1394,8 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                             room->throwCard(card, player);
                         }
                     }
+                    else
+                        room->loseHp(player);
                 }
                 else if(!player->isAllNude()){
                     int index = qrand() % player->getCards("hej").length();
