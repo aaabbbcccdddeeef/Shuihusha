@@ -180,20 +180,25 @@ luamaichong=sgs.CreateTriggerSkill{
 
 	can_trigger = function(self, player)
 		return true
+		-- 本技能涉及到两个事件，其中伤害事件不需要return true，但是概率事件的触发者并不一定拥有maichong技能，所以需要return true
 	end,
 
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()
 		if event == sgs.ConjuringProbability then
-			if player:hasFlag("iswoman")
-				-- data = dizzy_jur*75
-				local eatdeath_skills = data:toString():split("*")
+		-- 本事件用于设置咒术的附加概率
+			if player:hasFlag("iswoman") then
+				-- 传递的data为字符串类型，形似dizzy_jur*75，星号前面为咒术名，后面为概率（默认为100）
+				local dataa = data:toString():split("*")
 				local conjur = dataa[1]
 				local percent = dataa[2]:toInt()
+				-- 将data传递的字符串拆成两部分
 				if string.find(conjur, "dizzy") then
 					percent = percent + 5
+					-- 如果此咒术是晕眩，则概率+5
 				end
 				data:setValue(conjur .. "*" .. percent)
+				-- 写入data传回
 			end
 			return false
 		else
@@ -202,9 +207,12 @@ luamaichong=sgs.CreateTriggerSkill{
 			if damage.from then
 				if damage.from:getGeneral():isFemale() then
 					damage.from:setFlags("iswoman")
+					-- 设置触发标记，有iswoman的角色才能执行概率的增加
 				end
 				damage.from:gainJur("dizzy_jur", 2)
+				-- 设置咒术状态主函数，第二个参数是持续回合数，请遵守咒术的描述规则进行设置，否则须在技能中说明。第三个参数（可选）为布尔类型，设置是否叠加。程序中并未使用过
 				damage.from:setFlags("-iswoman")
+				-- 清除触发标记
 			end
 		end
 		return false
@@ -228,12 +236,14 @@ luashepin=sgs.CreateTriggerSkill{
 	end
 }
 
+-- 设置自定义咒术。自定义咒术其实就是写了一些新的技能效果，在咒术名的约束下进行执行而已
 luashepin_shensu = sgs.CreateSlashSkill
 {
 	name = "#luashepin_shensu",
 
 	s_extra_func = function(self, from, to, slash)
-		if from:hasMark("shensu_jur") then
+		if from:hasJur("shensu_jur") then
+		-- 判断from是否有你自定义的神速咒术状态
 			return 1
 		end
 	end,
@@ -278,8 +288,10 @@ sgs.LoadTranslationTable{
 
 	["#tianlong"] = "八部",
 	["tianlong"] = "天龍",
-	["luamaichong"] = "脉冲",
+	["luamaichong"] = "脉衝",
 	[":luamaichong"] = "LUA演示：锁定技，对你造成伤害的角色附加“晕眩”状态，若其为女性角色，附加“晕眩”状态的概率增加5%.",
-	["luashepin"] = "射频",
+	["luashepin"] = "射頻",
 	[":luashepin"] = "LUA演示：摸牌阶段，你可以少摸一张牌，然后附加“神速”状态（使用【杀】可额外指定一个目标。附加概率100%，共持续1个回合）。",
+	["shensu_jur"] = "神速",
+	[":shensu_jur"] = "目标角色使用【杀】可额外指定一个目标。附加概率100%，共持续1个回合。",
 }

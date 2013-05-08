@@ -75,7 +75,7 @@ class Player: public QObject
 {
 public:
 	enum Phase {RoundStart, Start, Judge, Draw, Play, Discard, Finish, NotActive};
-	enum Place {Hand, Equip, Judging, Special, DiscardedPile, DrawPile};
+	enum Place {Special, Hand, Equip, Judging, DiscardedPile, DrawPile};
 	enum Role {Lord, Loyalist, Rebel, Renegade};
 
 	explicit Player(QObject *parent);
@@ -254,6 +254,10 @@ public:
 	bool isMale(){
 		return $self->getGeneral()->isMale();
 	}
+
+	bool hasJur(const char *jur){
+		return $self->hasMark(jur);
+	}
 };
 
 class ServerPlayer : public Player
@@ -301,6 +305,8 @@ public:
 	void gainMark(const char *mark, int n = 1);
 	void loseMark(const char *mark, int n = 1);
 	void loseAllMarks(const char *mark_name);
+	void gainJur(const char *jur, int n, bool overlying = false);
+	void removeJur(const char *jur);
 
 	void setAI(AI *ai);
 	AI *getAI() const;
@@ -502,6 +508,7 @@ enum TriggerEvent{
 	TurnedOver,
 	ChainStateChange,
 	PreConjuring,
+	ConjuringProbability,
 
 	Predamage,
 	DamagedProceed,
