@@ -4,6 +4,7 @@ extension = sgs.Package("personal")
 tianqi = sgs.General(extension, "tianqi", "god", 5, false)
 tianyin = sgs.General(extension, "tianyin", "god", 3)
 tianshuang = sgs.General(extension, "tianshuang", "god", 3)
+tianlong = sgs.General(extension, "tianlong", "god", 3)
 
 eatdeath=sgs.CreateTriggerSkill{
 	name="eatdeath",
@@ -171,6 +172,77 @@ tianshuang:addSkill(doubledao)
 tianshuang:addSkill(dragonfist)
 tianshuang:addSkill(dragonfistt)
 
+luamaichong=sgs.CreateTriggerSkill{
+	name="luamaichong",
+	frequency = sgs.Skill_Compulsory,
+	events={sgs.Damaged, sgs.ConjuringProbability},
+	priority = -1,
+
+	can_trigger = function(self, player)
+		return true
+	end,
+
+	on_trigger=function(self,event,player,data)
+		local room = player:getRoom()
+		if event == sgs.ConjuringProbability then
+			if player:hasFlag("iswoman")
+				-- data = dizzy_jur*75
+				local eatdeath_skills = data:toString():split("*")
+				local conjur = dataa[1]
+				local percent = dataa[2]:toInt()
+				if string.find(conjur, "dizzy") then
+					percent = percent + 5
+				end
+				data:setValue(conjur .. "*" .. percent)
+			end
+			return false
+		else
+			if not player:hasSkill(self:objectName()) then return false end
+			local damage = data:toDamage()
+			if damage.from then
+				if damage.from:getGeneral():isFemale() then
+					damage.from:setFlags("iswoman")
+				end
+				damage.from:gainJur("dizzy_jur", 2)
+				damage.from:setFlags("-iswoman")
+			end
+		end
+		return false
+	end
+}
+
+luashepin=sgs.CreateTriggerSkill{
+	name="luashepin",
+	frequency = sgs.Skill_NotFrequent,
+	events = {sgs.DrawNCards},
+
+	on_trigger = function(self, event, player, data)
+		local room = player:getRoom()
+		if(room:askForSkillInvoke(player, self:objectName())) then
+			local x = data:toInt()
+			room:playSkillEffect(self:objectName())
+			player:gainJur("shensu_jur", 1)
+			data:setValue(x-1)
+		end
+		return false
+	end
+}
+
+luashepin_shensu = sgs.CreateSlashSkill
+{
+	name = "#luashepin_shensu",
+
+	s_extra_func = function(self, from, to, slash)
+		if from:hasMark("shensu_jur") then
+			return 1
+		end
+	end,
+}
+
+tianlong:addSkill(luamaichong)
+tianlong:addSkill(luashepin)
+tianlong:addSkill(luashepin_shensu)
+
 sgs.LoadTranslationTable{
 	["personal"] = "Pesonal",
 
@@ -203,4 +275,11 @@ sgs.LoadTranslationTable{
 	[":doubledao"] = "LUA演示：你的草花杀可额外指定一个目标；你使用红桃杀的攻击范围锁定为4.",
 	["dragonfist"] = "龙拳",
 	[":dragonfist"] = "LUA演示：出牌阶段，当你的【杀】造成伤害时，可额外出一次【杀】",
+
+	["#tianlong"] = "八部",
+	["tianlong"] = "天龍",
+	["luamaichong"] = "脉冲",
+	[":luamaichong"] = "LUA演示：锁定技，对你造成伤害的角色附加“晕眩”状态，若其为女性角色，附加“晕眩”状态的概率增加5%.",
+	["luashepin"] = "射频",
+	[":luashepin"] = "LUA演示：摸牌阶段，你可以少摸一张牌，然后附加“神速”状态（使用【杀】可额外指定一个目标。附加概率100%，共持续1个回合）。",
 }
