@@ -195,8 +195,17 @@ public:
 
 class ClientSkill: public Skill{
     Q_OBJECT
+    Q_ENUMS(ClientType)
 
 public:
+    enum ClientType {
+        MaxCard,
+        Distance,
+        Residue,
+        AttackRange,
+        ExtraGoals
+    };
+
     ClientSkill(const QString &name);
 
     virtual int getExtra(const Player *target) const;

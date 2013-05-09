@@ -1349,14 +1349,15 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << DamagedProceed << Damaged << ConjuringProbability;
+    events << DamagedProceed << Damaged << PreConjuring;
 }
 
 int ConjuringRule::getPriority(TriggerEvent e) const{
     switch(e){
     case DamageDone:
     case AskForPeaches:
-    case ConjuringProbability:
+    case PreConjuring:
+    case Conjured:
         return 1;
     case DamagedProceed:
         return 2;
@@ -1365,9 +1366,17 @@ int ConjuringRule::getPriority(TriggerEvent e) const{
     }
 }
 
+bool ConjuringRule::conjurTrigger(PlayerStar player, const QString &conjur) const{
+    QVariant data = QString("%1*%2").arg(conjur).arg(100); //lucky_jur*75
+    Room* room = player->getRoom();
+    room->getThread()->trigger(Conjured, room, player, data);
+    int percent = QString(data.toString().split("*").last()).toInt();
+    return qrand() % 100 + 1 <= percent;
+}
+
 bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
     switch(event){
-    case ConjuringProbability:{
+    case PreConjuring:{
         QStringList dataa = data.toString().split("*");
         QString conjur = dataa.first();
         int percent = QString(dataa.last()).toInt();
@@ -1378,10 +1387,21 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         data = QString("%1*%2").arg(conjur).arg(percent); //sleep_jur*75
         break;
     }
+    case Conjured:{
+        QStringList dataa = data.toString().split("*");
+        QString conjur = dataa.first();
+        int percent = QString(dataa.last()).toInt();
+        if(conjur.startsWith("lucky"))
+            percent = 75;
+        else if(conjur.startsWith("reflex"))
+            percent = 25;
+        data = QString("%1*%2").arg(conjur).arg(percent); //reflex_jur*25
+        break;
+    }
     case DrawNCards:{
         if(player->hasMark("lucky_jur")){
             int n = data.toInt();
-            if(qrand() % 100 + 1 <= 75)
+            if(conjurTrigger(player, "lucky_jur"))
                 n ++;
             data = n;
         }
@@ -1435,7 +1455,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case DamagedProceed:{
-        if(player->hasMark("reflex_jur")){
+        if(player->hasMark("reflex_jur") && conjurTrigger(player, "reflex_jur")){
             DamageStruct damage = data.value<DamageStruct>();
             damage.to = damage.from;
             room->damage(damage);

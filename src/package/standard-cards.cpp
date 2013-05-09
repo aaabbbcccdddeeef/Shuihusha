@@ -16,7 +16,9 @@ void Slash::setNature(DamageStruct::Nature nature){
 }
 
 bool Slash::IsAvailable(const Player *player){
-    int slash_residue = Sanguosha->correctClient("residue", player);
+    Slash *slash = new Slash(Card::NoSuit, 0);
+    slash->deleteLater();
+    int slash_residue = Sanguosha->correctClient(ClientSkill::Residue, player, NULL, slash);
     return slash_residue > 0;
 }
 
@@ -65,8 +67,8 @@ bool Slash::targetsFeasible(const QList<const Player *> &targets, const Player *
 }
 
 bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int slash_targets = 1 + Sanguosha->correctClient("extragoals", Self, to_select, this);
-    bool distance_limit = Sanguosha->correctClient("attackrange", Self, to_select, this) < 50;
+    int slash_targets = 1 + Sanguosha->correctClient(ClientSkill::ExtraGoals, Self, to_select, this);
+    bool distance_limit = Sanguosha->correctClient(ClientSkill::AttackRange, Self, to_select, this) < 50;
 
     if(targets.length() >= slash_targets)
         return false;

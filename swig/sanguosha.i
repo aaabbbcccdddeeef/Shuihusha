@@ -508,7 +508,7 @@ enum TriggerEvent{
 	TurnedOver,
 	ChainStateChange,
 	PreConjuring,
-	ConjuringProbability,
+	Conjured,
 
 	Predamage,
 	DamagedProceed,
@@ -777,7 +777,7 @@ public:
 
 	const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 	const ClientSkill *isPenetrate(const Player *from, const Player *to, const Card *card) const;
-	int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
+	int correctClient(const ClientSkill::ClientType type, const Player *from, const Player *to = NULL) const;
 	int correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const;
 };
 

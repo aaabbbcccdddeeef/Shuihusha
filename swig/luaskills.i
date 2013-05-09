@@ -33,6 +33,14 @@ public:
 
 class ClientSkill: public Skill{
 public:
+    enum ClientType {
+        MaxCard,
+        Distance,
+        Residue,
+        AttackRange,
+        ExtraGoals
+    };
+
 	ClientSkill(const QString &name);
 	virtual int getExtra(const Player *target) const;
 	virtual int getCorrect(const Player *from, const Player *to) const;

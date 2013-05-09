@@ -882,37 +882,62 @@ const ClientSkill *Engine::isPenetrate(const Player *from, const Player *to, con
     return NULL;
 }
 
-int Engine::correctClient(const QString &type, const Player *from, const Player *to, const Card *slash) const{
+int Engine::correctClient(const ClientSkill::ClientType type, const Player *from, const Player *to, const Card *slash) const{
     int x = 0;
 
     foreach(const ClientSkill *skill, client_skills){
-        if(type == "maxcard"){
+        switch(type){
+        case ClientSkill::MaxCard : {
             int y = skill->getExtra(from);
             if(y < 0) // fixed maxcard
                 return y;
             else
                 x += y;
+            break;
         }
-        else if(type == "distance")
+        case ClientSkill::Distance : {
             x += skill->getCorrect(from, to);
-        else if(type == "residue"){
+            break;
+        }
+        case ClientSkill::Residue : {
             int y = skill->getSlashResidue(from);
             if(y < -200) // use slash never
                 return y;
             x += y;
-            x += correctCardTarget(TargetModSkill::Residue, from, slash);
+            break;
         }
-        else if(type == "attackrange"){
+        case ClientSkill::AttackRange : {
             int y = skill->getSlashRange(from, to, slash);
             if(y < 0) // fixed attack range
                 return y;
             if(y > x) // use longest range
                 x = y;
-            x += correctCardTarget(TargetModSkill::DistanceLimit, from, slash);
+            break;
         }
-        else if(type == "extragoals"){
+        case ClientSkill::ExtraGoals : {
             x += skill->getSlashExtraGoals(from, to, slash);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    //if(slash == NULL)
+    //    slash = cloneCard("slash", Card::NoSuit, 0);
+    if(slash){
+        switch(type){
+        case ClientSkill::Residue :
+            x += correctCardTarget(TargetModSkill::Residue, from, slash);
+            break;
+        case ClientSkill::AttackRange :
+            x += correctCardTarget(TargetModSkill::DistanceLimit, from, slash);
+            break;
+        case ClientSkill::ExtraGoals :
             x += correctCardTarget(TargetModSkill::ExtraTarget, from, slash);
+            break;
+        default:
+            break;
         }
     }
 
@@ -922,29 +947,24 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
 int Engine::correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const{
     int x = 0;
 
-    if (type == TargetModSkill::Residue) {
-        foreach (const TargetModSkill *skill, targetmod_skills) {
-            ExpPattern p(skill->getPattern());
-            if (p.match(from, card)) {
-                int residue = skill->getResidueNum(from, card);
-                if (residue >= 998) return residue;
-                x += residue;
+    foreach(const TargetModSkill *skill, targetmod_skills){
+        ExpPattern sp(skill->getPattern());
+        if(sp.match(from, card)){
+            switch(type){
+            case TargetModSkill::Residue : {
+                x += skill->getResidueNum(from, card);
+                break;
             }
-        }
-    } else if (type == TargetModSkill::DistanceLimit) {
-        foreach (const TargetModSkill *skill, targetmod_skills) {
-            ExpPattern p(skill->getPattern());
-            if (p.match(from, card)) {
-                int distance_limit = skill->getDistanceLimit(from, card);
-                if (distance_limit >= 998) return distance_limit;
-                x += distance_limit;
+            case TargetModSkill::DistanceLimit : {
+                x += skill->getDistanceLimit(from, card);
+                break;
             }
-        }
-    } else if (type == TargetModSkill::ExtraTarget) {
-        foreach (const TargetModSkill *skill, targetmod_skills) {
-            ExpPattern p(skill->getPattern());
-            if (p.match(from, card)) {
+            case TargetModSkill::ExtraTarget : {
                 x += skill->getExtraTargetNum(from, card);
+                break;
+            }
+            default:
+                break;
             }
         }
     }

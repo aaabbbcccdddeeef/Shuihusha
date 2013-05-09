@@ -21,8 +21,7 @@ bool ExpPattern::willThrow() const{
 // 2nd patt means the card suit, and ',' means more than one options.
 // 3rd part means the card number, and ',' means more than one options,
 // the number uses '~' to make a scale for valid expressions
-bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) const
-{
+bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) const{
     //QString eXp = exp;
     if(exp.right(1) == "$")
         exp.chop(1);
@@ -30,9 +29,27 @@ bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) c
 
     bool checkpoint = false;
     QStringList card_types = factors.at(0).split(',');
-    foreach(QString name, card_types)
-        if(card->inherits(name.toLocal8Bit().data()) || name == ".")
-            checkpoint = true;
+    foreach (QString or_name, card_types) {
+        checkpoint = false;
+        foreach (QString name, or_name.split('+')) {
+            if (name == ".") {
+                checkpoint = true;
+            } else {
+                bool isInt = false;
+                bool positive = true;
+                if (name.startsWith('^')) {
+                    positive = false;
+                    name = name.mid(1);
+                }
+                if (card->isKindOf(name.toLocal8Bit().data()) || (card->getEffectiveId() == name.toInt(&isInt) && isInt))
+                    checkpoint = positive;
+                else
+                    checkpoint = !positive;
+            }
+            if (!checkpoint) break;
+        }
+        if (checkpoint) break;
+    }
     if(!checkpoint)
         return false;
     if(factors.size() < 2)
@@ -40,9 +57,19 @@ bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) c
 
     checkpoint = false;
     QStringList card_suits = factors.at(1).split(',');
-    foreach(QString suit, card_suits)
-        if(card->getSuitString() == suit || suit == ".")
-            checkpoint = true;
+    foreach(QString suit, card_suits){
+        if (suit == ".") {checkpoint = true; break;}
+        bool positive = true;
+        if (suit.startsWith('^')) {
+            positive = false;
+            suit = suit.mid(1);
+        }
+        if (card->getSuitString() == suit)
+            checkpoint = positive;
+        else
+            checkpoint = !positive;
+        if (checkpoint) break;
+    }
     if(!checkpoint)
         return false;
     if(factors.size() < 3)
@@ -53,6 +80,7 @@ bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) c
     int cdn = card->getNumber();
 
     foreach(QString number, card_numbers){
+        if (number == ".") {checkpoint = true; break;}
         if(number.contains('~')){
             QStringList params = number.split('~');
             int from, to;
@@ -84,7 +112,7 @@ bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) c
         checkpoint = true;
     else if(place == "equipped" && player->hasEquip(card))
         checkpoint = true;
-    else if(place == "hand" && !player->hasEquip(card))
+    else if(place == "hand" && card->getEffectiveId() >= 0 && !player->hasEquip(card))
         checkpoint = true;
     if(!checkpoint)
         return false;

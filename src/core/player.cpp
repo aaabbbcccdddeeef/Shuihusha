@@ -163,7 +163,7 @@ void Player::clearFlags(){
 
 int Player::getAttackRange(const Player *other, const Card *slash) const{
     int atkrg = getWeapon() ? getWeapon()->getRange() : 1;
-    int extra = Sanguosha->correctClient("attackrange", this, other, slash);
+    int extra = Sanguosha->correctClient(ClientSkill::AttackRange, this, other, slash);
 
     return extra >= 0 ? qMax(atkrg, extra): qAbs(extra);
 }
@@ -218,7 +218,7 @@ int Player::distanceTo(const Player *other, int distance_fix) const{
                 distance --;
         }
     }
-    distance += Sanguosha->correctClient("distance", this, other);
+    distance += Sanguosha->correctClient(ClientSkill::Distance, this, other);
     distance += distance_fix;
 
     // keep the distance >=1
@@ -619,7 +619,7 @@ int Player::getMaxCards() const{
         if(total % 2 != 0)
             rule = 1;
     }
-    extra += Sanguosha->correctClient("maxcard", this);
+    extra += Sanguosha->correctClient(ClientSkill::MaxCard, this);
 
     if(extra < 0)
         return qAbs(extra);
@@ -629,7 +629,7 @@ int Player::getMaxCards() const{
 
 int Player::getSlashTarget(const Player *other, const Card *slash) const{
     int rule = 1;
-    int extra = Sanguosha->correctClient("extragoals", this, other, slash);
+    int extra = Sanguosha->correctClient(ClientSkill::ExtraGoals, this, other, slash);
     return rule + extra;
 }
 

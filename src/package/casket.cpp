@@ -222,10 +222,39 @@ public:
     }
 };
 
+class Kaizi: public MasochismSkill{
+public:
+    Kaizi():MasochismSkill("Kaizi"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        if(player->getGender() != General::Male)
+            return;
+        QList<ServerPlayer *> huhuhu = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *huhu, huhuhu){
+            if(player->hasMark("lucky_jur"))
+                continue;
+            if(room->askForCard(huhu, "..", "@kaizi:" + player->objectName(), true, QVariant::fromValue(damage), CardDiscarded)){
+                LogMessage g;
+                g.type = "#InvokeSkill";
+                g.from = huhu;
+                g.arg = objectName();
+                room->sendLog(g);
+                player->gainJur("lucky_jur", 2);
+            }
+        }
+    }
+};
+
 class Dingxin: public TriggerSkill{
 public:
     Dingxin():TriggerSkill("dingxin"){
-        events << ConjuringProbability << Death;
+        events << PreConjuring << Death;
         frequency = Compulsory;
     }
 
@@ -333,6 +362,7 @@ CasketPackage::CasketPackage()
     addMetaObject<FanyinCard>();
 
     General *moon_jiashi = new General(this, "moon_jiashi", "moon", 3, false);
+    moon_jiashi->addSkill(new Kaizi);
     moon_jiashi->addSkill(new Dingxin);
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
