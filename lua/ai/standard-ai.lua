@@ -149,10 +149,20 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 						end
 					end
 				end
+			else
+				self:sort(self.enemies, "hp")
+				for _, enemi in ipairs(self.enemies) do
+					if not self:hasSkills("ganlin|binggong|baoguo|haoshen", enemi) then
+						use.card = sgs.Card_Parse("@GanlinCard=" .. hcard:getId())
+						if use.to then use.to:append(enemi) end
+						return
+					end
+				end
 			end
 		end
 	end
 
+--[[
 	local shit
 	shit = self:getCard("Shit")
 	if shit then
@@ -160,7 +170,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 		self:sort(self.enemies,"hp")
 		if use.to then use.to:append(self.enemies[1]) end
 		return
-	end
+	end]]
 
 	if #self.friends == 1 then return end
 
@@ -261,7 +271,17 @@ sgs.ai_skill_invoke["baoguo"] = true
 sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 	if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end
 	local damage = data:toDamage()
-	if self:isFriend(damage.to) and damage.to:getHp() <= 2 and not self.player:isKongcheng() then
+	local invoke = false
+	if damage.damage == 0 then
+		invoke = true
+	elseif self:isEnemy(damage.to) then
+		invoke = false
+	elseif damage.to:getHp() <= 2 then
+		invoke = true
+	else
+		invoke = math.random(1, 3) == 2
+	end
+	if invoke and not self.player:isKongcheng() then
 		local pile = self:getCardsNum("Peach") + self:getCardsNum("Analeptic")
 		local dmgnum = damage.damage
 		if self.player:getHp() + pile - dmgnum > 0 then
@@ -650,8 +670,7 @@ sgs.wusong_keep_value =
 -- fuhu
 sgs.ai_skill_cardask["@fuhu"] = function(self, data)
 	local damage = data:toDamage()
-	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
-	if not self:slashIsEffective(slash, damage.from) then return "." end
+	if self:slashProhibit(damage.from) then return "." end
 	if self:isEnemy(damage.from) then
 		local cards = self.player:getCards("he")
 		cards = sgs.QList2Table(cards)
@@ -1459,4 +1478,39 @@ end
 sgs.ai_skill_invoke["huakui"] = function(self, data)
 	self:speak("huakui")
 	return true
+end
+
+-- wusheng
+sgs.ai_view_as.wusheng = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:isRed() then
+		return ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
+	end
+end
+
+local wusheng_skill={}
+wusheng_skill.name="wusheng"
+table.insert(sgs.ai_skills,wusheng_skill)
+wusheng_skill.getTurnUseCard=function(self,inclusive)
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	local red_card
+	self:sortByUseValue(cards,true)
+	for _,card in ipairs(cards) do
+		if card:isRed() then
+			red_card = card
+			break
+		end
+	end
+	if red_card then
+		local suit = red_card:getSuitString()
+		local number = red_card:getNumberString()
+		local card_id = red_card:getEffectiveId()
+		local card_str = ("slash:wusheng[%s:%s]=%d"):format(suit, number, card_id)
+		local slash = sgs.Card_Parse(card_str)
+		assert(slash)
+		return slash
+	end
 end

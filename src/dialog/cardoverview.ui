@@ -130,6 +130,38 @@
     <string>Play (female)</string>
    </property>
   </widget>
+  <widget class="QLabel" name="cardNumber">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>30</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>image/system/card/red/A.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="cardSuit">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>30</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>image/system/suit/heart.png</pixmap>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -18,8 +18,6 @@ public:
         :ScenarioRule(scenario)
     {
         events << GameStart;
-
-
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{

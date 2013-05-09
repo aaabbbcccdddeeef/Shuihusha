@@ -23,7 +23,7 @@ return {
 	["duduan"] = "独断",
 	[":duduan"] = "<b>锁定技</b>，你不能成为延时类锦囊的目标。",
 
-	["#Baozou"] = "%from 进入暴走状态，拥有无视防具效果",
+	["#Baozou"] = "%from 进入暴走状态",
 	["#BaozouOver"] = "%from 的暴走状态消失，[绝境之战]事件触发。每名角色开始进行判定",
 	["#TiemuAvoid"] = "%to 的技能【%arg2】被触发，%from 对 %to 使用的锦囊 %arg 无效",
 

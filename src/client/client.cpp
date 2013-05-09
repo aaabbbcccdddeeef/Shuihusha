@@ -76,6 +76,7 @@ Client::Client(QObject *parent, const QString &filename)
     m_callbacks[S_COMMAND_SET_PROPERTY] = &Client::updateProperty;
     //callbacks["skillInvoked"] = &Client::skillInvoked;
     callbacks["addHistory"] = &Client::addHistory;
+    callbacks["clearHistory"] = &Client::clearHistory;
     callbacks["animate"] = &Client::animate;
     callbacks["judgeResult"] = &Client::judgeResult;
     callbacks["setScreenName"] = &Client::setScreenName;
@@ -419,33 +420,40 @@ void Client::onPlayerChooseGeneral(const QString &item_name){
     setStatus(Client::NotActive);
     if(!item_name.isEmpty()){
         replyToServer(S_COMMAND_CHOOSE_GENERAL, toJsonString(item_name));
-        Sanguosha->playAudio("choose-item");
+        playAudio("choose-item");
     }
 }
 
 void Client::requestCheatRunScript(const QString& script)
 {
-    Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
+    Json::Value cheatReq(Json::arrayValue);
     cheatReq[0] = (int)S_CHEAT_RUN_SCRIPT;
     cheatReq[1] = toJsonString(script);
     requestToServer(S_COMMAND_CHEAT, cheatReq);
 }
 
-void Client::requestCheatRevive(const QString& name)
+void Client::requestCheatRevive(const QString& name, bool full_state, bool invoke_start)
 {
-    Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
+    Json::Value cheatReq(Json::arrayValue);
     cheatReq[0] = (int)S_CHEAT_REVIVE_PLAYER;
     cheatReq[1] = toJsonString(name);
+    QString flag;
+    if(full_state)
+        flag.append("F");
+    if(invoke_start)
+        flag.append("I");
+    cheatReq[2] = toJsonString(flag);
     requestToServer(S_COMMAND_CHEAT, cheatReq);
 }
 
-void Client::requestCheatDamage(const QString& source, const QString& target, DamageStruct::Nature nature, int points)
+void Client::requestCheatDamage(const QString& source, const QString& target, int nature, int points, int card_id)
 {
     Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
     cheatArg[0] = toJsonString(source);
     cheatArg[1] = toJsonString(target);
-    cheatArg[2] = (int)nature;
+    cheatArg[2] = nature;
     cheatArg[3] = points;
+    cheatArg[4] = card_id;
 
     cheatReq[0] = (int)S_CHEAT_MAKE_DAMAGE;
     cheatReq[1] = cheatArg;
@@ -457,6 +465,23 @@ void Client::requestCheatKill(const QString& killer, const QString& victim)
     Json::Value cheatArg;
     cheatArg[0] = (int)S_CHEAT_KILL_PLAYER;
     cheatArg[1] = toJsonArray(killer, victim);
+    requestToServer(S_COMMAND_CHEAT, cheatArg);
+}
+
+void Client::requestCheatMove(int card_id, const QString &place){
+    Json::Value cheatArg;
+    cheatArg[0] = (int)S_CHEAT_CARD_MOVE;
+    cheatArg[1] = card_id;
+    cheatArg[2] = toJsonString(place);
+    requestToServer(S_COMMAND_CHEAT, cheatArg);
+}
+
+void Client::requestCheatState(const QString &target, const QString &data)
+{
+    Json::Value cheatArg;
+    cheatArg[0] = (int)S_CHEAT_SET_STATE;
+    cheatArg[1] = toJsonString(target);
+    cheatArg[2] = toJsonString(data);
     requestToServer(S_COMMAND_CHEAT, cheatArg);
 }
 
@@ -938,7 +963,7 @@ void Client::askForChoice(const Json::Value &ask_str){
     }
 
     ask_dialog = dialog;
-    Sanguosha->playAudio("pop-up");
+    playAudio("pop-up");
     setStatus(ExecDialog);
 }
 
@@ -1064,9 +1089,9 @@ void Client::trust(){
     request("trust .");
 
     if(Self->getState() == "trust")
-        Sanguosha->playAudio("untrust");
+        playAudio("untrust");
     else
-        Sanguosha->playAudio("trust");
+        playAudio("trust");
 
     setStatus(NotActive);
 }
@@ -1106,6 +1131,10 @@ void Client::addHistory(const QString &add_str){
 
         Self->addHistory(card_name, times);
     }
+}
+
+void Client::clearHistory(const QString &name){
+    Self->clearHistory(name);
 }
 
 int Client::alivePlayerCount() const{
@@ -1419,7 +1448,7 @@ void Client::askForSuit(const Json::Value &){
     setStatus(ExecDialog);
 }
 
-void Client::askForKingdom(const Json::Value&){
+void Client::askForKingdom(const Json::Value &include_god){
     delete ask_dialog;
 
     QDialog *dialog = new QDialog;
@@ -1428,7 +1457,10 @@ void Client::askForKingdom(const Json::Value&){
     QVBoxLayout *layout = new QVBoxLayout;
 
     QStringList kingdoms = Sanguosha->getKingdoms();
-    //kingdoms.removeOne("god"); // god kingdom does not really exist
+    if(include_god.asInt() == 0)
+        kingdoms.removeOne("god"); // god kingdom does not really exist
+    kingdoms.removeOne("sun");
+    kingdoms.removeOne("moon");
 
     foreach(QString kingdom, kingdoms){
         QCommandLinkButton *button = new QCommandLinkButton;
@@ -1586,7 +1618,7 @@ QList<const ClientPlayer*> Client::getPlayers() const{
 void Client::clearTurnTag(){
     switch(Self->getPhase()){
     case Player::Start:{
-            Sanguosha->playAudio("your-turn");
+            playAudio("your-turn");
             QApplication::alert(QApplication::focusWidget());
             break;
     }

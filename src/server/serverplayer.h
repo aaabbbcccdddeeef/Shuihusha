@@ -54,7 +54,7 @@ public:
     bool hasNullification(bool include_counterplot = false) const;
     void kick();
     bool pindian(ServerPlayer *target, const QString &reason, const Card *card1 = NULL);
-    void turnOver();
+    bool turnOver();
     void play(QList<Player::Phase> set_phases = QList<Player::Phase>());
 
     QList<Player::Phase> &getPhases();
@@ -64,7 +64,8 @@ public:
     void gainMark(const QString &mark, int n = 1);
     void loseMark(const QString &mark, int n = 1);
     void loseAllMarks(const QString &mark_name);
-    void gainJur(const QString &jur, int n);
+    void gainJur(const QString &jur, int n, bool overlying = false);
+    void removeJur(const QString &jur);
 
     void setAI(AI *ai);
     AI *getAI() const;
@@ -97,6 +98,7 @@ public:
 
     int getGeneralMaxHP() const;
     int getGeneralMaxHp() const;
+    int getGeneralHp() const;
     virtual QString getGameMode() const;
 
     QString getIp() const;
@@ -135,13 +137,15 @@ public:
     inline void setClientReplyString(const QString &val){m_clientResponseString = val;}
     inline Json::Value getClientReply(){return _m_clientResponse;}
     inline void setClientReply(const Json::Value &val){_m_clientResponse = val;}    
-    int m_expectedReplySerial; // Suggest the acceptable serial number of an expected response.
+    unsigned int m_expectedReplySerial; // Suggest the acceptable serial number of an expected response.
     bool m_isClientResponseReady; //Suggest whether a valid player's reponse has been received.
     bool m_isWaitingReply; // Suggest if the server player is waiting for client's response.
     Json::Value m_cheatArgs; // Store the cheat code received from client.
     QSanProtocol::CommandType m_expectedReplyCommand; // Store the command to be sent to the client.
     Json::Value m_commandArgs; // Store the command args to be sent to the client.
 
+    // static function
+    static bool CompareByActionOrder(ServerPlayer *a, ServerPlayer *b);
 
 protected:    
     //Synchronization helpers
@@ -171,6 +175,7 @@ signals:
     void disconnected();
     void request_got(const QString &request);
     void message_cast(const QString &message) const;
+    void conjuring_changed();
 };
 
 #endif // SERVERPLAYER_H

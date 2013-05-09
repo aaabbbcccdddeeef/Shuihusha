@@ -13,6 +13,7 @@
 #include "pixmapanimation.h"
 #include "scenario.h"
 #include "audio.h"
+#include "cheatdialog.h"
 #include "record-analysis.h"
 
 #include <QPropertyAnimation>
@@ -55,8 +56,8 @@ using namespace QSanProtocol;
 struct RoomLayout {
     QPointF discard, drawpile;
     QPointF enemy_box, self_box;
-    QSize chat_box_size;
-    QPointF chat_box_pos;
+    QSize chat_box_size, log_box_size;
+    QPointF chat_box_pos, log_box_pos;
     QPointF button1_pos, button2_pos;
     QPointF state_item_pos;
 };
@@ -85,6 +86,12 @@ struct NormalRoomLayout : public RoomLayout{
 
         coord = settings.value("chat_box_pos").toList();
         chat_box_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("log_box_size").toList();
+        log_box_size = QSize(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("log_box_pos").toList();
+        log_box_pos = QPointF(coord.first().toReal(), coord.last().toReal());
 
         coord = settings.value("button1_pos").toList();
         button1_pos = QPointF(coord.first().toReal(), coord.last().toReal());
@@ -156,6 +163,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         dashboard->setPlayer(Self);
         connect(Self, SIGNAL(general_changed()), dashboard, SLOT(updateAvatar()));
         connect(Self, SIGNAL(general2_changed()), dashboard, SLOT(updateSmallAvatar()));
+        connect(Self, SIGNAL(conjuring_changed()), dashboard, SLOT(updateSmallAvatar()));
         connect(ClientInstance, SIGNAL(do_filter()), dashboard, SLOT(doFilter()));
         connect(dashboard, SIGNAL(card_selected(const Card*)), this, SLOT(enableTargets(const Card*)));
         connect(dashboard, SIGNAL(card_to_use()), this, SLOT(doOkButton()));
@@ -363,21 +371,18 @@ RoomScene::RoomScene(QMainWindow *main_window)
     {
         // log box
         log_box = new ClientLogBox;
-        log_box->resize(chat_box->width(), 205);
+        QSize log_box_size = room_layout->log_box_size;
+        log_box->resize(chat_box->width(), log_box_size.height());
         log_box->setTextColor(Config.TextEditColor);
         log_box->setObjectName("log_box");
         log_box->setProperty("type", "border");
 
         QGraphicsProxyWidget *log_box_widget = addWidget(log_box);
-        log_box_widget->setPos(114, -83);
+        QPointF log_box_pos = room_layout->log_box_pos;
+        log_box_widget->setPos(log_box_pos);
         log_box_widget->setZValue(-2.0);
         log_box_widget->setObjectName("log_box_widget");
         connect(ClientInstance, SIGNAL(log_received(QString)), log_box, SLOT(appendLog(QString)));
-
-        if(circular){
-            log_box->resize(chat_box->width(), 210);
-            log_box_widget->setPos(367, -246);
-        }
 
         log_box_widget->setFlag(QGraphicsItem::ItemIsMovable);
     }
@@ -2720,7 +2725,7 @@ void RoomScene::onGameOver(){
             loser_list << player;
 
         if(player != Self)
-            setEmotion(player->objectName(), win ? "win" : "lose", true);
+            setEmotion(player->objectName(), win ? "%win" : "%lose");
     }
 
     fillTable(winner_table, winner_list);
@@ -2797,126 +2802,6 @@ void RoomScene::autoSaveReplayRecord(){
     ClientInstance->save(QString("%1/%2").arg(location).arg(filename));
 }
 
-ScriptExecutor::ScriptExecutor(QWidget *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Script execution"));
-
-    QVBoxLayout *vlayout = new QVBoxLayout;
-
-    vlayout->addWidget(new QLabel(tr("Please input the script that should be executed at server side:\n P = you, R = your room")));
-
-    QTextEdit *box = new QTextEdit;
-    box->setObjectName("scriptBox");
-    vlayout->addWidget(box);
-
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addStretch();
-
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    hlayout->addWidget(ok_button);
-
-    vlayout->addLayout(hlayout);
-
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(this, SIGNAL(accepted()), this, SLOT(doScript()));
-
-    setLayout(vlayout);
-}
-
-void ScriptExecutor::doScript(){
-    QTextEdit *box = findChild<QTextEdit *>("scriptBox");
-    if(box == NULL)
-        return;
-
-    QString script = box->toPlainText();
-    QByteArray data = script.toAscii();
-    data = qCompress(data);
-    script = data.toBase64();
-
-    ClientInstance->requestCheatRunScript(script);
-}
-
-DeathNoteDialog::DeathNoteDialog(QWidget *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Death note"));
-
-    killer = new QComboBox;
-    RoomScene::FillPlayerNames(killer, true);
-
-    victim = new QComboBox;
-    RoomScene::FillPlayerNames(victim, false);
-
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
-
-    QFormLayout *layout = new QFormLayout;
-    layout->addRow(tr("Killer"), killer);
-    layout->addRow(tr("Victim"), victim);
-
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addStretch();
-    hlayout->addWidget(ok_button);
-    layout->addRow(hlayout);
-
-    setLayout(layout);
-}
-
-void DeathNoteDialog::accept(){
-    QDialog::accept();
-    ClientInstance->requestCheatKill(killer->itemData(killer->currentIndex()).toString(),
-                            victim->itemData(victim->currentIndex()).toString());
-}
-
-DamageMakerDialog::DamageMakerDialog(QWidget *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Damage maker"));
-
-    damage_source = new QComboBox;
-    RoomScene::FillPlayerNames(damage_source, true);
-
-    damage_target = new QComboBox;
-    RoomScene::FillPlayerNames(damage_target, false);
-
-    damage_nature = new QComboBox;
-    damage_nature->addItem(tr("Normal"), S_CHEAT_NORMAL_DAMAGE);
-    damage_nature->addItem(tr("Thunder"), S_CHEAT_THUNDER_DAMAGE);
-    damage_nature->addItem(tr("Fire"), S_CHEAT_FIRE_DAMAGE);
-    damage_nature->addItem(tr("Recover HP"), S_CHEAT_HP_RECOVER);
-    damage_nature->addItem(tr("Lose HP"), S_CHEAT_HP_LOSE);
-    damage_nature->addItem(tr("Lose Max HP"), S_CHEAT_MAX_HP_LOSE);
-    damage_nature->addItem(tr("Reset Max HP"), S_CHEAT_MAX_HP_RESET);
-
-    damage_point = new QSpinBox;
-    damage_point->setRange(1, 1000);
-    damage_point->setValue(1);
-
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addStretch();
-    hlayout->addWidget(ok_button);
-
-    QFormLayout *layout = new QFormLayout;
-
-    layout->addRow(tr("Damage source"), damage_source);
-    layout->addRow(tr("Damage target"), damage_target);
-    layout->addRow(tr("Damage nature"), damage_nature);
-    layout->addRow(tr("Damage point"), damage_point);
-    layout->addRow(hlayout);
-
-    setLayout(layout);
-
-    connect(damage_nature, SIGNAL(currentIndexChanged(int)), this, SLOT(disableSource()));
-}
-
-void DamageMakerDialog::disableSource(){
-    int nature = damage_nature->itemData(damage_nature->currentIndex()).toInt();
-    damage_source->setEnabled(nature < 5);
-}
-
 void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){
     if(add_none)
         combobox->addItem(tr("None"), ".");
@@ -2932,22 +2817,14 @@ void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){
     }
 }
 
-void DamageMakerDialog::accept(){
-    QDialog::accept();
-
-    ClientInstance->requestCheatDamage(damage_source->itemData(damage_source->currentIndex()).toString(),
-                            damage_target->itemData(damage_target->currentIndex()).toString(),
-                            (DamageStruct::Nature)damage_nature->itemData(damage_nature->currentIndex()).toInt(),
-                            damage_point->value());
-}
-
 void RoomScene::makeDamage(){
     if(Self->getPhase() != Player::Play){
         QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
         return;
     }
 
-    DamageMakerDialog *damage_maker = new DamageMakerDialog(main_window);
+    CheatDialog *damage_maker = new CheatDialog(main_window, Self);
+    damage_maker->tab_widget->setCurrentIndex(0);
     damage_maker->exec();
 }
 
@@ -2957,7 +2834,19 @@ void RoomScene::makeKilling(){
         return;
     }
 
-    DeathNoteDialog *dialog = new DeathNoteDialog(main_window);
+    CheatDialog *dialog = new CheatDialog(main_window, Self);
+    dialog->tab_widget->setCurrentIndex(1);
+    dialog->exec();
+}
+
+void RoomScene::makeState(){
+    if(Self->getPhase() != Player::Play){
+        QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
+        return;
+    }
+
+    CheatDialog *dialog = new CheatDialog(main_window, Self);
+    dialog->tab_widget->setCurrentIndex(3);
     dialog->exec();
 }
 
@@ -2966,6 +2855,12 @@ void RoomScene::makeReviving(){
         QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
         return;
     }
+    /*
+    CheatDialog *dialog = new CheatDialog(main_window, Self);
+    dialog->tab_widget->setCurrentIndex(1);
+    dialog->unkill->setChecked(true);
+    dialog->exec();
+    */
 
     QStringList items;
     QList<const ClientPlayer*> victims;;
@@ -2997,7 +2892,7 @@ void RoomScene::doScript(){
 }
 
 void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players){
-    table->setColumnCount(9);
+    table->setColumnCount(10);
     table->setRowCount(players.length());
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -3012,8 +2907,8 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         else
             labels << tr("Role");
 
-        labels << /*tr("Designation") <<*/ tr("Kill")
-                << tr("Save") << tr("Damage") << tr("Recover") << tr("Cheat");
+        labels << /*tr("Designation") <<*/ tr("Kill") << tr("Save")
+                << tr("Damage") << tr("Recover") << tr("Revive") << tr("Cheat");
     }
     table->setHorizontalHeaderLabels(labels);
 
@@ -3070,31 +2965,20 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         designations.remove(designations.length()-3, 2);
         table->setItem(i, 4, item);
         */
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_kill));
-        item->setText(QString::number(statistics->kill));
-        table->setItem(i, 4, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_save));
-        item->setText(QString::number(statistics->save));
-        table->setItem(i, 5, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_damage));
-        item->setText(QString::number(statistics->damage));
-        table->setItem(i, 6, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_recover));
-        item->setText(QString::number(statistics->recover));
-        table->setItem(i, 7, item);
-
-        item = new QTableWidgetItem;
-        //item->setText(QString::number(rec->m_cheat));
-        item->setText(QString::number(statistics->cheat));
-        table->setItem(i, 8, item);
+        QList<int> datas;
+        datas
+                << statistics->kill // 4
+                << statistics->save // 5
+                << statistics->damage
+                << statistics->recover // 7
+                << statistics->revive // 8
+                << statistics->cheat; //9
+        for(int ii = 4; ii < 10; ii ++){
+            item = new QTableWidgetItem;
+            //item->setText(QString::number(rec->m_kill));
+            item->setText(QString::number(datas.at(ii - 4)));
+            table->setItem(i, ii, item);
+        }
 
         table->setColumnWidth(0, 85);
         table->setColumnWidth(1, 65);
@@ -3105,6 +2989,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         table->setColumnWidth(6, 37);
         table->setColumnWidth(7, 37);
         table->setColumnWidth(8, 37);
+        table->setColumnWidth(9, 37);
     }
 
     //for (int i = 2; i <= 8; i++)
@@ -3608,15 +3493,18 @@ void RoomScene::moveFocus(const QString &who){
     }
 }
 
-void RoomScene::setEmotion(const QString &who, const QString &emotion ,bool permanent){
-    if(Config.BanEmotions.contains(emotion))
+void RoomScene::setEmotion(const QString &who, const QString &emotion){
+    QString true_emotion = emotion;
+    bool permanent = true_emotion.startsWith("%"); //% mean keep show for example: "%win"
+    true_emotion.remove("%");
+    if(Config.BanEmotions.contains(true_emotion))
         return;
     Photo *photo = name2photo[who];
     if(photo){
-        photo->setEmotion(emotion,permanent);
+        photo->setEmotion(true_emotion, permanent);
         return;
     }
-    PixmapAnimation * pma = PixmapAnimation::GetPixmapAnimation(dashboard,emotion);
+    PixmapAnimation * pma = PixmapAnimation::GetPixmapAnimation(dashboard, true_emotion);
     if(pma){
         pma->moveBy(0,- dashboard->boundingRect().height()/2);
         pma->setZValue(8.0);

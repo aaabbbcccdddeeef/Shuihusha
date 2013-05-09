@@ -168,13 +168,14 @@ function SmartAI:useCardWiretap(wiretap, use)
 		use.to:append(targets[r])
 		self:speak("wiretap", targets[r])
 	end
+	return targets[r]
 end
 
 sgs.dynamic_value.benefit.Wiretap = true
 
 -- xing ci
 function SmartAI:useCardAssassinate(ass, use)
-	if #self.enemies == 0 then return "." end
+	if #self.enemies == 0 then return end
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			if self:hasTrickEffective(ass, enemy) then
@@ -202,17 +203,10 @@ function SmartAI:useCardAssassinate(ass, use)
 			end
 		end
 	end
-
-	self:sort(self.enemies)
+	if not target then return end
 	use.card = ass
-	if target then
-		if use.to then
-			use.to:append(target)
-		end
-	else
-		if use.to then
-			use.to:append(self.enemies[1])
-		end
+	if use.to then
+		use.to:append(target)
 	end
 end
 
@@ -227,6 +221,7 @@ sgs.dynamic_value.damage_card.Assassinate = true
 
 -- sheng chen gang
 function SmartAI:useCardTreasury(card, use)
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	if not self.player:containsTrick("treasury") then
 		use.card = card
 	end
@@ -237,6 +232,7 @@ sgs.dynamic_value.lucky_chance.Treasury = true
 -- hai xiao
 function SmartAI:useCardTsunami(card, use)
 	if self.player:containsTrick("tsunami") then return end
+	if self.room:isProhibited(self.player, self.player, card) then return end
 	if self.player:hasEquip("haiqiu") then return end
 
 	if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
@@ -276,7 +272,7 @@ sgs.dynamic_value.lucky_chance.Tsunami = true
 -- ji cao tun liang
 function SmartAI:useCardProvistore(provistore, use)
 	for _, friend in ipairs(self.friends) do
-		if not friend:containsTrick("provistore") and friend:getHandcardNum() > 3 then
+		if not friend:containsTrick("provistore") and friend:getHandcardNum() > 3 and self:hasTrickEffective(provistore, friend) then
 			use.card = provistore
 			if use.to then
 				use.to:append(friend)

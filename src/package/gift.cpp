@@ -11,11 +11,13 @@ QString Zongzi::getSubtype() const{
 }
 
 QString Zongzi::getEffectPath(bool) const{
-    return "audio/card/common/zongzi.ogg";
+    return Card::getEffectPath();
 }
 
 bool Zongzi::isAvailable(const Player *quyuan) const{
-    if(ServerInfo.GameMode != "dusong")
+    if(quyuan->isProhibited(quyuan, this))
+        return false;
+    else if(ServerInfo.GameMode != "dusong")
         return !quyuan->hasMark("HaveEaten");
     else
         return true;
@@ -135,12 +137,8 @@ public:
             room->sendLog(ogg);
             room->throwCard(use.card);
 
-            foreach(ServerPlayer *target, targets){
-                bool chained = ! target->isChained();
-                target->setChained(chained);
-                room->broadcastProperty(target, "chained");
-                room->setEmotion(target, "chain");
-            }
+            foreach(ServerPlayer *target, targets)
+                room->setPlayerChained(target);
 
             return true;
         }

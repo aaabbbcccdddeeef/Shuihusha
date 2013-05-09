@@ -287,7 +287,7 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     room->throwCard(this);
 
     player->addHistory("HuaceCard");
-    Self->addHistory("HuaceCard");
+    player->invoke("addHistory", "HuaceCard");
     return use_card;
 }
 
@@ -450,6 +450,7 @@ public:
 
             room->sendJudgeResult(player);
         }
+        player->tag.remove("Judge");
         return false;
     }
 };
@@ -473,7 +474,7 @@ void QimenCard::willCry(Room *room, ServerPlayer *target) const{
     QVariant data = QVariant::fromValue(skills.join("+"));
     target->tag["QimenStore"] = data;
 
-    room->setPlayerProperty(target, "scarecrow", true);
+    room->setPlayerMark(target, "scarecrow", 1);
     target->gainMark("@shut");
 }
 
@@ -550,7 +551,7 @@ public:
             room->acquireSkill(player, skill_name);
         player->tag.remove("QimenStore");
 
-        room->setPlayerProperty(player, "scarecrow", false);
+        room->setPlayerMark(player, "scarecrow", 0);
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
@@ -1085,7 +1086,11 @@ public:
 class Fuhu: public TriggerSkill{
 public:
     Fuhu():TriggerSkill("fuhu"){
-        events << DamageConclude;
+        events << Damage;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -1528,10 +1533,8 @@ public:
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
-        if(to->getHp() == 1)
-            return card->inherits("Slash") || card->inherits("Duel") || card->inherits("Assassinate");
-        else
-            return false;
+        return to->hasSkill(objectName()) && to->getHp() == 1 &&
+                (card->isKindOf("Slash") || card->isKindOf("Duel") || card->isKindOf("Assassinate"));
     }
 };
 
@@ -1542,7 +1545,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *nana, QVariant &data) const{
-        if(nana->getHp() == 1 && nana->getPhase() == Player::NotActive)
+        if(nana->getHp() == 1)
             room->playSkillEffect("jueming");
         return false;
     }
@@ -1813,6 +1816,7 @@ public:
 };
 
 YanshouCard::YanshouCard(){
+    mute = true;
 }
 
 bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Player *, const Player *Self) const{
@@ -2227,7 +2231,6 @@ public:
                     QString skill = room->askForChoice(caijing, objectName(), skills.join("+"));
                     room->acquireSkill(caijing, skill);
                 }
-                room->playSkillEffect(objectName());
 
                 room->playLightbox(caijing, "duoquan", "");
 
@@ -2450,7 +2453,6 @@ public:
                 continue;
             if(room->askForCard(xing, ".S", "@zhensha:" + player->objectName(), true, data, CardDiscarded)){
                 LogMessage log;
-                room->playSkillEffect(objectName());
                 log.type = "#UseSkill";
                 log.from = xing;
                 log.to << player;
@@ -2654,7 +2656,7 @@ class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
         frequency = Frequent;
-        events << DamageComplete << PreDeath;
+        events << Damaged << PreDeath;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -2671,26 +2673,16 @@ public:
             if(other->getHp() >= (other->getMaxHp()+1) / 2)
                 continue;
             if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
-                //const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 loli->drawCards(1);
-                /*room->getThread()->delay();
-
-                LogMessage log;
-                log.type = "$TakeAG";
-                log.from = loli;
-                log.card_str = card->getEffectIdString();
-                room->sendLog(log);
-
-                room->obtainCard(loli, card);*/
             }
         }
         return false;
     }
 
     virtual int getPriority(TriggerEvent event) const{
-        if(event == DamageComplete)
-            return 1;
+        if(event == Damaged)
+            return -2;
         else
             return 2;
     }

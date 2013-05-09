@@ -1,0 +1,11 @@
+
+general:suyuanjing general2:select role:lord starter:true maxhp:3 hp:3 
+general:songjiang role:loyalist 
+general:wuyong role:loyalist 
+general:luzhishen role:rebel maxhp:4 hp:3 
+general:wusong role:rebel maxhp:4 hp:3 
+general:liutang role:rebel maxhp:4 hp:3 
+general:shijin role:rebel maxhp:4 hp:3 
+general:muhong role:rebel maxhp:4 hp:3 
+general:likui role:rebel maxhp:4 hp:3 
+general:lujunyi role:loyalist 

@@ -27,7 +27,7 @@ public:
     ~Engine();
 
     void addTranslationEntry(const char *key, const char *value);
-    QString translate(const QString &to_translate) const;
+    QString translate(const QString &to_translate, bool return_null = false) const;
     lua_State *getLuaState() const;
 
     void addPackage(Package *package);
@@ -74,14 +74,17 @@ public:
     const TriggerSkill *getTriggerSkill(const QString &skill_name) const;
     const ViewAsSkill *getViewAsSkill(const QString &skill_name) const;
     QList<const ClientSkill *> getClientSkills() const;
+    QList<const TargetModSkill *> getTargetModSkills() const;
     void addSkills(const QList<const Skill *> &skills);
 
     bool isDuplicated(const QString &name, bool is_skill = true);
+    bool isExist(const QString &str);
 
     int getCardCount() const;
     const Card *getCard(int index) const;
+    QList<Card*> getCards() const;
 
-    QStringList getLords() const;
+    QStringList getLords(bool contain_banned = false) const;
     QStringList getRandomLords() const;
     QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
     QList<int> getRandomCards() const;
@@ -97,6 +100,7 @@ public:
     const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
     const ClientSkill *isPenetrate(const Player *from, const Player *to, const Card *card) const;
     int correctClient(const QString &type, const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+    int correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const;
 
 private:
     QHash<QString, QString> translations;
@@ -109,6 +113,7 @@ private:
 
     // special skills
     QList<const ClientSkill *> client_skills;
+    QList<const TargetModSkill *> targetmod_skills;
 
     QHash<QString, const Scenario *> scenarios;
 

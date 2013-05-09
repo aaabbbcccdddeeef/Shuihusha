@@ -44,6 +44,35 @@ public:
     }
 };
 
+class Tuzai: public TriggerSkill{
+public:
+    Tuzai():TriggerSkill("tuzai"){
+        events << Damage;
+        frequency = Frequent;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.card && damage.card->inherits("Slash") &&
+           damage.to && !damage.to->isKongcheng()
+            && player->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
+            int dust = damage.to->getRandomHandCardId();
+            room->showCard(damage.to, dust);
+
+            if(Sanguosha->getCard(dust)->isRed()){
+                room->throwCard(dust, damage.to, player);
+                player->drawCards(1);
+            }
+        }
+        return false;
+    }
+};
+
 class Chengfu: public TriggerSkill{
 public:
     Chengfu():TriggerSkill("chengfu"){
@@ -95,11 +124,15 @@ public:
 class Xiaduo: public TriggerSkill{
 public:
     Xiaduo():TriggerSkill("xiaduo"){
-        events << DamageComplete;
+        events << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -2;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
@@ -578,9 +611,11 @@ public:
 MonkeyPackage::MonkeyPackage()
     :GeneralPackage("monkey")
 {
-    General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
-    ximenqing->addSkill("#hp-1");
+    General *ximenqing = new General(this, "ximenqing$", "min", "3/4");
     ximenqing->addSkill(new Caiquan);
+
+    General *caozheng = new General(this, "caozheng", "min");
+    caozheng->addSkill(new Tuzai);
 
     General *wanglun = new General(this, "wanglun", "kou", 3);
     wanglun->addSkill(new Chengfu);

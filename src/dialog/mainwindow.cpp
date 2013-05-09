@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
 
-    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool()){
+    if(Config.value("UI/ButtonStyle", true).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
@@ -152,14 +152,15 @@ void MainWindow::restoreFromConfig(){
     ui->actionPause->setChecked(false);
     ui->actionAutoSave->setChecked(Config.value("AutoSave", false).toBool());
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
+    ui->actionCircular_view->setChecked(Config.CircularView);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
     ui->actionDraw_indicator->setChecked(!Config.value("UI/NoIndicator", false).toBool());
-    ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", true).toBool());
+    ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", false).toBool());
     ui->actionFit_in_view->setChecked(Config.FitInView);
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
-    ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool());
+    ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", true).toBool());
     ui->actionEquip_style->setChecked(Config.value("UI/EquipStyle", true).toBool());
 }
 
@@ -167,7 +168,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
     Config.beginGroup("UI");
     Config.setValue("WindowSize", size());
     Config.setValue("WindowPosition", pos());
-    if(scene->inherits("StartScene") && Config.value("ButtonStyle", false).toBool()){
+    if(scene->inherits("StartScene") && Config.value("ButtonStyle", true).toBool()){
         StartScene *start_scene = qobject_cast<StartScene *>(scene);
         Config.setValue("PlatePosition", start_scene->button_plate->pos());
     }
@@ -304,7 +305,7 @@ void MainWindow::checkVersion(const QString &server_version, const QString &serv
 
     client->disconnectFromHost();
 
-    static QString link = "http://github.com/Moligaloo/QSanguosha/downloads";
+    static QString link = "http://weibo.com/ubuntenkei";
     QString text = tr("Server version is %1, client version is %2 <br/>").arg(server_version).arg(client_version);
     if(server_version > client_version)
         text.append(tr("Your client version is older than the server's, please update it <br/>"));
@@ -365,6 +366,8 @@ void MainWindow::enterRoom(){
     ui->actionJoin_Game->setEnabled(false);
     ui->actionStart_Game->setEnabled(false);
     ui->actionAI_Melee->setEnabled(false);
+    ui->actionCircular_view->setEnabled(false);
+    ui->actionButton_style->setEnabled(false);
 
     RoomScene *room_scene = new RoomScene(this);
 
@@ -395,15 +398,18 @@ void MainWindow::enterRoom(){
         connect(ui->actionDeath_note, SIGNAL(triggered()), room_scene, SLOT(makeKilling()));
         connect(ui->actionDamage_maker, SIGNAL(triggered()), room_scene, SLOT(makeDamage()));
         connect(ui->actionRevive_wand, SIGNAL(triggered()), room_scene, SLOT(makeReviving()));
+        connect(ui->actionState_control, SIGNAL(triggered()), room_scene, SLOT(makeState()));
         connect(ui->actionSend_lowlevel_command, SIGNAL(triggered()), this, SLOT(sendLowLevelCommand()));
         connect(ui->actionExecute_script_at_server_side, SIGNAL(triggered()), room_scene, SLOT(doScript()));
     }
     else{
         ui->menuCheat->setEnabled(false);
         ui->actionGet_card->disconnect();
+        ui->actionChange_general->disconnect();
         ui->actionDeath_note->disconnect();
         ui->actionDamage_maker->disconnect();
         ui->actionRevive_wand->disconnect();
+        ui->actionState_control->disconnect();
         ui->actionSend_lowlevel_command->disconnect();
         ui->actionExecute_script_at_server_side->disconnect();
     }
@@ -433,7 +439,7 @@ void MainWindow::on_actionReturn_main_triggered(){
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
 
-    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool()){
+    if(Config.value("UI/ButtonStyle", true).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
@@ -451,6 +457,7 @@ void MainWindow::on_actionReturn_main_triggered(){
     ui->actionDeath_note->disconnect();
     ui->actionDamage_maker->disconnect();
     ui->actionRevive_wand->disconnect();
+    ui->actionState_control->disconnect();
     ui->actionSend_lowlevel_command->disconnect();
     ui->actionExecute_script_at_server_side->disconnect();
     gotoScene(start_scene);
@@ -733,6 +740,13 @@ void MainWindow::on_actionAcknowledgement_triggered()
 void MainWindow::on_actionScript_editor_triggered()
 {
     QMessageBox::information(this, tr("Warning"), tr("This function is not implemented yet!"));
+}
+
+void MainWindow::on_actionCircular_view_toggled(bool checked)
+{
+    if(Config.CircularView != checked)
+        Config.CircularView = checked;
+        Config.setValue("CircularView", checked);
 }
 
 void MainWindow::on_actionDraw_indicator_toggled(bool checked)

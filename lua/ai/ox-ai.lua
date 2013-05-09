@@ -18,13 +18,12 @@ end
 sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 	self:sort(self.enemies, "defense")
 	local target_count=0
-	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	for _, enemy in ipairs(self.enemies) do
 		if ((self.player:canSlash(enemy, not no_distance)) or
 			(use.isDummy and (self.player:distanceTo(enemy)<=self.predictedRange))) and
 			self:objectiveLevel(enemy)>3 and
-			self:slashIsEffective(slash, enemy) and
-			not self:slashProhibit(slash, enemy) then
+			self:slashIsEffective(enemy) and
+			not self:slashProhibit(enemy) then
 			local cheat_card = sgs.Sanguosha:getCard(self.room:getDrawPile():first())
 			if cheat_card and cheat_card:getSuit() == sgs.Card_Heart and not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
 				local cards = sgs.QList2Table(self.player:getCards("h"))
@@ -68,7 +67,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 		local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 		self:sort(self.enemies, "handcard")
 		for _, enemy in ipairs(self.enemies) do
-			if not self:slashProhibit(slash, enemy) then
+			if not self:slashProhibit(enemy) then
 				table.insert(enemies, enemy:objectName())
 				i = i + 1
 			end
@@ -269,14 +268,8 @@ sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 end
 sgs.ai_skill_askforag["butian"] = function(self, card_ids)
 	local judge = self.butianjudge
-	local cards = {}
-	local card_id
 	if judge and self:needRetrial(judge) then
-		for _, card_id in ipairs(card_ids) do
-			local card = sgs.Sanguosha:getCard(card_id)
-			table.insert(cards, card)
-		end
-		card_id = self:getRetrialCardId(cards, judge)
+		local card_id = self:getRetrialCardId(card_ids, judge)
 		if card_id ~= -1 then
 			return card_id
 		end
@@ -285,7 +278,9 @@ sgs.ai_skill_askforag["butian"] = function(self, card_ids)
 end
 
 -- huaxian
-sgs.ai_skill_invoke["huaxian"] = true
+sgs.ai_skill_invoke["huaxian"] = function(self)
+	return self:getCardsNum("Peach") + self:getCardsNum("Analeptic") == 0
+end
 
 -- lili
 sgs.lili_suit_value =

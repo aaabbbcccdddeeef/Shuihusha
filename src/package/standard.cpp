@@ -54,6 +54,10 @@ Card::CardType EquipCard::getTypeId() const{
     return Equip;
 }
 
+bool EquipCard::isAvailable(const Player *player) const{
+    return !player->isProhibited(player, this) && Card::isAvailable(player);
+}
+
 QString EquipCard::getEffectPath(bool is_male) const{
     return "audio/card/common/equip.ogg";
 }
@@ -117,8 +121,25 @@ QString GlobalEffect::getSubtype() const{
 }
 
 void GlobalEffect::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *source = card_use.from;
+    QList<ServerPlayer *> targets, other_players = room->getAllPlayers();
+    foreach(ServerPlayer *player, other_players){
+        const ClientSkill *skill = room->isProhibited(source, player, this);
+        if(skill){
+            LogMessage log;
+            log.type = "#SkillAvoid";
+            log.from = player;
+            log.arg = skill->objectName();
+            log.arg2 = objectName();
+            room->sendLog(log);
+
+            room->playSkillEffect(skill->objectName());
+        }else
+            targets << player;
+    }
+
     CardUseStruct use = card_use;
-    use.to = room->getAllPlayers();
+    use.to = targets;
     TrickCard::onUse(room, use);
 }
 
@@ -557,7 +578,7 @@ public:
     }
 
     virtual bool isDTE(CardStar card) const{
-        return (card->inherits("DelayedTrick") ||
+        return (card->isKindOf("DelayedTrick") ||
                 card->getTypeId() == Card::Equip);
     }
 
@@ -660,11 +681,10 @@ public:
 TestPackage::TestPackage()
     :GeneralPackage("test")
 {
-    skills << new Wusheng;
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
-    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
+    General *ubuntenkei = new General(this, "ubuntenkei", "god", "4", General::Female, General::Hidden);
     ubuntenkei->addSkill(new Ubuna);
     ubuntenkei->addSkill(new Qiapai);
     addMetaObject<QiapaiCard>();
@@ -679,14 +699,17 @@ TestPackage::TestPackage()
     addMetaObject<UbundCard>();
     ubuntenkei->addSkill(new Ubunf);
 
-    General *catty = new General(this, "catty", "god", 2, false, true, true);
+    General *catty = new General(this, "catty", "god", "2/3", General::Female, General::NeverShown);
     catty->addSkill("change");
-    catty->addSkill("ubunf");
+    catty->addSkill("youxia");
     catty->addSkill("#ubuna");
 
-    new General(this, "sujiang", "god", 5, true, true);
-    new General(this, "sujiangf", "god", 5, false, true);
-    new General(this, "anjiang", "god", 4, true, true, true);
+    General *nicholas = new General(this, "nicholas", "god", "4", General::Male, General::NeverShown);
+    nicholas->addSkill(new Wusheng);
+
+    new General(this, "sujiang", "god", "5", General::Male, General::Hidden);
+    new General(this, "sujiangf", "god", "5", General::Female, General::Hidden);
+    new General(this, "anjiang", "god", "4", General::Neuter, General::NeverShown);
     addMetaObject<FreeRegulateCard>();
 
     patterns["."] = new ExpPattern(".|.|.|hand");

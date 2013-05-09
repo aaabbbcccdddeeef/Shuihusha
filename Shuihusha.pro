@@ -43,6 +43,7 @@ SOURCES += \
 	src/dialog/choosegeneraldialog.cpp \
 	src/dialog/configdialog.cpp \
 	src/dialog/connectiondialog.cpp \
+	src/dialog/cheatdialog.cpp \
 	src/dialog/customassigndialog.cpp \
 	src/dialog/distanceviewdialog.cpp \
 	src/dialog/generaloverview.cpp \
@@ -74,6 +75,7 @@ SOURCES += \
 	src/package/cock.cpp \
 	src/package/boar.cpp \
 	src/package/sp.cpp \
+	src/package/casket.cpp \
 	src/package/mini-generals.cpp \
 	src/package/joy.cpp \
 	src/package/guben.cpp \
@@ -184,6 +186,7 @@ HEADERS += \
 	src/dialog/cardoverview.h \
 	src/dialog/choosecarddialog.h \
 	src/dialog/choosegeneraldialog.h \
+	src/dialog/cheatdialog.h \
 	src/dialog/configdialog.h \
 	src/dialog/connectiondialog.h \
 	src/dialog/customassigndialog.h \
@@ -217,6 +220,7 @@ HEADERS += \
 	src/package/cock.h \
 	src/package/boar.h \
 	src/package/sp.h \
+	src/package/casket.h \
 	src/package/mini-generals.h \
 	src/package/joy.h \
 	src/package/guben.h \
@@ -336,6 +340,11 @@ OTHER_FILES += \
         swig/ai.i \
         etc/3v3-priority.txt \
         etc/1v1-priority.txt \
+        etc/customScenes/35.txt \
+        etc/customScenes/34.txt \
+        etc/customScenes/33.txt \
+        etc/customScenes/32.txt \
+        etc/customScenes/31.txt \
         etc/customScenes/30.txt \
         etc/customScenes/29.txt \
         etc/customScenes/28.txt \
@@ -366,6 +375,7 @@ OTHER_FILES += \
         etc/customScenes/03.txt \
         etc/customScenes/02.txt \
         etc/customScenes/01.txt \
+        image/system/emotion/revise.ini \
         image/system/coord_normal.ini \
         image/system/coord_circular.ini \
         image/system/dashboard.ini \
@@ -413,43 +423,6 @@ CONFIG(qrc){
 RESOURCES += \
     image/big-card.qrc \
     image/card.qrc \
-    image/system/emotion/weapon.qrc \
-    image/system/emotion/success.qrc \
-    image/system/emotion/peach.qrc \
-    image/system/emotion/no-success.qrc \
-    image/system/emotion/revive.qrc \
-    image/system/emotion/death.qrc \
-    image/system/emotion/damage.qrc \
-    image/system/emotion/damage2.qrc \
-    image/system/emotion/chain.qrc \
-    image/system/emotion/armor.qrc \
-    image/system/emotion/analeptic.qrc \
-    image/system/emotion/tsunami.qrc \
-    image/system/emotion/hplost.qrc \
-    image/system/emotion/awake.qrc \
-    image/system/emotion/assassinate.qrc \
-    image/system/emotion/thunder_damage.qrc \
-    image/system/emotion/fire_damage.qrc \
-    image/system/emotion/avoid.qrc \
-    image/system/emotion/judgegood.qrc \
-    image/system/emotion/judgebad.qrc \
-    image/system/emotion/horse.qrc \
-    image/system/emotion/draw-card.qrc \
-    image/system/emotion/lightning.qrc \
-    image/system/emotion/killer.qrc \
-    image/system/emotion/jink.qrc \
-    image/system/emotion/recover.qrc \
-    image/system/emotion/limited.qrc \
-    image/system/emotion/duel.qrc \
-    image/system/emotion/thunder_slash.qrc \
-    image/system/emotion/slash_red.qrc \
-    image/system/emotion/slash_black.qrc \
-    image/system/emotion/fire_slash.qrc \
-    image/system/emotion/pindian.qrc \
-    image/system/emotion/god_salvation.qrc \
-    image/system/emotion/amazing_grace.qrc \
-    image/system/emotion/archery_attack.qrc \
-    image/system/emotion/inspiration.qrc \
     backdrop/shuihu-cover.qrc \
     backdrop/shuihu.qrc
 }

@@ -202,11 +202,8 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
 
                 case 4:
                     foreach(ServerPlayer *p, room->getAlivePlayers()) {
-                        if(!p->isChained()){
-                            p->setChained(true);
-                            room->broadcastProperty(p, "chained");
-                            room->setEmotion(p, "chain");
-                        }
+                        if(!p->isChained())
+                            room->setPlayerChained(p);
                     }
                     break;
 

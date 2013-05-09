@@ -236,9 +236,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
 
         if(this->players.at(i)["chained"] != NULL){
-            sp->setChained(true);
-            room->broadcastProperty(sp, "chained");
-            room->setEmotion(sp, "chain");
+            room->setPlayerChained(sp);
         }
         if(this->players.at(i)["turned"] == "true"){
             if(sp->faceUp())
@@ -336,19 +334,20 @@ MiniScene::MiniScene(const QString &name)
     int stage = name.right(2).toInt();
     QStringList usernames;
     usernames << "Tenkei" << "1";
-    bool show = usernames.contains(qgetenv("USERNAME"));
-    addGenerals(stage, !show);
+    General::Attrib trib = General::Shown;
+    if(!usernames.contains(qgetenv("USERNAME")))
+        trib = General::NeverShown;
+    addGenerals(stage, trib);
 }
 
 void MiniScene::setupCustom(QString name) const
 {
-    if(name == NULL)name = "custom_scenario";
+    if(name == QString())name = "custom_scenario";
     name.prepend("etc/customScenes/");
     name.append(".txt");
 
     MiniSceneRule* arule = qobject_cast<MiniSceneRule*>(this->getRule());
     arule->loadSetting(name);
-
 }
 
 QString MiniScene::setBackgroundMusic() const{
@@ -391,5 +390,10 @@ ADD_CUSTOM_SCENARIO(27)
 ADD_CUSTOM_SCENARIO(28)
 ADD_CUSTOM_SCENARIO(29)
 ADD_CUSTOM_SCENARIO(30)
+ADD_CUSTOM_SCENARIO(31)
+ADD_CUSTOM_SCENARIO(32)
+ADD_CUSTOM_SCENARIO(33)
+ADD_CUSTOM_SCENARIO(34)
+ADD_CUSTOM_SCENARIO(35)
 
 ADD_SCENARIO(Custom)

@@ -10,7 +10,8 @@ return {
 	["$blade2"] = "再给一刀！",
 	["$spear"] = "喝！",
 	["$axe"] = "挡我者死！",
-	["$halberd"] = "打甚鸟紧！",
+	["$halberd1"] = "打你个直娘贼！",
+	["$halberd2"] = "去死吧！",
 	["$kylin_bow"] = "看枪！",
 	["$eight_diagram1"] = "看吾神行之术！",
 	["$eight_diagram2"] = "咦？",
@@ -31,4 +32,10 @@ return {
 	["$sun_bow"] = "一箭双雕！",
 	["$gold_armor1"] = "宝甲护身！",
 	["$gold_armor2"] = "你这破刀太钝了！",
+
+	["$proud_banner1"] = "此计安能灭我军威？", -- 一效果男声
+	["$proud_banner2"] = "一战到底！", -- 一效果女声
+	["$proud_banner3"] = "吾命由我不由天！", -- 三效果男声
+	["$proud_banner4"] = "军心不散，以抗天命！", -- 三效果女声
+	["$lash_gun"] = "（炮声）",
 }

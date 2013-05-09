@@ -306,9 +306,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
         foreach(ServerPlayer *player, players){
             if(player->hasEquip("Horse", true)){
                 if(!player->isChained()){
-                    player->setChained(true);
-                    room->broadcastProperty(player, "chained");
-                    room->setEmotion(player, "chain");
+                    room->setPlayerChained(player);
                     log.to << player;
                 }
             }
@@ -319,7 +317,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
         foreach(ServerPlayer *player, players){
             if(!player->hasEquip("Horse", true)){
                 if(player->isChained()){
-                    room->setPlayerProperty(player, "chained", false);
+                    room->setPlayerChained(player);
                     log.to << player;
                 }
             }
@@ -445,14 +443,15 @@ LianzhuCard::LianzhuCard(){
 }
 
 void LianzhuCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    card_use.from->turnOver();
-    ArcheryAttack *ar = new ArcheryAttack(Card::NoSuit, 0);
-    ar->setSkillName("lianzhu");
-    CardUseStruct use;
-    use.card = ar;
-    use.from = card_use.from;
-    use.to = card_use.to;
-    room->useCard(use);
+    if(!card_use.from->turnOver()){
+        ArcheryAttack *ar = new ArcheryAttack(Card::NoSuit, 0);
+        ar->setSkillName("lianzhu");
+        CardUseStruct use;
+        use.card = ar;
+        use.from = card_use.from;
+        use.to = card_use.to;
+        room->useCard(use);
+    }
 }
 
 class Lianzhu: public ZeroCardViewAsSkill{
@@ -618,15 +617,8 @@ public:
             judge.who = ren;
 
             room->judge(judge);
-            if(judge.isGood()){
-                RecoverStruct rev;
-                rev.card = judge.card;
-                rev.recover = ren->getLostHp(false) - ren->getMaxHp() + 1;
-                rev.who = ren;
-                room->recover(ren, rev);
-                if(ren->getHp() != 1)
-                    room->setPlayerProperty(ren, "hp", 1);
-            }
+            if(judge.isGood())
+                room->setPlayerProperty(ren, "hp", 1);
         }
         return false;
     }
@@ -635,6 +627,7 @@ public:
 DuomingCard::DuomingCard(){
     target_fixed = true;
     mute = true;
+    will_throw = false;
 }
 
 void DuomingCard::use(Room *m, ServerPlayer *source, const QList<ServerPlayer *> &) const{
@@ -695,13 +688,16 @@ public:
             return false;
         QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *lili, lily){
-            if(lili != player && lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
-                DamageStruct damage;
-                damage.from = lili;
-                damage.to = player;
-                room->setPlayerFlag(player, "Duoming");
-                room->damage(damage);
-                room->setPlayerFlag(player, "-Duoming");
+            RecoverStruct rec = data.value<RecoverStruct>();
+            for(int i = rec.recover; i > 0; i--){
+                if(lili != player && lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
+                    DamageStruct damage;
+                    damage.from = lili;
+                    damage.to = player;
+                    room->setPlayerFlag(player, "Duoming");
+                    room->damage(damage);
+                    room->setPlayerFlag(player, "-Duoming");
+                }
             }
         }
         return false;
@@ -973,6 +969,7 @@ public:
 };
 
 ZiyiCard::ZiyiCard(){
+    mute = true;
 }
 
 bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{

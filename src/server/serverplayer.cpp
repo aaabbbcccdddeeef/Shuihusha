@@ -105,13 +105,12 @@ void ServerPlayer::throwAllHandCards(){
 void ServerPlayer::throwAllMarks(){
     // throw all marks
     foreach(QString mark_name, marks.keys()){
-        if(!mark_name.startsWith("@"))
-            continue;
+        //if(!mark_name.startsWith("@"))
+        //    continue;
 
         int n = marks.value(mark_name, 0);
-        if(n != 0){
+        if(n != 0)
             room->setPlayerMark(this, mark_name, 0);
-        }
     }
 
     marks.clear();
@@ -152,15 +151,6 @@ void ServerPlayer::bury(){
 
     room->clearPlayerCardLock(this);
     room->setEmotion(this, "death");
-
-    if(Config.EnableReincarnation){
-        QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
-        if(!deathnote.contains(getGeneralName()))
-            deathnote << getGeneralName();
-        if(deathnote.first() == "")
-            deathnote.removeFirst();
-        room->setTag("DeadPerson", deathnote.join("+"));
-    }
 }
 
 void ServerPlayer::throwAllCards(){
@@ -243,7 +233,7 @@ void ServerPlayer::unicast(const QString &message) const{
     emit message_cast(message);
 
     if(recorder)
-        recorder->recordLine(message);
+        recorder->record(message);
 }
 
 void ServerPlayer::startNetworkDelayTest(){
@@ -405,8 +395,10 @@ void ServerPlayer::addCard(const Card *card, Place place){
 
     case Equip: {
             const EquipCard *equip = qobject_cast<const EquipCard *>(card);
-            setEquip(equip);
-            equip->onInstall(this);
+            if(equip){
+                setEquip(equip);
+                equip->onInstall(this);
+            }
             break;
         }
 
@@ -474,6 +466,8 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
+    if(room->getCurrent() != this && hasMark("sleep_jur"))
+        return false;
     foreach(const Card *card, handcards){
         if(include_counterplot && card->isKindOf("Nullification"))
             return true; // all trick
@@ -498,9 +492,8 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
 }
 
 void ServerPlayer::kick(){
-    if(socket){
+    if(socket)
         socket->disconnectFromHost();
-    }
 }
 
 bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Card *card1){
@@ -549,17 +542,8 @@ bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Ca
     return success;
 }
 
-void ServerPlayer::turnOver(){
-    setFaceUp(!faceUp());
-    room->broadcastProperty(this, "faceup");
-
-    LogMessage log;
-    log.type = "#TurnOver";
-    log.from = this;
-    log.arg = faceUp() ? "face_up" : "face_down";
-    room->sendLog(log);
-
-    room->getThread()->trigger(TurnedOver, room, this);
+bool ServerPlayer::turnOver(){
+    return room->getThread()->trigger(TurnedOver, room, this);
 }
 
 void ServerPlayer::play(QList<Player::Phase> set_phases){
@@ -628,6 +612,10 @@ void ServerPlayer::skip(){
 }
 
 void ServerPlayer::gainMark(const QString &mark, int n){
+    if(mark.endsWith("_jur")){
+        gainJur(mark, n);
+        return;
+    }
     int value = getMark(mark) + n;
     if(n < 1)
         return;
@@ -656,28 +644,64 @@ void ServerPlayer::loseMark(const QString &mark, int n){
         room->sendLog(log);
 
     room->setPlayerMark(this, mark, value);
+    if(getMark(mark) < 1 && mark.endsWith("_jur"))
+        removeJur(mark);
 }
 
 void ServerPlayer::loseAllMarks(const QString &mark_name){
     int n = getMark(mark_name);
     if(n > 0)
         loseMark(mark_name, n);
+    if(mark_name.endsWith("_jur"))
+        removeJur(mark_name);
 }
 
-void ServerPlayer::gainJur(const QString &jur, int n){
+void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
     int value = getMark(jur) + n;
-    if(n < 1)
+    if(n < 1 || !jur.endsWith("_jur"))
         return;
+    if(!overlying && getMark(jur) > 0) //do not overlying
+        return;
+
+    QVariant data = jur;
+    if(room->getThread()->trigger(PreConjuring, room, this, data))
+        return;
+
+    data = QString("%1*%2").arg(jur).arg(100); //sleep_jur*50
+    room->getThread()->trigger(ConjuringProbability, room, this, data);
+    int percent = QString(data.toString().split("*").last()).toInt();
+    if(qrand() % 100 + 1 > percent)
+        return;
+
+    foreach(QString mark, getAllMarkName(3, "_jur"))
+        removeJur(mark);
 
     LogMessage log;
     log.type = "#GainJur";
     log.from = this;
     log.arg = jur;
-    //log.arg2 = QString::number(n);
-
     room->sendLog(log);
 
+    room->setEmotion(this, "conjuring/" + jur.split("_").first());
     room->setPlayerMark(this, jur, value);
+    if(jur.startsWith("dizzy"))
+        room->setPlayerMark(this, "scarecrow", 1);
+    emit conjuring_changed();
+}
+
+void ServerPlayer::removeJur(const QString &jur){
+    if(getMark(jur) > 0)
+        room->setPlayerMark(this, jur, 0);
+    LogMessage log;
+    log.type = "#RemoveJur";
+    log.from = this;
+    log.arg = jur;
+    room->sendLog(log);
+
+    removeMark(jur);
+    if(jur.startsWith("dizzy"))
+        room->setPlayerMark(this, "scarecrow", 0);
+    emit conjuring_changed();
 }
 
 bool ServerPlayer::isOnline() const {
@@ -753,7 +777,8 @@ int ServerPlayer::getGeneralMaxHP() const{
         int second = getGeneral2()->getMaxHp();
 
         int plan = Config.MaxHpScheme;
-        if(Config.GameMode.contains("_mini_"))plan = 1;
+        if(Config.GameMode.contains("_mini_"))
+            plan = 1;
 
         switch(plan){
         case 2: max_hp = (first + second)/2; break;
@@ -768,12 +793,42 @@ int ServerPlayer::getGeneralMaxHP() const{
 
     if(room->hasWelfare(this))
         max_hp++;
+    max_hp = qMax(max_hp, 1);
 
     return max_hp;
 }
 
 int ServerPlayer::getGeneralMaxHp() const{
     return getGeneralMaxHP();
+}
+
+int ServerPlayer::getGeneralHp() const{
+    int hp = 0;
+
+    if(getGeneral2() == NULL)
+        hp = getGeneral()->getHp();
+    else{
+        int first = getGeneral()->getHp();
+        int second = getGeneral2()->getHp();
+
+        int plan = Config.MaxHpScheme;
+        if(Config.GameMode.contains("_mini_"))
+            plan = 1;
+
+        switch(plan){
+        case 2: hp = (first + second)/2; break;
+        case 1: hp = qMin(first, second); break;
+        case 0:
+        default:
+            hp = first + second - 3; break;
+        }
+
+        hp = qMax(hp, 1);
+    }
+    if(room->hasWelfare(this))
+        hp++;
+
+    return hp;
 }
 
 QString ServerPlayer::getGameMode() const{
@@ -916,7 +971,7 @@ void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     ServerPlayer *current = room->getCurrent();
 
     room->setCurrent(this);
-    room->removeTag("Shudan");
+    //room->removeTag("Shudan");
     if(clearflag)
         clearflag->clearFlags();
     room->getThread()->trigger(TurnStart, room, this);
@@ -947,4 +1002,9 @@ void ServerPlayer::copyFrom(ServerPlayer* sp)
 
     Player* c = b;
     c->copyFrom(a);
+}
+
+bool ServerPlayer::CompareByActionOrder(ServerPlayer *a, ServerPlayer *b){
+    Room *room = a->getRoom();
+    return room->getFront(a, b) == a;
 }

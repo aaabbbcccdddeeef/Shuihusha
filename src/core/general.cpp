@@ -9,8 +9,27 @@
 #include <QFile>
 
 General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
-    :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
+    :QObject(package), kingdom(kingdom), max_hp(max_hp), _hp(max_hp), gender(male ? Male : Female)
 {
+    show_hp = QString::number(max_hp);
+    if(never_shown)
+        attrib = NeverShown;
+    else if(hidden)
+        attrib = Hidden;
+    else
+        attrib = Shown;
+    init(name);
+}
+
+General::General(Package *package, const QString &name, const QString &kingdom, const QString &show_hp, Gender gender, Attrib attrib)
+    :QObject(package), kingdom(kingdom), show_hp(show_hp), gender(gender), attrib(attrib)
+{
+    max_hp = QString(show_hp.split("/").last()).toInt();
+    _hp = QString(show_hp.split("/").first()).toInt();
+    init(name);
+}
+
+void General::init(const QString &name){
     static QChar lord_symbol('$');
     if(name.contains(lord_symbol)){
         QString copy = name;
@@ -28,10 +47,6 @@ General::General(Package *package, const QString &name, const QString &kingdom, 
     kmap["qun"] = "kou";
 }
 
-int General::getMaxHp() const{
-    return max_hp;
-}
-
 QString General::getKingdom(bool unmap) const{
     if(unmap)
         return kingdom;
@@ -46,6 +61,17 @@ void General::setGender(Gender gender){
     this->gender = gender;
 }
 
+void General::setGenderString(const QString &sex){
+    Gender gender;
+    if(sex == "male")
+        gender = Male;
+    else if(sex == "female")
+        gender = Female;
+    else
+        gender = Neuter;
+    setGender(gender);
+}
+
 QString General::getGenderString() const{
     switch(gender){
     case Male: return "male";
@@ -56,30 +82,14 @@ QString General::getGenderString() const{
 }
 
 QString General::getId() const{
-    QString id = Sanguosha->translate("$" + objectName());
-    if(id.startsWith("$"))
-        id = "";
-    return id;
+    return Sanguosha->translate("$" + objectName(), true);
 }
 
 QString General::getNickname(bool full) const{
-    QString nick = Sanguosha->translate("#" + objectName());
-    if(nick.startsWith("#"))
-        nick = "";
+    QString nick = Sanguosha->translate("#" + objectName(), true);
     if(full)
         nick.append(Sanguosha->translate(objectName()));
     return nick;
-}
-
-QString General::getShowHp() const{
-    QString max_hp = QString::number(getMaxHp());
-    for(int n = 1; n <= 3; n++){
-        if(hasSkill("#hp-" + QString::number(n))){
-            max_hp = QString::number(getMaxHp() - n) + "/" + QString::number(getMaxHp());
-            break;
-        }
-    }
-    return max_hp;
 }
 
 bool General::isLuaGeneral() const{
@@ -232,11 +242,11 @@ void General::winWord() const{
 QString General::getLastword() const{
     QString general_name = objectName();
     QString last_word = Sanguosha->translate("~" + general_name);
-    if(last_word.startsWith("~")){
+    /*if(last_word.startsWith("~")){
         QStringList origin_generals = general_name.split("_");
         if(origin_generals.length()>1)
             last_word = Sanguosha->translate(("~") +  origin_generals.at(1));
-    }
+    }*/
 
     if(last_word.startsWith("~") && general_name.endsWith("f")){
         QString origin_general = general_name;
@@ -263,6 +273,29 @@ QString General::getWinword() const{
             win_word = Sanguosha->translate(("`") + origin_general);
     }
     return win_word;
+}
+
+QString General::getResume() const{
+    if(!Config.value("ShowResume", true).toBool())
+        return QString();
+    QFile file("etc/resume.txt");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        while(!stream.atEnd()){
+            QString line = stream.readLine();
+            QString name = line.split(" ").first();
+            if(name.startsWith("--"))
+                continue;
+            QString resume = line.split(" ").last();
+
+            if(objectName() == name){
+                file.close();
+                return resume;
+            }
+        }
+        file.close();
+    }
+    return QString();
 }
 
 QSize General::BigIconSize(94, 96);

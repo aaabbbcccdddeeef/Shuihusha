@@ -105,7 +105,7 @@ function SmartAI:useCardSupplyShortage(card, use)
 	table.sort(self.enemies, handcard_subtract_hp)
 	local enemies = self:exclude(self.enemies, card)
 	for _, enemy in ipairs(enemies) do
-		if (self:hasSkills("yongsi|haoshi|tuxi", enemy) or (enemy:hasSkill("zaiqi") and enemy:getLostHp() > 1)) and
+		if (self:hasSkills("yongsi|haoshi|tuxi", enemy) or (enemy:hasSkill("zaiqi") and enemy:getLostHp() > 1)) and self:hasTrickEffective(card, enemy) and
 			not enemy:containsTrick("supply_shortage") and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
 			use.card = card
 			if use.to then use.to:append(enemy) end
@@ -114,10 +114,10 @@ function SmartAI:useCardSupplyShortage(card, use)
 		end
 	end
 	for _, enemy in ipairs(enemies) do
-		if ((#enemies == 1) or not self:hasSkills("yueli|qimen",enemy)) and not enemy:containsTrick("supply_shortage") and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
+		if ((#enemies == 1) or not self:hasSkills("yueli|qimen",enemy)) and not enemy:containsTrick("supply_shortage") and
+			self:hasTrickEffective(card, enemy) and enemy:faceUp() and self:objectiveLevel(enemy) > 3 then
 			use.card = card
 			if use.to then use.to:append(enemy) end
-
 			return
 		end
 	end
@@ -199,7 +199,6 @@ function SmartAI:isGoodChainTarget(who)
 	return good > bad
 end
 
-
 function SmartAI:useCardIronChain(card, use)
 	use.card = card
 	if #self.enemies == 1 and #(self:getChainedFriends()) <= 1 then return end
@@ -260,6 +259,15 @@ sgs.ai_use_priority.IronChain = 2.8
 sgs.dynamic_value.benefit.IronChain = true
 
 function SmartAI:useCardFireAttack(fire_attack, use)
+	if self.room:getMode() == "fuck_guanyu" then
+		local targe = self.enemies[1]
+		if targe and not targe:isKongcheng() and not self.room:isProhibited(self.player, targe, fire_attack) then
+			use.card = fire_attack
+			if use.to then use.to:append(targe) end
+		end
+		return
+	end
+
 	if self.player:hasSkill("wuyan") then return end
 	local lack = {
 		spade = true,

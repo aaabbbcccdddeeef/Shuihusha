@@ -155,17 +155,24 @@ QList<ServerPlayer *> WarlordsScenario::getPlayersbyRole(Room *room, const QStri
 void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
-    roles << "lord";
-    for(int i = 0; i < 7; i++)
-        roles << "rebel";
+    for(int i = 0; i < getPlayerCount(); i++){
+        if(i == 0)
+            roles << "lord";
+        else
+            roles << "rebel";
+    }
 }
 
 int WarlordsScenario::getPlayerCount() const{
-    return 8;
+    int count = Config.value("Scenario/WarlordsCount", 8).toInt();
+    return qMin(qMax(count, 8), 12);
 }
 
 void WarlordsScenario::getRoles(char *roles) const{
-    strcpy(roles, "FFFFFFFF");
+    QString r;
+    for(int i = 0; i < getPlayerCount(); i++)
+        r.append("F");
+    strcpy(roles, r.toLocal8Bit().data());
 }
 
 bool WarlordsScenario::lordWelfare(const ServerPlayer *player) const{
@@ -317,6 +324,7 @@ ArthurFerrisScenario::ArthurFerrisScenario()
     :Scenario("arthur_ferris")
 {
     rule = new ArthurFerrisScenarioRule(this);
+    skills << new Youxia;
 }
 
 ADD_SCENARIO(Warlords)

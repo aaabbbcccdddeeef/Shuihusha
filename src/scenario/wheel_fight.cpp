@@ -142,4 +142,74 @@ WheelFightScenario::WheelFightScenario()
     rule = new WheelFightScenarioRule(this);
 }
 
+#include "maneuvering.h"
+class FuckGuanyuScenarioRule: public ScenarioRule{
+public:
+    FuckGuanyuScenarioRule(Scenario *scenario)
+        :ScenarioRule(scenario){
+        events << GameStart;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return 1;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        switch(event){
+        case GameStart:{
+            if(!player->isLord()){
+                QStringList choices = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()));
+                QString name = room->askForGeneral(player, choices, choices.first());
+                room->transfigure(player, name);
+                room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
+            }
+            break;
+        }
+        default:
+            break;
+        }
+        return false;
+    }
+};
+
+void FuckGuanyuScenario::assign(QStringList &generals, QStringList &roles) const{
+    roles << "lord" << "renegade";
+    qShuffle(roles);
+    if(roles[0] == "lord")
+        generals << "nicholas" << "anjiang";
+    else
+        generals << "anjiang" << "nicholas";
+}
+
+int FuckGuanyuScenario::getPlayerCount() const{
+    return 2;
+}
+
+void FuckGuanyuScenario::getRoles(char *roles) const{
+    strcpy(roles, "ZN");
+}
+
+bool FuckGuanyuScenario::generalSelection(Room *) const{
+    return false;
+}
+
+bool FuckGuanyuScenario::setCardPiles(const Card *card) const{
+    return card->getPackage() != objectName();
+}
+
+int FuckGuanyuScenario::swapCount() const{
+    return 998;
+}
+
+FuckGuanyuScenario::FuckGuanyuScenario()
+    :Scenario("fuck_guanyu"){
+    rule = new FuckGuanyuScenarioRule(this);
+
+    for(int i = 0; i < 26; i ++){
+        Card *card = new FireAttack(Card::Diamond, i % 13 + 1);
+        card->setParent(this);
+    }
+}
+
 ADD_SCENARIO(WheelFight)
+ADD_SCENARIO(FuckGuanyu)

@@ -58,7 +58,7 @@ public:
         WeaponLocation,
         ArmorLocation,
         DefensiveHorseLocation,
-        OffensiveHorseLocation,
+        OffensiveHorseLocation
     };
 
     EquipCard(Suit suit, int number):Card(suit, number, true), skill(NULL){}
@@ -68,6 +68,7 @@ public:
     virtual CardType getTypeId() const;
     virtual QString getEffectPath(bool is_male) const;
 
+    virtual bool isAvailable(const Player *player) const;
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 
@@ -163,6 +164,7 @@ class ExNihilo: public SingleTargetTrick{
 public:
     Q_INVOKABLE ExNihilo(Card::Suit suit, int number);
     virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual bool isAvailable(const Player *player) const;
 };
 
 class Duel:public SingleTargetTrick{
@@ -170,6 +172,7 @@ class Duel:public SingleTargetTrick{
 
 public:
     Q_INVOKABLE Duel(Card::Suit suit, int number);
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 

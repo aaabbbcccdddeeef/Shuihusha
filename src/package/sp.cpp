@@ -207,7 +207,11 @@ public:
 class Exterminate: public TriggerSkill{
 public:
     Exterminate():TriggerSkill("exterminate"){
-        events << DamageConclude;
+        events << Damage;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *hanae, QVariant &data) const{
@@ -355,38 +359,74 @@ public:
     }
 };
 
+QingshangCard::QingshangCard(){
+    mute = true;
+}
+
+bool QingshangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+void QingshangCard::onEffect(const CardEffectStruct &effect) const{
+    PlayerStar player = effect.from;
+    Room *room = player->getRoom();
+    room->playSkillEffect(skill_name, 1);
+
+    JudgeStruct judge;
+    judge.reason = skill_name;
+    judge.who = player;
+    room->judge(judge);
+    Card::Color mycolor = judge.card->getColor();
+
+    room->getThread()->delay();
+
+    judge.who = effect.to;
+    judge.pattern = mycolor == Card::Red ? QRegExp("(.*):(heart|diamond):(.*)"): QRegExp("(.*):(club|spade):(.*)");
+    judge.good = false;
+    room->judge(judge);
+    if(judge.card->getColor() == mycolor){
+        room->playSkillEffect(skill_name, 2);
+        DamageStruct mmm;
+        mmm.from = player;
+        mmm.to = effect.to;
+        room->damage(mmm);
+    }
+    else
+        room->playSkillEffect(skill_name, 3);
+}
+
+class QingshangViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    QingshangViewAsSkill():ZeroCardViewAsSkill("qingshang"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new QingshangCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@qingshang";
+    }
+};
+
 class Qingshang:public TriggerSkill{
 public:
     Qingshang():TriggerSkill("qingshang"){
         events << HpRecovered;
+        view_as_skill = new QingshangViewAsSkill;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
-        if(player->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName(), 1);
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
-
-            JudgeStruct judge;
-            judge.reason = objectName();
-            judge.who = player;
-            room->judge(judge);
-            Card::Color mycolor = judge.card->getColor();
-
-            room->getThread()->delay();
-
-            judge.who = target;
-            judge.pattern = mycolor == Card::Red ? QRegExp("(.*):(heart|diamond):(.*)"): QRegExp("(.*):(club|spade):(.*)");
-            judge.good = false;
-            room->judge(judge);
-            if(judge.card->getColor() == mycolor){
-                room->playSkillEffect(objectName(), 2);
-                DamageStruct mmm;
-                mmm.from = player;
-                mmm.to = target;
-                room->damage(mmm);
-            }
-            else
-                room->playSkillEffect(objectName(), 3);
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &dat) const{
+        RecoverStruct recover = dat.value<RecoverStruct>();
+        if(recover.recover < 1)
+            return false;
+        for(int r = recover.recover; r > 0; r--){
+            if(!room->askForUseCard(player, "@@qingshang", "@qingshang", true))
+                break;
         }
         return false;
     }
@@ -531,7 +571,7 @@ SPPackage::SPPackage()
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
 
-    General *tora = new General(this, "tora", "god", 4, false);
+    General *tora = new General(this, "tora", "god", "4", General::Neuter);
     tora->addSkill(new Strike);
     tora->addSkill(new Lift);
     tora->addSkill(new Exterminate);
@@ -553,6 +593,7 @@ SPPackage::SPPackage()
 */
     addMetaObject<BaoquanCard>();
     addMetaObject<LuanjunCard>();
+    addMetaObject<QingshangCard>();
 }
 
 ADD_PACKAGE(SP)

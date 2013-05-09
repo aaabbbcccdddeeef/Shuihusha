@@ -10,7 +10,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include <QPixmapCache>
-#include <QFile>
 
 Dashboard::Dashboard(QGraphicsItem *button_widget)
 #ifdef USE_RCC
@@ -53,12 +52,12 @@ void Dashboard::createLeft(){
         plate_path = "image/mode/hegemony.png";
     else if(ServerInfo.EnableEndless)
         plate_path = "image/mode/endless.png";
-    if(!QFile::exists(plate_path)){
+    if(!Sanguosha->isExist(plate_path)){
         QString gm = game_mode;
         gm.chop(1);
         plate_path = QString("image/mode/%1.png").arg(gm);
     }
-    if(!QFile::exists(plate_path))
+    if(!Sanguosha->isExist(plate_path))
         plate->hide();
     else{
         plate->show();
@@ -236,6 +235,21 @@ void Dashboard::createRight(){
     wake_icon->setOpacity(settings->value("opacity").toReal());
     settings->endGroup();
     wake_icon->hide();
+
+    conjur_icon = new Pixmap();
+    conjur_icon->setPos(-52, 27);
+    conjur_icon->setParentItem(right);
+    conjur_icon->setZValue(0.5);
+    conjur_icon->hide();
+
+    conjur_item = new QGraphicsSimpleTextItem(this);
+    conjur_item->setParentItem(right);
+    conjur_item->setBrush(Qt::yellow);
+    QFont font = Config.SmallFont;
+    font.setPixelSize(15);
+    conjur_item->setFont(font);
+    conjur_item->setPos(35, 70);
+    conjur_item->hide();
 }
 
 void Dashboard::setRole(const QString &new_role, int index){
@@ -249,6 +263,25 @@ void Dashboard::setWakeState(){
         wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
         wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
+}
+
+void Dashboard::setConjuring(){
+    QStringList conjurs = Self->getAllMarkName(3, "_jur");
+    if(!conjurs.isEmpty()){
+        QString conjur = conjurs.first();
+        conjur_icon->setPixmap(QPixmap(QString("image/system/conjuring/%1_d.png").arg(conjur)));
+        conjur_icon->show();
+
+        conjur_item->setText(QString("%1 %2 %3")
+                          .arg(Sanguosha->translate(conjur))
+                          .arg(Sanguosha->translate("multiply"))
+                          .arg(Self->getMark(conjur)));
+        conjur_item->show();
+    }
+    else{
+        conjur_icon->hide();
+        conjur_item->hide();
+    }
 }
 
 void Dashboard::setPhaseState(){
@@ -334,6 +367,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
     connect(player, SIGNAL(phase_changed()), this, SLOT(setPhaseState()));
     //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
+    connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
 
     mark_item->setDocument(player->getMarkDoc());
 

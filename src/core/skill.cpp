@@ -6,8 +6,6 @@
 #include "standard.h"
 #include "scenario.h"
 
-#include <QFile>
-
 Skill::Skill(const QString &name, Frequency frequency)
     :frequency(frequency), default_choice("no"), equip_skill(false)
 {
@@ -56,14 +54,13 @@ int Skill::getEffectIndex(const ServerPlayer *, const Card *) const{
 void Skill::initMediaSource(){
     sources.clear();
 
-    int i;
-    for(i=1; ;i++){
+    for(int i=1; ;i++){
         QString effect_file = QString("audio/skill/%1%2.dat").arg(objectName()).arg(i);
-        //if(!QFile::exists(effect_file))
-        //    effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-        if(!QFile::exists(effect_file))
+        if(!Sanguosha->isExist(effect_file))
+            effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
+        if(!Sanguosha->isExist(effect_file))
             effect_file = QString("extensions/audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-        if(QFile::exists(effect_file))
+        if(Sanguosha->isExist(effect_file))
             sources << effect_file;
         else
             break;
@@ -71,11 +68,11 @@ void Skill::initMediaSource(){
 
     if(sources.isEmpty()){
         QString effect_file = QString("audio/skill/%1.dat").arg(objectName());
-        //if(!QFile::exists(effect_file))
+        //if(!Sanguosha->isExist(effect_file))
         //    effect_file = QString("audio/skill/%1.ogg").arg(objectName());
-        if(!QFile::exists(effect_file))
+        if(!Sanguosha->isExist(effect_file))
             effect_file = QString("extensions/audio/skill/%1.ogg").arg(objectName());
-        if(QFile::exists(effect_file))
+        if(Sanguosha->isExist(effect_file))
             sources << effect_file;
     }
 }
@@ -122,7 +119,7 @@ ViewAsSkill::ViewAsSkill(const QString &name)
 
 bool ViewAsSkill::isAvailable() const{
     switch(ClientInstance->getStatus()){
-    case Client::Playing: return isEnabledAtPlay(Self);
+    case Client::Playing: return !Self->hasMark("scarecrow") && isEnabledAtPlay(Self);
     case Client::Responsing: return isEnabledAtResponse(Self, ClientInstance->getPattern());
     default:
         return false;
@@ -362,6 +359,27 @@ SlashSkill::SlashSkill(const QString &name)
     :ClientSkill(name){
 }
 
+TargetModSkill::TargetModSkill(const QString &name)
+    : Skill(name, Skill::Compulsory), pattern("Slash")
+{
+}
+
+QString TargetModSkill::getPattern() const{
+    return pattern;
+}
+
+int TargetModSkill::getResidueNum(const Player *, const Card *) const{
+    return 0;
+}
+
+int TargetModSkill::getDistanceLimit(const Player *, const Card *) const{
+    return 0;
+}
+
+int TargetModSkill::getExtraTargetNum(const Player *, const Card *) const{
+    return 0;
+}
+
 WeaponSkill::WeaponSkill(const QString &name)
     :TriggerSkill(name)
 {
@@ -394,17 +412,4 @@ int MarkAssignSkill::getPriority(TriggerEvent) const{
 
 void MarkAssignSkill::onGameStart(ServerPlayer *player) const{
     player->gainMark(mark_name, n);
-}
-
-CutHpSkill::CutHpSkill(int n)
-    :GameStartSkill(QString("#hp-%1").arg(n)), n(n)
-{
-}
-
-int CutHpSkill::getPriority(TriggerEvent) const{
-    return -1;
-}
-
-void CutHpSkill::onGameStart(ServerPlayer *player) const{
-    player->getRoom()->setPlayerProperty(player, "hp", player->getHp() - n);
 }

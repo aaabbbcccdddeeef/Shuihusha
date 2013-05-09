@@ -39,7 +39,10 @@ public:
 class General : public QObject
 {
 public:
+	enum Gender {Male = 0, Female = 1, Neuter = 2};
+	enum Attrib {Shown = 1, Hidden = 0, NeverShown = -1};
 	explicit General(Package *package, const char *name, const char *kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
+	explicit General(Package *package, const char *name, const char *kingdom, const char *show_hp, Gender gender = Male, Attrib attrib = Shown);
 
 	// property getters/setters
 	int getMaxHp() const;
@@ -51,7 +54,6 @@ public:
 	bool isHidden() const;
 	bool isTotallyHidden() const;
 
-	enum Gender {Male, Female, Neuter};
 	Gender getGender() const;
 	void setGender(Gender gender);
 
@@ -73,7 +75,7 @@ class Player: public QObject
 {
 public:
 	enum Phase {RoundStart, Start, Judge, Draw, Play, Discard, Finish, NotActive};
-	enum Place {Hand, Equip, Judging, Special, DiscardedPile, DrawPile};
+	enum Place {Special, Hand, Equip, Judging, DiscardedPile, DrawPile};
 	enum Role {Lord, Loyalist, Rebel, Renegade};
 
 	explicit Player(QObject *parent);
@@ -131,7 +133,7 @@ public:
 	void setAlive(bool alive);
 
 	QString getFlags() const;
-    QStringList getClearFlags() const;
+	QStringList getClearFlags() const;
 	void setFlags(const char *flag);
 	bool hasFlag(const char *flag) const;
 	void clearFlags();
@@ -140,7 +142,7 @@ public:
 	void setFaceUp(bool face_up);
 
 	virtual int aliveCount() const = 0;
-	int distanceTo(const Player *other) const;
+	int distanceTo(const Player *other, int distance_fix = 0) const;
 	void setFixedDistance(const Player *player, int distance);
 	const General *getAvatarGeneral() const;
 	const General *getGeneral() const;
@@ -202,9 +204,11 @@ public:
 
 	void addHistory(const char *name, int times = 1);
 	void clearHistory();
+	void clearHistory(const char *name);
 	bool hasUsed(const char *card_class) const;
 	int usedTimes(const char *card_class, int init = 0) const;
 	int getSlashCount() const;
+	QStringList getHistorys() const;
 
 	QSet<const TriggerSkill *> getTriggerSkills() const;
 	QSet<const Skill *> getVisibleSkills() const;
@@ -250,6 +254,10 @@ public:
 	bool isMale(){
 		return $self->getGeneral()->isMale();
 	}
+
+	bool hasJur(const char *jur){
+		return $self->hasMark(jur);
+	}
 };
 
 class ServerPlayer : public Player
@@ -288,7 +296,7 @@ public:
 	bool hasNullification(bool include_counterplot = false) const;
 	void kick();
 	bool pindian(ServerPlayer *target, const char *reason, const Card *card1 = NULL);
-	void turnOver();
+	bool turnOver();
 	void play(QList<Player::Phase> set_phases = QList<Player::Phase>());
 
 	QList<Player::Phase> &getPhases();
@@ -297,6 +305,8 @@ public:
 	void gainMark(const char *mark, int n = 1);
 	void loseMark(const char *mark, int n = 1);
 	void loseAllMarks(const char *mark_name);
+	void gainJur(const char *jur, int n, bool overlying = false);
+	void removeJur(const char *jur);
 
 	void setAI(AI *ai);
 	AI *getAI() const;
@@ -326,6 +336,7 @@ public:
 
 	int getGeneralMaxHP() const;
 	int getGeneralMaxHp() const;
+	int getGeneralHp() const;
 	virtual QString getGameMode() const;
 
 	QString getIp() const;
@@ -495,7 +506,9 @@ enum TriggerEvent{
 
 	Pindian,
 	TurnedOver,
-	ChainStateChanged,
+	ChainStateChange,
+	PreConjuring,
+	ConjuringProbability,
 
 	Predamage,
 	DamagedProceed,
@@ -504,7 +517,6 @@ enum TriggerEvent{
 	DamageDone,
 	Damage,
 	Damaged,
-	DamageConclude,
 	DamageComplete,
 
 	Dying,
@@ -708,7 +720,7 @@ class Engine: public QObject
 {
 public:
 	void addTranslationEntry(const char *key, const char *value);
-	QString translate(const char *to_translate) const;
+	QString translate(const char *to_translate, bool return_null = false) const;
 
 	void addPackage(Package *package);
 	void addBanPackage(const char *package_name);
@@ -746,12 +758,13 @@ public:
 	const TriggerSkill *getTriggerSkill(const char *skill_name) const;
 	const ViewAsSkill *getViewAsSkill(const char *skill_name) const;
 	QList<const ClientSkill *> getClientSkills() const;
+	QList<const TargetModSkill *> getTargetModSkills() const;
 	void addSkills(const QList<const Skill *> &skills);
 
 	int getCardCount() const;
 	const Card *getCard(int index) const;
 
-	QStringList getLords() const;
+	QStringList getLords(bool contain_banned = false) const;
 	QStringList getRandomLords() const;
 	QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
 	QList<int> getRandomCards() const;
@@ -765,6 +778,7 @@ public:
 	const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 	const ClientSkill *isPenetrate(const Player *from, const Player *to, const Card *card) const;
 	int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
+	int correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const;
 };
 
 extern Engine *Sanguosha;
@@ -869,7 +883,7 @@ public:
 	QList<ServerPlayer *> getAlivePlayers() const;
 	void enterDying(ServerPlayer *player, DamageStruct *reason);
 	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);
-	void revivePlayer(ServerPlayer *player);
+	void revivePlayer(ServerPlayer *player, bool invoke_start = true);
 	QStringList aliveRoles(ServerPlayer *except = NULL) const;
 	void gameOver(const char *winner);
 	void slashEffect(const SlashEffectStruct &effect);
@@ -880,6 +894,7 @@ public:
 	void setPlayerFlag(ServerPlayer *player, const char *flag);
 	void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
 	void setPlayerMark(ServerPlayer *player, const char *mark, int value);
+	void setPlayerChained(ServerPlayer *player);
 	void setPlayerCardLock(ServerPlayer *player, const char *name);
 	void clearPlayerCardLock(ServerPlayer *player);
 	void setPlayerStatistics(ServerPlayer *player, const char *property_name, const QVariant &value);
@@ -974,7 +989,7 @@ public:
 	// interactive methods
 	void activate(ServerPlayer *player, CardUseStruct &card_use);
 	Card::Suit askForSuit(ServerPlayer *player, const char *reason);
-	QString askForKingdom(ServerPlayer *player);
+	QString askForKingdom(ServerPlayer *player, bool include_god = true);
 	bool askForSkillInvoke(ServerPlayer *player, const char *skill_name, const QVariant &data = QVariant());
 	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices, const QVariant &data = QVariant());
 	bool askForDiscard(ServerPlayer *target, const char *reason, int discard_num, bool optional = false, bool include_equip = false);
@@ -996,8 +1011,8 @@ public:
 	void broadcastInvoke(const char *method, const char *arg = ".", ServerPlayer *except = NULL);
 
 	void updateStateItem();
-	bool notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const QString &value = QString());
-	bool broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
+	bool notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const char *value = QString());
+	bool broadcastProperty(ServerPlayer *player, const char *property_name, const char *value = QString());
 };
 
 %extend Room {

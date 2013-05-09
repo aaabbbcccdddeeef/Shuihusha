@@ -6,7 +6,6 @@
 
 #include <QTextDocument>
 #include <QTextOption>
-#include <QFile>
 
 ClientPlayer *Self = NULL;
 
@@ -149,8 +148,8 @@ void ClientPlayer::setFlags(const QString &flag){
 
     if(flag.endsWith("drank"))
         emit drank_changed();
-    //else if(flag.endsWith("ecst"))
-    //    emit ecst_changed();
+    else if(flag.endsWith("ecst"))
+        emit ecst_changed();
     else if(flag.endsWith("actioned"))
         emit action_taken();
 }
@@ -163,7 +162,7 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
     if(mark.endsWith("_wake"))
         emit waked();
-    if(mark.endsWith("_jar"))
+    if(mark.endsWith("_jur"))
         emit conjuring_changed();
     if(!mark.startsWith("@"))
         return;
@@ -178,7 +177,7 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
         if(itor.key().startsWith("@") && itor.value() > 0){
             QString path = QString("image/mark/%1.png").arg(itor.key());
-            if(!QFile::exists(path))
+            if(!Sanguosha->isExist(path))
                 path = QString("extensions/generals/mark/%1.png").arg(itor.key());
             QString mark_text = QString("<img src='%1' />").arg(path);
             QString mark_text_small = QString("<img src='%1' />").arg(path);

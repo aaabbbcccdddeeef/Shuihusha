@@ -28,56 +28,11 @@ struct RoomLayout;
 #include <QTextEdit>
 #include <QCheckBox>
 #include <QDockWidget>
-#include <QSpinBox>
 #include <QDialog>
 #include <QGraphicsWidget>
 #include <QGraphicsProxyWidget>
 #include <QThread>
 #include <QHBoxLayout>
-
-class ScriptExecutor: public QDialog{
-    Q_OBJECT
-
-public:
-    ScriptExecutor(QWidget *parent);
-
-public slots:
-    void doScript();
-};
-
-class DeathNoteDialog: public QDialog{
-    Q_OBJECT
-
-public:
-    DeathNoteDialog(QWidget *parent);
-
-protected:
-    virtual void accept();
-
-private:
-    QComboBox *killer, *victim;
-};
-
-class DamageMakerDialog: public QDialog{
-    Q_OBJECT
-
-public:
-    DamageMakerDialog(QWidget *parent);
-
-protected:
-    virtual void accept();
-
-private:
-    QComboBox *damage_source;
-    QComboBox *damage_target;
-    QComboBox *damage_nature;
-    QSpinBox *damage_point;
-
-    void fillCombobox(QComboBox *combobox);
-
-private slots:
-    void disableSource();
-};
 
 class KOFOrderBox: public QGraphicsPixmapItem{
 public:
@@ -164,6 +119,7 @@ public slots:
     void makeDamage();
     void makeKilling();
     void makeReviving();
+    void makeState();
     void doScript();
 
     EffectAnimation * getEA() const{return animations;}
@@ -312,7 +268,7 @@ private slots:
     void changeHp(const QString &who, int delta, DamageStruct::Nature nature, bool losthp);
     void changeMaxHp(const QString &who, int delta);
     void moveFocus(const QString &who);
-    void setEmotion(const QString &who, const QString &emotion,bool permanent = false);
+    void setEmotion(const QString &who, const QString &emotion);
     void showSkillInvocation(const QString &who, const QString &skill_name);
     void doAnimation(const QString &name, const QStringList &args);
     void adjustDashboard(bool expand);

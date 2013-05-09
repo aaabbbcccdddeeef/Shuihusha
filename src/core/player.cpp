@@ -192,7 +192,7 @@ bool Player::isBetweenAandB(const Player *a, const Player *b) const{
     return metoa + metob == atob;
 }
 
-int Player::distanceTo(const Player *other) const{
+int Player::distanceTo(const Player *other, int distance_fix) const{
     if(this == other)
         return 0;
 
@@ -219,6 +219,7 @@ int Player::distanceTo(const Player *other) const{
         }
     }
     distance += Sanguosha->correctClient("distance", this, other);
+    distance += distance_fix;
 
     // keep the distance >=1
     if(distance < 1)
@@ -357,7 +358,7 @@ bool Player::isLord() const{
 }
 
 bool Player::hasSkill(const QString &skill_name) const{
-    if(property("scarecrow").toBool()) //qimen
+    if(hasMark("scarecrow")) //qimen
         return false;
     return hasInnateSkill(skill_name)
             || acquired_skills.contains(skill_name);
@@ -668,7 +669,9 @@ bool Player::isAllNude() const{
 
 void Player::addDelayedTrick(const Card *trick){
     judging_area << trick;
-    delayed_tricks << DelayedTrick::CastFrom(trick);
+    const DelayedTrick *t_rick = DelayedTrick::CastFrom(trick);
+    if(t_rick)
+        delayed_tricks << t_rick;
 }
 
 void Player::removeDelayedTrick(const Card *trick){
@@ -756,11 +759,11 @@ QStringList Player::getAllMarkName(int flag, const QString &part) const{
         QString key = i.key();
         switch(flag){
         case 1:
-            if(key.startsWith(part)) //like "@skull"
+            if(key.startsWith(part) && hasMark(key)) //like "@skull"
                 marknames << key;
             break;
         case 3:
-            if(key.endsWith(part)) //like "aoxiang_wake"
+            if(key.endsWith(part) && hasMark(key)) //like "aoxiang_wake"
                 marknames << key;
             break;
         case 2:
@@ -819,7 +822,7 @@ QList<int> Player::getPile(const QString &pile_name) const{
 
 QStringList Player::getPileNames() const{
     QStringList names;
-    foreach(QString pile_name,piles.keys())
+    foreach(QString pile_name, piles.keys())
         names.append(pile_name);
     return names;
 }
@@ -846,8 +849,15 @@ int Player::getSlashCount() const{
     return usedTimes("Slash") + usedTimes("ThunderSlash") + usedTimes("FireSlash");
 }
 
-void Player::clearHistory(){
-    history.clear();
+QStringList Player::getHistorys() const{
+    return history.keys();
+}
+
+void Player::clearHistory(const QString &name){
+    if(!getHistorys().contains(name))
+        history.clear();
+    else
+        history.remove(name);
 }
 
 bool Player::hasUsed(const QString &card_class) const{
@@ -965,7 +975,13 @@ QString Player::getAllSkillDescription() const{
             }
         }
     }
-    QString fin = QString("%1%2%3").arg(local_desc).arg(local_desc2).arg(acquired_desc);
+    QString conjur_desc = QString();
+    if(!getAllMarkName(3, "_jur").isEmpty()){
+        QString conjur = getAllMarkName(3, "_jur").first();
+        conjur_desc = tr("<font color=deeppink size=4>Conjuring:</font><br/>");
+        conjur_desc.append(QString("<b>%1</b>: %2 <br/> <br/>").arg(Sanguosha->translate(conjur)).arg(Sanguosha->translate(":" + conjur)));
+    }
+    QString fin = QString("%1%2%3%4").arg(local_desc).arg(local_desc2).arg(acquired_desc).arg(conjur_desc);
     fin.replace("<br/> <br/>", "<br/>");
     return fin;
 }
@@ -1165,6 +1181,17 @@ QList<const Player *> Player::getSiblings() const{
     }
 
     return siblings;
+}
+
+const Player *Player::findPlayer(const QString &objectname) const{
+    if(parent()){
+        QList<const Player *> siblings = parent()->findChildren<const Player *>();
+        foreach(const Player *player, siblings){
+            if(player->objectName() == objectname || player->getGeneralName() == objectname)
+                return player;
+        }
+    }
+    return NULL;
 }
 
 void Player::playAudio(const QString &name) const{

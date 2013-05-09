@@ -165,7 +165,9 @@ enum TriggerEvent{
 
     Pindian,
     TurnedOver,
-    ChainStateChanged,
+    ChainStateChange,
+    PreConjuring,
+    ConjuringProbability,
 
     Predamage,
     DamagedProceed,
@@ -174,7 +176,7 @@ enum TriggerEvent{
     DamageDone,
     Damage,
     Damaged,
-    DamageConclude,
+    //DamageConclude,
     DamageComplete,
 
     Dying,

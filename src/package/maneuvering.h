@@ -37,7 +37,7 @@ public:
     virtual QString getSubtype() const;
     virtual QString getEffectPath(bool is_male) const;
 
-    static bool IsAvailable(const Player *player);
+    static bool IsAvailable(const Player *player, const Card *analeptic = NULL);
 
     virtual bool isAvailable(const Player *player) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;

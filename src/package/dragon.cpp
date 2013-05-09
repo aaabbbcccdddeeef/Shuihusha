@@ -5,7 +5,7 @@
 class Xixue: public TriggerSkill{
 public:
     Xixue():TriggerSkill("xixue"){
-        events << Predamage << Death;
+        events << DamageProceed << Death;
         frequency = Compulsory;
     }
 
@@ -278,10 +278,6 @@ public:
         frequency = Compulsory;
     }
 
-    virtual int getPriority(TriggerEvent) const{
-        return -1;
-    }
-
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }
@@ -368,12 +364,16 @@ public:
 class Anxi: public TriggerSkill{
 public:
     Anxi():TriggerSkill("anxi"){
-        events << DamageConclude;
+        events << Damage;
         view_as_skill = new AnxiViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -418,7 +418,7 @@ public:
 class Shuizhen: public TriggerSkill{
 public:
     Shuizhen():TriggerSkill("shuizhen"){
-        events << DamagedProceed << DamageComplete;
+        events << DamagedProceed << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -426,7 +426,7 @@ public:
     }
 
     virtual int getPriority(TriggerEvent event) const{
-        return event == DamagedProceed ? 2 : -1;
+        return event == DamagedProceed ? 2 : -2;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *, QVariant &data) const{
@@ -610,10 +610,11 @@ public:
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
         if(selected.isEmpty())
-            return to_select->getCard()->inherits("BasicCard");
+            return to_select->getFilteredCard()->isKindOf("BasicCard");
         else if(selected.length() == 1){
-            const Card *card = selected.first()->getFilteredCard();
-            return to_select->getCard()->inherits("BasicCard") && to_select->getFilteredCard()->isRed() == card->isRed();
+            const Card *card1 = selected.first()->getFilteredCard();
+            const Card *card2 = to_select->getFilteredCard();
+            return card2->isKindOf("BasicCard") && card1->getColor() == card2->getColor();
         }else
             return false;
     }
@@ -713,16 +714,14 @@ void QianxianCard::onEffect(const CardEffectStruct &effect) const{
         effect.from->obtainCard(club);
         if(!effect.to->faceUp())
             effect.to->turnOver();
+        if(effect.to->isChained())
+            room->setPlayerChained(effect.to);
     }
     else{
         if(effect.to->faceUp())
             effect.to->turnOver();
-    }
-    bool ch = club == NULL;
-    if(ch != effect.to->isChained()){
-        effect.to->setChained(ch);
-        room->broadcastProperty(effect.to, "chained");
-        room->setEmotion(effect.to, "chain");
+        if(!effect.to->isChained())
+            room->setPlayerChained(effect.to);
     }
 }
 
@@ -814,17 +813,17 @@ public:
                 if(target->isDead())
                     return;
                 QString prompt = QString("@jianwu-slash:%1:%2").arg(lizhu->objectName()).arg(target->objectName());
-                const Card *slash = room->askForCard(p, "slash", prompt, QVariant::fromValue(target));
-                if(slash) {
-                    Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
-                    slas->setSkillName(objectName());
-                    slas->addSubcard(slash);
+                const Card *card = room->askForCard(p, "slash", prompt, false, QVariant::fromValue(target));
+                if(card){
+                    Slash *slash = new Slash(card->getSuit(), card->getNumber());
+                    slash->addSubcard(card);
+                    slash->setSkillName(objectName());
+
                     CardUseStruct use;
-                    use.card = slas;
+                    use.card = slash;
                     use.to << target;
                     use.from = lizhu;
                     room->useCard(use);
-                    //break;
                 }
             }
         }
@@ -981,8 +980,7 @@ DragonPackage::DragonPackage()
     General *shibao = new General(this, "shibao", "jiang");
     shibao->addSkill(new Xiaozhan);
 
-    General *ruanxiaowu = new General(this, "ruanxiaowu", "min");
-    ruanxiaowu->addSkill("#hp-1");
+    General *ruanxiaowu = new General(this, "ruanxiaowu", "min", "3/4");
     ruanxiaowu->addSkill(new Anxi);
     ruanxiaowu->addSkill(new Shuilao);
 

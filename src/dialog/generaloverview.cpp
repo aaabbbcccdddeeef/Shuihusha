@@ -55,7 +55,7 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         package = Sanguosha->translate(general->getPackage());
         id = general->getId();
 
-        if(nickname == "")
+        if(nickname.isNull())
             nickname = Sanguosha->translate("UnknowNick");
         QTableWidgetItem *nickname_item = new QTableWidgetItem(nickname);
         nickname_item->setData(Qt::UserRole, general->objectName());
@@ -132,7 +132,7 @@ bool GeneralOverview::isInvisibleSkill(const QString &skill_name, int index){
         return index > 7;
     if(index > 2){  // butian&qimen for wudao_wake; other for landlord mode
         QStringList skills;
-        skills << "butian" << "qimen" << "linse" << "duoming" << "shemi";
+        skills << "qimen" << "linse" << "duoming" << "shemi";
         return skills.contains(skill_name);
     }
     return false;
@@ -243,13 +243,13 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     else
         ui->changeGeneralButton->hide();
 
-    QString resum = Sanguosha->translate("resume:" + general->objectName());
-    if(!resum.startsWith("resume:")){
-        QString resume = Sanguosha->translate("resume::");
-        if(general_name == "tora")
-            resume = Sanguosha->translate("resume:;");
-        for(int i=0; i < resum.length();i ++){
-            resume.append(resum.at(i));
+    QString resum = general->getResume();
+    if(!resum.isNull()){
+        QString resume = Sanguosha->translate("resume:human");
+        if(general->isNeuter())
+            resume = Sanguosha->translate("resume:animal");
+        for(int i=0; i < resum.length();i += 25){
+            resume.append(resum.mid(i, 25));
             if((i + 1) % 25 == 0)
                 resume.append("<br />");
         }
@@ -257,6 +257,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     }
     else
         ui->generalPhoto->setToolTip(QString());
+
     ui->generalPhoto->setWhatsThis("FAQ:"); //@todo
 
     QList<const Skill *> skills = general->getVisibleSkillList();
@@ -276,7 +277,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 
     addWakeLines(general_name);
 
-    QString last_word = Sanguosha->translate("~" + general->objectName());
+    QString last_word = general->getLastword();
     if(!last_word.startsWith("~")){
         QCommandLinkButton *death_button = new QCommandLinkButton(tr("Death"), last_word);
         button_layout->addWidget(death_button);
@@ -389,7 +390,7 @@ void GeneralOverview::addChangeAction(QPushButton *button){
         QAction *action4 = new QAction(menu4);
         action4->setData(QString("general:%1").arg(player->objectName()));
         action4->setText(QString("%1 %2%3").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneralName()))
-                         .arg(player->isDead() ? tr("(dead)") : ""));
+                         .arg(player->isDead() ? tr("(dead)") : QString()));
         action4->setIcon(QIcon(player->getGeneral()->getPixmapPath("tiny")));
         menu4->addAction(action4);
         connect(action4, SIGNAL(triggered()), this, SLOT(askChange()));

@@ -7,11 +7,7 @@ struct StatisticsStruct{
     StatisticsStruct();
     bool setStatistics(const QString &name, const QVariant &value);
 
-    int kill;
-    int damage;
-    int save;
-    int recover;
-    int cheat;
+    int kill, damage, save, recover, revive, cheat;
     QStringList designation;
 };
 

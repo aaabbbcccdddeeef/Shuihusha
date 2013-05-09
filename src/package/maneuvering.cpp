@@ -43,14 +43,17 @@ QString Analeptic::getEffectPath(bool ) const{
     return Card::getEffectPath();
 }
 
-bool Analeptic::IsAvailable(const Player *player){
-    if(player->hasFlag("%zhaoan"))
+bool Analeptic::IsAvailable(const Player *player, const Card *analeptic){
+    Analeptic *newanal = new Analeptic(Card::NoSuit, 0);
+    newanal->deleteLater();
+    if(player->isProhibited(player, analeptic == NULL ? newanal : analeptic))
         return false;
-    return !player->hasUsed("Analeptic") || player->hasSkill("huafo");
+
+    return player->usedTimes("Analeptic") <= Sanguosha->correctCardTarget(TargetModSkill::Residue, player, analeptic == NULL ? newanal : analeptic);
 }
 
 bool Analeptic::isAvailable(const Player *player) const{
-    return IsAvailable(player);
+    return IsAvailable(player, this) && BasicCard::isAvailable(player);
 }
 
 void Analeptic::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -269,7 +272,8 @@ FireAttack::FireAttack(Card::Suit suit, int number)
 }
 
 bool FireAttack::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
 
     if(to_select->isKongcheng())
@@ -322,17 +326,19 @@ QString IronChain::getEffectPath(bool is_male) const{
 }
 
 bool IronChain::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.length() >= 2)
+    int total_num = 2 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
 
     return true;
 }
 
 bool IronChain::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
+    int total_num = 2 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
     if(getSkillName() == "huace" || getSkillName() == "linmo" || getSkillName() == "fangzao")
-        return targets.length() == 1 || targets.length() == 2;
+        return targets.length() > 0 && targets.length() <= total_num;
     else
-        return targets.length() <= 2;
+        return targets.length() <= total_num;
 }
 
 void IronChain::onUse(Room *room, const CardUseStruct &card_use) const{
@@ -351,11 +357,7 @@ void IronChain::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
 }
 
 void IronChain::onEffect(const CardEffectStruct &effect) const{
-    bool chained = ! effect.to->isChained();
-    effect.to->setChained(chained);
-
-    effect.to->getRoom()->broadcastProperty(effect.to, "chained");
-    effect.to->getRoom()->setEmotion(effect.to, "chain");
+    effect.from->getRoom()->setPlayerChained(effect.to);
 }
 
 SupplyShortage::SupplyShortage(Card::Suit suit, int number)
@@ -378,14 +380,15 @@ bool SupplyShortage::targetFilter(const QList<const Player *> &targets, const Pl
     if(to_select->containsTrick(objectName()))
         return false;
 
-    if(Self->hasSkill("qicai"))
-        return true;
+    int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
+    int rangefix = 0;
+    if (Self->getOffensiveHorse() && subcards.contains(Self->getOffensiveHorse()->getId()))
+        rangefix += 1;
 
-    int distance = Self->distanceTo(to_select);
-    if(Self->hasSkill("duanliang"))
-        return distance <= 2;
-    else
-        return distance <= 1;
+    if (Self->distanceTo(to_select, rangefix) > distance_limit)
+        return false;
+
+    return true;
 }
 
 void SupplyShortage::takeEffect(ServerPlayer *target, bool good) const{

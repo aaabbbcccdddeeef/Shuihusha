@@ -403,7 +403,6 @@ public:
                 n--;
             }
             if(n < 5){
-                room->playSkillEffect(objectName());
                 zhuwu->loseMark("@embattle");
                 zhuwu->throwAllEquips();
                 zhuwu->throwAllHandCards();
@@ -552,20 +551,17 @@ public:
     }
 };
 
-class ShudanClear: public TriggerSkill{
+class XiayaoTargetMod: public TargetModSkill {
 public:
-    ShudanClear():TriggerSkill("#shudan_clear"){
-        events << PhaseChange;
+    XiayaoTargetMod(): TargetModSkill("#xiayao-target"){
+        pattern = "Ecstasy";
     }
 
-    virtual bool triggerable(const ServerPlayer *) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
-        if(player->getPhase() == Player::NotActive)
-            room->removeTag("Shudan");
-        return false;
+    virtual int getExtraTargetNum(const Player *from, const Card *card) const{
+        if(from->hasSkill("xiayao"))
+            return 1;
+        else
+            return 0;
     }
 };
 
@@ -580,7 +576,7 @@ public:
         if(player->getPhase() != Player::NotActive)
             return false;
         if(event == Damaged){
-            room->setTag("Shudan", player->objectName());
+            room->setPlayerFlag(player, "%Shudan");
             room->playSkillEffect(objectName(), 1);
 
             LogMessage log;
@@ -589,10 +585,10 @@ public:
             room->sendLog(log);
 
         }else if(event == CardEffected){
-            if(room->getTag("Shudan").toString() != player->objectName())
+            if(!player->hasFlag("%Shudan"))
                 return false;
             CardEffectStruct effect = data.value<CardEffectStruct>();
-            if(effect.card->inherits("Slash") || effect.card->isNDTrick()){
+            if(effect.card->isKindOf("Slash") || effect.card->isNDTrick()){
                 room->playSkillEffect(objectName(), 2);
                 LogMessage log;
                 log.type = "#ShudanAvoid";
@@ -611,8 +607,9 @@ public:
     Feiyan():ClientSkill("feiyan"){
     }
 
-    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
-        return card->inherits("Snatch") || card->inherits("SupplyShortage");
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasSkill(objectName()) &&
+                (card->isKindOf("Snatch") || card->isKindOf("SupplyShortage"));
     }
 };
 
@@ -631,6 +628,20 @@ public:
         snatch->addSubcard(first->getId());
         snatch->setSkillName(objectName());
         return snatch;
+    }
+};
+
+class ShentouTargetMod: public TargetModSkill {
+public:
+    ShentouTargetMod(): TargetModSkill("#shentou-target"){
+        pattern = "Snatch";
+    }
+
+    virtual int getDistanceLimit(const Player *from, const Card *) const{
+        if(from->hasSkill("shentou"))
+            return 1;
+        else
+            return 0;
     }
 };
 
@@ -752,7 +763,6 @@ public:
         if(p->getPhase() == Player::NotActive){
             Room *room = p->getRoom();
             if(!p->isChained()){
-                p->setChained(true);
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#Mozhang";
@@ -760,8 +770,7 @@ public:
                 log.arg = objectName();
                 room->sendLog(log);
 
-                room->broadcastProperty(p, "chained");
-                room->setEmotion(p, "chain");
+                room->setPlayerChained(p);
             }
         }
         return false;
@@ -906,12 +915,14 @@ RatPackage::RatPackage()
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Xiayao);
     baisheng->addSkill(new Shudan);
-    baisheng->addSkill(new ShudanClear);
-    related_skills.insertMulti("shudan", "#shudan_clear");
+    baisheng->addSkill(new XiayaoTargetMod);
+    related_skills.insertMulti("xiayao", "#xiayao-target");
 
     General *shiqian = new General(this, "shiqian", "kou", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
+    shiqian->addSkill(new ShentouTargetMod);
+    related_skills.insertMulti("shentou", "#shentou-target");
 
     General *shiwengong = new General(this, "shiwengong", "jiang");
     shiwengong->addSkill(new Dujian);

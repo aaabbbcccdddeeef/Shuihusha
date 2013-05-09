@@ -135,6 +135,8 @@ bool Peach::IsAvailable(const Player *player){
 }
 
 bool Peach::isAvailable(const Player *player) const{
+    if(player->isProhibited(player, this))
+        return false;
     return IsAvailable(player);
 }
 
@@ -166,9 +168,7 @@ public:
                 else{
                     QString prompt = "double-sword-card:" + effect.from->getGeneralName();
                     const Card *card = room->askForCard(effect.to, ".", prompt, data, CardDiscarded);
-                    if(card)
-                        room->throwCard(card, effect.to);
-                    else
+                    if(!card)
                         draw_card = true;
                 }
 
@@ -410,7 +410,10 @@ public:
                 log.to << target;
                 log.arg = objectName();
                 room->sendLog(log);
-                player->playCardEffect("Ehalberd", "weapon");
+                if(player->getGeneral()->isMale())
+                    player->playCardEffect("Ehalberd1", "weapon");
+                else
+                    player->playCardEffect("Ehalberd2", "weapon");
 
                 room->slashResult(effect, NULL);
                 return true;
@@ -800,9 +803,21 @@ void ExNihilo::onEffect(const CardEffectStruct &effect) const{
     effect.to->drawCards(2);
 }
 
+bool ExNihilo::isAvailable(const Player *player) const{
+    return !player->isProhibited(player, this);
+}
+
 Duel::Duel(Suit suit, int number)
     :SingleTargetTrick(suit, number, true){
     setObjectName("duel");
+}
+
+bool Duel::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
+        return false;
+
+    return to_select != Self;
 }
 
 void Duel::onEffect(const CardEffectStruct &effect) const{
@@ -849,7 +864,8 @@ Snatch::Snatch(Suit suit, int number):SingleTargetTrick(suit, number, true) {
 }
 
 bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
 
     if(to_select->isAllNude())
@@ -858,10 +874,12 @@ bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to
     if(to_select == Self)
         return false;
 
-    if(Self->distanceTo(to_select) < 3 && Self->hasSkill("shentou"))
-        return true;
+    int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
+    int rangefix = 0;
+    if (Self->getOffensiveHorse() && subcards.contains(Self->getOffensiveHorse()->getId()))
+        rangefix += 1;
 
-    if(Self->distanceTo(to_select) > 1 && !Self->hasSkill("qicai"))
+    if (Self->distanceTo(to_select, rangefix) > distance_limit)
         return false;
 
     return true;
@@ -885,7 +903,8 @@ Dismantlement::Dismantlement(Suit suit, int number)
 }
 
 bool Dismantlement::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
 
     if(to_select->isAllNude())
@@ -936,7 +955,7 @@ bool Indulgence::targetFilter(const QList<const Player *> &targets, const Player
 
 void Indulgence::takeEffect(ServerPlayer *target, bool good) const{
     target->clearHistory();
-	if(!good)
+    if(!good)
         target->skip(Player::Play);
 }
 

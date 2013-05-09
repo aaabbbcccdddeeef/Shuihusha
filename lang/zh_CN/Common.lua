@@ -30,6 +30,7 @@ return {
 	["no"] = "否",
 	["male"] = "男性",
 	["female"] = "女性",
+	["neuter"] = "双性",
 
 	["Pairs"] = "双将",
 	["Cards"] = "卡牌",
@@ -107,6 +108,7 @@ return {
 	["#SkillNullify"] = "%from 的技能【%arg】被触发，【%arg2】对其无效",
 	["#ComskillNullify"] = "%to 的锁定技【%arg2】被触发，%from 对 %to 的 %arg 无效",
 	["#ArmorNullify"] = "%from 的防具【%arg】技能被触发，【%arg2】对其无效",
+	["#ArmorTrigger"] = "%from 的防具【%arg】技能被触发",
 	["#DrawNCards"] = "%from 摸了 %arg 张牌",
 	["#MoveNCards"] = "%to 从 %from 处得到 %arg 张牌",
 	["$TakeAG"] = "%from 拿走了 %card",
@@ -140,4 +142,8 @@ return {
 	["draw2card"] = "摸2张牌",
 	["recover1hp"] = "回复1点体力",
 	["cancel"] = "不发动",
+
+	--超级作弊器相关
+	["red_trick"] = "红色锦囊",
+	["black_trick"] = "黑色锦囊",
 }

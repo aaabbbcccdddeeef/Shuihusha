@@ -140,11 +140,17 @@ void Engine::addSkills(const QList<const Skill *> &all_skills){
 
         if(skill->isKindOf("ClientSkill"))
             client_skills << qobject_cast<const ClientSkill *>(skill);
+        else if (skill->inherits("TargetModSkill"))
+            targetmod_skills << qobject_cast<const TargetModSkill *>(skill);
     }
 }
 
 QList<const ClientSkill *> Engine::getClientSkills() const{
     return client_skills;
+}
+
+QList<const TargetModSkill *> Engine::getTargetModSkills() const{
+    return targetmod_skills;
 }
 
 void Engine::addPackage(Package *package){
@@ -216,8 +222,12 @@ bool Engine::isDuplicated(const QString &name, bool is_skill){
         return generals.contains(name);
 }
 
-QString Engine::translate(const QString &to_translate) const{
-    return translations.value(to_translate, to_translate);
+bool Engine::isExist(const QString &str){
+    return QFile::exists(str);
+}
+
+QString Engine::translate(const QString &to_translate, bool return_null) const{
+    return translations.value(to_translate, return_null ? QString() : to_translate);
 }
 
 int Engine::getRoleIndex() const{
@@ -579,7 +589,11 @@ int Engine::getCardCount() const{
     return cards.length();
 }
 
-QStringList Engine::getLords() const{
+QList<Card*> Engine::getCards() const{
+    return cards;
+}
+
+QStringList Engine::getLords(bool contain_banned) const{
     QStringList lords;
 
     // add intrinsic lord
@@ -590,8 +604,15 @@ QStringList Engine::getLords() const{
             continue;
         if(ban_package.contains(general->getPackage()))
             continue;
-        if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
-            continue;
+        if(!contain_banned){
+            if(ServerInfo.GameMode.endsWith("p")
+               || ServerInfo.GameMode.endsWith("pd")
+               || ServerInfo.GameMode.endsWith("pz"))
+                if (Config.value("Banlist/Roles", "").toStringList().contains(lord))
+                    continue;
+            if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
+                continue;
+        }
         lords << lord;
     }
 
@@ -671,12 +692,12 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
     Q_ASSERT(all_generals.count() >= count);
 
     if(Config.EnableBasara)
-        general_set = general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
+        general_set = general_set.subtract(Config.value("Banlist/Basara", QStringList()).toStringList().toSet());
     if(Config.EnableHegemony)
-        general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
+        general_set = general_set.subtract(Config.value("Banlist/Hegemony", QStringList()).toStringList().toSet());
 
     if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd") || ServerInfo.GameMode.endsWith("pz"))
-        general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
+        general_set.subtract(Config.value("Banlist/Roles", QStringList()).toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();
 
@@ -694,14 +715,19 @@ QList<int> Engine::getRandomCards() const{
     foreach(Card *card, cards){
         card->clearFlags();
 
-        QStringList bancards = Config.value("Banlist/Cards", "").toStringList();
+        QStringList bancards = Config.value("Banlist/Cards", QStringList()).toStringList();
         if(bancards.contains(card->objectName()) || bancards.contains(card->getSubtype()))
             continue;
 
         const Scenario *scenario = getScenario(Config.GameMode);
-        if(scenario)
+        if(scenario){
             if(scenario->setCardPiles(card))
                 continue;
+        }
+        else{
+            if(getScenario(card->getPackage()))
+                continue;
+        }
 
         if(Config.GameMode == "06_3v3"){
             bool exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
@@ -857,7 +883,7 @@ const ViewAsSkill *Engine::getViewAsSkill(const QString &skill_name) const{
 
 const ClientSkill *Engine::isProhibited(const Player *from, const Player *to, const Card *card) const{
     foreach(const ClientSkill *skill, client_skills){
-        if(to->hasSkill(skill->objectName()) && skill->isProhibited(from, to, card))
+        if(skill->isProhibited(from, to, card))
             return skill;
     }
 
@@ -891,6 +917,7 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
             if(y < -200) // use slash never
                 return y;
             x += y;
+            x += correctCardTarget(TargetModSkill::Residue, from, slash);
         }
         else if(type == "attackrange"){
             int y = skill->getSlashRange(from, to, slash);
@@ -898,10 +925,47 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
                 return y;
             if(y > x) // use longest range
                 x = y;
+            x += correctCardTarget(TargetModSkill::DistanceLimit, from, slash);
         }
-        else if(type == "extragoals")
+        else if(type == "extragoals"){
             x += skill->getSlashExtraGoals(from, to, slash);
+            x += correctCardTarget(TargetModSkill::ExtraTarget, from, slash);
+        }
     }
 
     return x;
 }
+
+int Engine::correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const{
+    int x = 0;
+
+    if (type == TargetModSkill::Residue) {
+        foreach (const TargetModSkill *skill, targetmod_skills) {
+            ExpPattern p(skill->getPattern());
+            if (p.match(from, card)) {
+                int residue = skill->getResidueNum(from, card);
+                if (residue >= 998) return residue;
+                x += residue;
+            }
+        }
+    } else if (type == TargetModSkill::DistanceLimit) {
+        foreach (const TargetModSkill *skill, targetmod_skills) {
+            ExpPattern p(skill->getPattern());
+            if (p.match(from, card)) {
+                int distance_limit = skill->getDistanceLimit(from, card);
+                if (distance_limit >= 998) return distance_limit;
+                x += distance_limit;
+            }
+        }
+    } else if (type == TargetModSkill::ExtraTarget) {
+        foreach (const TargetModSkill *skill, targetmod_skills) {
+            ExpPattern p(skill->getPattern());
+            if (p.match(from, card)) {
+                x += skill->getExtraTargetNum(from, card);
+            }
+        }
+    }
+
+    return x;
+}
+

@@ -57,8 +57,10 @@ public:
     void requestCheatGetOneCard(int card_id);
     void requestCheatChangeGeneral(QString name);
     void requestCheatKill(const QString& killer, const QString& victim);
-    void requestCheatDamage(const QString& source, const QString& target, DamageStruct::Nature nature, int points);
-    void requestCheatRevive(const QString& name);
+    void requestCheatDamage(const QString& source, const QString& target, int nature, int points, int card_id);
+    void requestCheatRevive(const QString& name, bool full_state = true, bool invoke_start = false);
+    void requestCheatMove(int card_id, const QString &place);
+    void requestCheatState(const QString &target, const QString &data);
     void requestCheatRunScript(const QString& script);
 
     // other client requests
@@ -128,6 +130,7 @@ public:
     void log(const QString &log_str);
     void speak(const QString &speak_data);
     void addHistory(const QString &card);
+    void clearHistory(const QString &name = QString());
     void moveFocus(const Json::Value &focus);
     void setEmotion(const QString &set_str);
     void skillInvoked(const Json::Value &invoke_str);

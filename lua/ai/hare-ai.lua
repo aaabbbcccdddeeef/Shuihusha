@@ -90,7 +90,8 @@ function linmo_card(self, card, name)
 	for _, word in ipairs(zis) do
 		local card = sgs.Sanguosha:getCard(word)
 		if card:objectName() == name then
-			self.room:throwCard(word)
+			self.room:setPlayerMark(self.player, "LinmoZi", word)
+	--		self.room:throwCard(word)
 			break
 		end
 	end
@@ -403,9 +404,8 @@ sgs.ai_skill_invoke["shihao"] = function(self, data)
 end
 sgs.ai_skill_playerchosen["shihao"] = function(self, targets)
 	local wiretap = sgs.Sanguosha:cloneCard("wiretap", sgs.Card_NoSuit, 0)
-	local use = sgs.CardUseStruct()
-	self:useCardWiretap(wiretap, use)
-	return use.to:first()
+	local use = {}
+	return self:useCardWiretap(wiretap, use)
 end
 
 -- laolian

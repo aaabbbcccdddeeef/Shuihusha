@@ -19,11 +19,8 @@ QString Ecstasy::getSubtype() const{
 }
 
 bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int cst_targets = 1;
-    if(Self->hasSkill("xiayao"))
-        cst_targets ++;
-
-    if(targets.length() >= cst_targets)
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
     return to_select != Self && Self->inMyAttackRange(to_select);
 }
@@ -58,13 +55,10 @@ Drivolt::Drivolt(Suit suit, int number)
 }
 
 bool Drivolt::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
-
-    if(to_select == Self)
-        return false;
-
-    return to_select->getKingdom() != Self->getKingdom();
+    return to_select != Self && to_select->getKingdom() != Self->getKingdom();
 }
 
 void Drivolt::onEffect(const CardEffectStruct &effect) const{
@@ -163,6 +157,13 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
     }
 }
 
+bool Assassinate::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
+        return false;
+    return to_select != Self;
+}
+
 Counterplot::Counterplot(Suit suit, int number)
     :Nullification(suit, number){
     setObjectName("counterplot");
@@ -245,10 +246,7 @@ public:
                 player->playCardEffect("Edouble_whip1", "weapon");
             else
                 player->playCardEffect("Edouble_whip2", "weapon");
-            bool chained = ! effect.to->isChained();
-            effect.to->setChained(chained);
-            room->broadcastProperty(effect.to, "chained");
-            room->setEmotion(effect.to, "chain");
+            room->setPlayerChained(effect.to);
         }
         return false;
     }

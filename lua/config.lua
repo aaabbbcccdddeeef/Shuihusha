@@ -2,10 +2,10 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130404",
-	version_name = "F4.7.5",
+	version = "20130508",
+	version_name = "F5.3",
 	mod_name = "Shuihusha",
-	kingdoms = { "guan", "jiang", "min", "kou", "god"},
+	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
 		"StandardCard",
 		"Plough",
@@ -30,6 +30,7 @@ config = {
 --		"Cock",
 --		"Boar",
 		"SP",
+		"Casket",
 		"Test",
 --		"JoyGeneral",
 	},
@@ -43,6 +44,7 @@ config = {
 		"ArthurFerris",
 		"Contract",
 		"Impasse",
+--		"FuckGuanyu",
 --		"Changban",
 --[[	"Zombie",
 		"Legend",]]
@@ -50,7 +52,7 @@ config = {
 	},
 
 	ai_names = {
-		"太阳神的三国杀",
+		"太阳神Style",
 		"启姐的小雏田",
 		"海泡叉的乱码",
 		"威廉古堡",
@@ -58,9 +60,6 @@ config = {
 		"donle的最后之作",
 		"安歧的小黑屋",
 		"战栗的乐谱",
-		"中国的钓鱼岛",
-		"科比挂的柯南",
-		"贝克街的亡灵",
 		"导线的电阻",
 		"QB的契约",
 		"吉祥物小萨",
@@ -76,9 +75,12 @@ config = {
 		"裤衩反穿",
 		"活泼的P仔",
 		"趴趴走的呼呼",
+		"笛声悠扬",
+		"鬼心巧克力",
 		"小爺綠豆沙",
 		"单身的活宝",
 		"超级无敌小柴进",
+		"宇智波·李助",
 		"卖萌的豚纸",
 		"江西安义的雷海",
 		"中条老道的大头贴",
@@ -87,7 +89,12 @@ config = {
 		"爱上小衣的殃",
 		"纠结的金田一君",
 		"小辰的超兽伪画",
+		"第十一根草花",
+		"堕入轮回的樊瑞",
+		"莎乐美的优乐美",
+		"虎虎生威",
 		"肉酱茧",
+		"客串的冰爷",
 	},
 
 	color_guan = "#547998",
@@ -95,8 +102,10 @@ config = {
 	color_min = "#4DB873",
 	color_kou = "#8A807A",
 	color_god = "#96943D",
+	color_moon = "#2A2A2A",
+	color_sun = "#FC7202",
 
-	mini_max = 30 -- 此处以Config.S_MINI_MAX_COUNT为准
+	mini_max = 35 -- 此处以Config.S_MINI_MAX_COUNT为准
 }
 
 scenario = { -- 非身份局模式下的一些设置
@@ -116,7 +125,6 @@ scenario = { -- 非身份局模式下的一些设置
 
 ban_list = { -- 初始禁表设置
 	roles_ban = { -- 身份局单禁
-		"gongsunsheng",
 	},
 	kof_ban = { -- 1v1模式
 		"andaoquan",
@@ -199,6 +207,15 @@ ban_list = { -- 初始禁表设置
 		"zhaoji+andaoquan",
 --		"pangwanchun+tora",
 		"tongguan+suochao",
+		"zhaoji+liangshijie",
+		"zhaoji+xuanzan",
+		"liangshijie+xuanzan",
+--		"pangwanchun+xuanzan",
+--		"pangwanchun+liangshijie",
+
+--		"tongguan+liangshijie",
+		"suyuanjing+peixuan",
+		"moon_panqiaoyun+qiongyaonayan",
 
 		"fangjie+songjiang",
 		"liruilan+shijin",
@@ -209,6 +226,7 @@ ban_list = { -- 初始禁表设置
 	},
 	forbid_packages = { -- 灰色不可选的包
 		"test",
+		"zhangong"
 	},
 }
 

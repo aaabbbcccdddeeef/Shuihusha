@@ -13,7 +13,6 @@ Button::Button(const QString &label, qreal scale)
     :label(label), size(ButtonRect.size() * scale),
     mute(true), font(Config.SmallFont)
 {
-
     init();
 }
 

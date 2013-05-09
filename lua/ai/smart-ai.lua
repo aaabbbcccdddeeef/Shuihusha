@@ -73,7 +73,7 @@ function setInitialTables()
 	sgs.discard_pile =			global_room:getDiscardPile()
 	sgs.draw_pile = 			global_room:getDrawPile()
 	sgs.lose_equip_skill = 		"cuihuo|jiebei"
-	sgs.need_kongcheng = 		"zhiyuan"
+	sgs.need_kongcheng = 		"zhiyuan|beishui|ganlin|kongmen"
 	sgs.masochism_skill = 		"baoguo|fuqin|xiaozai|huatian|heidian|cuju|huanshu"
 	sgs.wizard_skill = 			"zhaixing|butian|shenpan|yixing|yueli|houlue"
 	sgs.wizard_harm_skill = 	"zhaixing|butian|shenpan|yixing"
@@ -277,7 +277,7 @@ function SmartAI:getUseValue(card)
 		if not self:hasTrickEffective(card) then v = 0 end
 	end
 
-	if self:hasSkills(sgs.need_kongcheng) then
+	if self:needKongcheng() then
 		if self.player:getHandcardNum() == 1 then v = 10 end
 	end
 	if self:hasSkill("halberd") and card:isKindOf("Slash") and self.player:getHandcardNum() == 1 then v = 10 end
@@ -2199,10 +2199,14 @@ function sgs.ai_cardneed.equip(to, card, self)
 end
 
 function SmartAI:needKongcheng(player)
-	if player:isWounded() and player:hasSkill("ganlin") then
+	player = player or self.player
+	if player:isWounded() then
+		if self:hasSkills("ganlin|kongmen") then return true end
+	end
+	if self.room:getMode() == "fuck_guanyu" then
 		return true
 	end
-	return self:hasSkills(sgs.need_kongcheng,player)
+	return self:hasSkills(sgs.need_kongcheng, player)
 end
 
 function SmartAI:getCardNeedPlayer(cards)
@@ -2445,7 +2449,7 @@ function SmartAI:getTurnUse()
 		local dummy_use = {}
 		dummy_use.isDummy = true
 		local hp = self.player:getHp()
-		if not self:hasSkills(sgs.need_kongcheng) then
+		if not self:needKongcheng() then
 			if (i >= (self.player:getHandcardNum()-hp+self.retain)) and (self:getUseValue(card) < self.retain_thresh) then
 				return turnUse
 			end
@@ -2627,6 +2631,7 @@ end
 function SmartAI:getRetrialCardId(cards, judge)
 	local can_use = {}
 	for _, card in ipairs(cards) do
+		if type(card) == "number" then card = sgs.Sanguosha:getCard(card) end
 		if judge.reason == "yinyu" then
 			if (self:isEnemy(judge.who) and card:getSuit() ~= sgs.Card_Spade) or
 				(self:isFriend(judge.who) and card:getSuit() == sgs.Card_Spade) then
@@ -2656,7 +2661,7 @@ function SmartAI:damageIsEffective(player, nature, source)
 	player = player or self.player
 	source = source or self.player
 	nature = nature or sgs.DamageStruct_Normal
-	if player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName() then
+	if player:hasSkill("shudan") and player:hasFlag("%Shudan") then
 		return false
 	end
 
@@ -3124,7 +3129,7 @@ function SmartAI:aoeIsEffective(card, to)
 		return false
 	end
 	--Baisheng's shudan
-	if (to:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == to:objectName()) then
+	if (to:hasSkill("shudan") and to:hasFlag("%Shudan")) then
 		return false
 	end
 	--Panjinlian's shengui
@@ -3306,7 +3311,7 @@ end
 function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护，锦囊无效
 	if player then
 		if self.room:isProhibited(self.player, player, card) then return false end
-		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
+		if (player:hasSkill("shudan") and player:hasFlag("%Shudan")) or player:hasSkill("wuyan") then
 			if card and not (card:isKindOf("Indulgence") or card:isKindOf("SupplyShortage")) then return false end
 		end
 		if player:hasSkill("shengui") and self.player:isMale() and not player:getArmor() then
@@ -3318,12 +3323,12 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:isKindOf("FireAttack") or card:isKindOf("FireSlash")) then
 			return false
 		end
-		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
-			return false
-		end
 		if player:hasSkill("qianshui") and not self.player:getWeapon() and card:isKindOf("Assassinate") then
 			return false
 		end
+--		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:isKindOf("Duel") or card:isKindOf("Assassinate") then
+--			return false
+--		end
 	end
 	return true
 end
@@ -3465,7 +3470,7 @@ function SmartAI:useEquipCard(card, use)
 		use.card = card
 		return
 	end
-	if self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng) and self:evaluateArmor(card)>-5 then
+	if self.player:getHandcardNum() == 1 and self:needKongcheng() and self:evaluateArmor(card)>-5 then
 		use.card = card
 		return
 	end
@@ -3535,7 +3540,7 @@ function SmartAI:damageMinusHp(self, enemy, type)
 					end
 				end
 				trick_effectivenum = trick_effectivenum + 1
-			elseif acard:isKindOf("Slash") and self:slashIsEffective(acard, enemy) and ( slash_damagenum == 0 or self:isEquip("Crossbow", self.player))
+			elseif acard:isKindOf("Slash") and self:slashIsEffective(enemy, acard) and ( slash_damagenum == 0 or self:isEquip("Crossbow", self.player))
 				and (self.player:distanceTo(enemy) <= self.player:getAttackRange()) then
 				if not (enemy:hasSkill("xiangle") and basicnum < 2) then slash_damagenum = slash_damagenum + 1 end
 				if self:getCardsNum("Analeptic") > 0 and analepticpowerup == 0 and
@@ -3588,7 +3593,21 @@ sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
 	return targetlist[1]
 end
 
-local loaded = "mini"
+dofile "lua/ai/general_config.lua"
+dofile "lua/ai/skill_config.lua"
+dofile "lua/ai/value_config.lua"
+dofile "lua/ai/guanxing-ai.lua"
+dofile "lua/ai/standard-ai.lua"
+dofile "lua/ai/standard_cards-ai.lua"
+dofile "lua/ai/plough-ai.lua"
+dofile "lua/ai/maneuvering-ai.lua"
+dofile "lua/ai/events-ai.lua"
+dofile "lua/ai/mini-ai.lua"
+dofile "lua/ai/debug-ai.lua"
+dofile "lua/ai/chat-ai.lua"
+dofile "lua/ai/crazyai.lua"
+
+local loaded = "standard|standard_cards|maneuvering|plough|events"
 
 local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 
@@ -3603,15 +3622,6 @@ for _, ascenario in ipairs(sgs.Sanguosha:getScenarioNames()) do
 		dofile("lua/ai/" .. string.lower(ascenario) .. "-ai.lua")
 	end
 end
-
-dofile "lua/ai/general_config.lua"
-dofile "lua/ai/skill_config.lua"
-dofile "lua/ai/value_config.lua"
-dofile "lua/ai/guanxing-ai.lua"
-dofile "lua/ai/mini-ai.lua"
-dofile "lua/ai/debug-ai.lua"
-dofile "lua/ai/chat-ai.lua"
-dofile "lua/ai/crazyai.lua"
 
 if sgs.GetConfig("EnableReincarnation", false) then
 	dofile "lua/ai/reincarnation-ai.lua"

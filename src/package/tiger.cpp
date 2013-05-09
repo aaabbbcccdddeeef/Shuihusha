@@ -225,11 +225,15 @@ public:
 class Pinming: public TriggerSkill{
 public:
     Pinming():TriggerSkill("pinming"){
-        events << DamageConclude;
+        events << Damage;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -731,7 +735,6 @@ class Houfa: public TriggerSkill{
 public:
     Houfa():TriggerSkill("houfa"){
         events << CardDiscarded;
-        //frequency = Frequent;
         view_as_skill = new HoufaViewAsSkill;
     }
 
@@ -740,7 +743,7 @@ public:
     }
 
     virtual int getPriority(TriggerEvent) const{
-        return 3;
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -814,8 +817,9 @@ public:
     Linse():ClientSkill("linse"){
     }
 
-    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
-        return card->inherits("Snatch") || card->inherits("Dismantlement");
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        return to->hasSkill(objectName()) &&
+                (card->isKindOf("Snatch") || card->isKindOf("Dismantlement"));
     }
 
     virtual int getExtra(const Player *target) const{
@@ -858,8 +862,7 @@ TigerPackage::TigerPackage()
     General *wuyanguang = new General(this, "wuyanguang", "guan");
     wuyanguang->addSkill(new Jintang);
 
-    General *shixiu = new General(this, "shixiu", "jiang", 6);
-    shixiu->addSkill(new CutHpSkill(2));
+    General *shixiu = new General(this, "shixiu", "jiang", "4/6");
     shixiu->addSkill(new Pinming);
     shixiu->addSkill(new PinmingDie);
     related_skills.insertMulti("pinming", "#pinming-die");
@@ -893,8 +896,7 @@ TigerPackage::TigerPackage()
     related_skills.insertMulti("houfa", "#houfa-slash");
     skills << new HoufaSlash2;
 
-    General *lizhong = new General(this, "lizhong", "kou", 4);
-    lizhong->addSkill(new CutHpSkill(1));
+    General *lizhong = new General(this, "lizhong", "kou", "3/4");
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse-effect");

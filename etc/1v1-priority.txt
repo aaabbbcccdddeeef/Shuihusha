@@ -1,15 +1,15 @@
 
 andaoquan 9
-wangqing 9
-yangxiong 8
+wangqing 9 *
+yangxiong 8 *
 yanqing 8
 yangzhi 8
 gaoqiu 7
-sunerniang 7
+sunerniang 7 *
 lujunyi 7
 chaijin 7
 husanniang 7
-ruanxiaoqi 7
+ruanxiaoqi 7 *
 xuning 7
 dongping 7
 qingzhang 7
@@ -42,7 +42,7 @@ songjiang 2
 
 luda 6
 
-luozhenren 8
+luozhenren 7 *
 huangxin 7
 shijin 7
 tongguan 7
@@ -57,11 +57,11 @@ lijun 4
 
 leiheng 6
 sunli 3
-wuyanguang 7
-shixiu 8
+wuyanguang 7 *
+shixiu 8 *
 lvfang 6
 tianhu 7
-zhangheng 5
+zhangheng 5 *
 xiebao 5
 shien 6
 yanshun 7
@@ -76,11 +76,11 @@ peixuan 5
 ligun 2
 tongwei 4
 songqing 6
-dingdesun 7
+dingdesun 7 *
 songwan 4
 zhoutong 6
 zhugui 5
-zhaoji 8
+zhaoji 8 *
 
 liutang 2
 hantao 4
@@ -91,6 +91,22 @@ gaoyanei 7
 shantinggui 6
 lizhu 7
 yangchun 6
-qiongyaonayan 6
+qiongyaonayan 6 *
 suochao 4
 wangpo 3
+
+muhong 6
+xuanzan 2
+oupeng 8 *
+lingzhen 3
+baoxu 1
+fanrui 5
+jindajian 2
+houjian 2
+dengfei 2
+huangfuduan 2
+liangshijie 1
+suyuanjing 1
+
+sun_peiruhai 3 *
+moon_panqiaoyun 9 *

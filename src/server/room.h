@@ -39,6 +39,7 @@ public:
     const Scenario *getScenario() const;
     RoomThread *getThread() const;
     void playSkillEffect(const QString &skill_name, int index = -1);
+    void playSpecializationEffect(const QString &base_skill, const QString &parent, int index = -1);
     void playExtra(TriggerEvent event, const QVariant &data = QVariant());
     ServerPlayer *getCurrent() const;
     void setCurrent(ServerPlayer *current);
@@ -51,7 +52,7 @@ public:
     void outputEventStack();
     void enterDying(ServerPlayer *player, DamageStruct *reason);
     void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);
-    void revivePlayer(ServerPlayer *player);
+    void revivePlayer(ServerPlayer *player, bool invoke_start = true);
     QStringList aliveRoles(ServerPlayer *except = NULL) const;
     void gameOver(const QString &winner);
     void slashEffect(const SlashEffectStruct &effect);
@@ -62,6 +63,7 @@ public:
     void setPlayerFlag(ServerPlayer *player, const QString &flag);
     void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
     void setPlayerMark(ServerPlayer *player, const QString &mark, int value);
+    void setPlayerChained(ServerPlayer *player);
     void addPlayerHistory(ServerPlayer *player, const QString &name, int times = 1);
     void setPlayerCardLock(ServerPlayer *player, const QString &name);
     void clearPlayerCardLock(ServerPlayer *player);
@@ -251,7 +253,7 @@ public:
     // interactive methods
     void activate(ServerPlayer *player, CardUseStruct &card_use);
     Card::Suit askForSuit(ServerPlayer *player, const QString &reason);
-    QString askForKingdom(ServerPlayer *player);
+    QString askForKingdom(ServerPlayer *player, bool include_god = true);
     bool askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data = QVariant());
     QString askForChoice(ServerPlayer *player, const QString &skill_name, const QString &choices, const QVariant &data = QVariant());
     bool askForDiscard(ServerPlayer *target, const QString &reason, int discard_num, bool optional = false, bool include_equip = false);
@@ -360,9 +362,11 @@ private:
 
     bool makeSurrender(ServerPlayer* player);
     bool makeCheat(ServerPlayer* player);
-    void makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point);
+    void makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point, int card_id);
     void makeKilling(const QString& killer, const QString& victim, bool force = false);
-    void makeReviving(const QString &name);
+    void makeReviving(const QString &name, const QString &flag);
+    void makeMove(int card_id, const QString &place);
+    void makeState(const QString &name, const QString &str);
     void doScript(const QString &script);
 
     //helper functions and structs

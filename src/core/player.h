@@ -51,7 +51,7 @@ class Player : public QObject
 
 public:
     enum Phase {RoundStart, Start, Judge, Draw, Play, Discard, Finish, NotActive};
-    enum Place {Hand, Equip, Judging, Special, DiscardedPile, DrawPile};
+    enum Place {Special, Hand, Equip, Judging, DiscardedPile, DrawPile};
     enum Role {Lord, Loyalist, Rebel, Renegade};
 
     explicit Player(QObject *parent);
@@ -121,7 +121,7 @@ public:
     virtual int aliveCount() const = 0;
     void setFixedDistance(const Player *player, int distance);
     bool isBetweenAandB(const Player *a, const Player *b) const;
-    int distanceTo(const Player *other) const;
+    int distanceTo(const Player *other, int distance_fix = 0) const;
     const General *getAvatarGeneral() const;
     const General *getGeneral() const;
 
@@ -192,10 +192,11 @@ public:
     QString getPileName(int card_id) const;
 
     void addHistory(const QString &name, int times = 1);
-    void clearHistory();
+    void clearHistory(const QString &name = QString());
     bool hasUsed(const QString &card_class) const;
     int usedTimes(const QString &card_class, int init = 0) const;
     int getSlashCount() const;
+    QStringList getHistorys() const;
 
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;
@@ -227,6 +228,7 @@ public:
     void copyFrom(Player* p);
 
     QList<const Player *> getSiblings() const;
+    const Player *findPlayer(const QString &objectname) const;
     void playAudio(const QString &name) const;
 
     QVariantMap tag;
@@ -262,6 +264,7 @@ private:
 
     QMap<Card::HandlingMethod, QStringList> card_limitation;
 
+    //QString conjur;
     StatisticsStruct *player_statistics;
 
 signals:

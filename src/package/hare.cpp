@@ -186,12 +186,8 @@ void LinmoCard::onUse(Room *room, const CardUseStruct &card_use) const{
     if(!card_ids.isEmpty()){
         room->fillAG(card_ids, xiao);
         int zid = room->askForAG(xiao, card_ids, false, objectName());
-        QString zi = Sanguosha->getCard(zid)->objectName();
-        card_ids.removeOne(zid);
         xiao->invoke("clearAG");
-
-        room->setPlayerProperty(xiao, "linmostore", zi);
-        room->throwCard(zid);
+        room->setPlayerMark(xiao, "LinmoZi", zid);
     }
 }
 
@@ -209,7 +205,8 @@ public:
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         if(player->hasUsed("LinmoCard") && player->hasFlag("linmo")){
-            QString name = Self->property("linmostore").toString();
+            int zid = player->getMark("LinmoZi");
+            QString name = Sanguosha->getCard(zid)->objectName();
             Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
             return card->isAvailable(player);
         }else if(!player->hasFlag("linmo"))
@@ -223,7 +220,8 @@ public:
             if(cards.length() != 1)
                 return NULL;
             const Card *card = cards.first()->getCard();
-            QString name = Self->property("linmostore").toString();
+            int zid = Self->getMark("LinmoZi");
+            QString name = Sanguosha->getCard(zid)->objectName();
             Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
             new_card->addSubcard(card);
             new_card->setSkillName("linmo");
@@ -241,7 +239,8 @@ public:
         if(player->hasFlag("linmo"))
             return false;
         if(player->hasUsed("LinmoCard")){
-            QString name = Self->property("linmostore").toString();
+            int zid = Self->getMark("LinmoZi");
+            QString name = Sanguosha->getCard(zid)->objectName();
             Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
             return pattern.contains(card->objectName());
         }else
@@ -253,7 +252,7 @@ class Linmo: public TriggerSkill{
 public:
     Linmo():TriggerSkill("linmo"){
         view_as_skill = new LinmoViewAsSkill;
-        events << CardFinished << PhaseChange;
+        events << CardUsed << CardFinished << PhaseChange;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -261,11 +260,21 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == CardUsed){
+            if(player->hasSkill(objectName())){
+                CardUseStruct use = data.value<CardUseStruct>();
+                if(use.card->getSkillName() == "linmo"){
+                    int zid = player->getMark("LinmoZi");
+                    room->throwCard(zid);
+                }
+            }
+            return false;
+        }
         QList<ServerPlayer *> writers = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *writer, writers){
             if(event == PhaseChange){
                 if(writer == player && player->getPhase() == Player::NotActive){
-                    player->property("linmostore") = "";
+                    room->setPlayerMark(player, "LinmoZi", 0);
                     if(!player->getPile("zi").isEmpty()){
                         room->playSkillEffect(objectName(), 5);
                         player->clearPile("zi");
@@ -379,6 +388,7 @@ public:
 
             room->sendJudgeResult(player);
         }
+        player->tag.remove("Judge");
         return false;
     }
 };
@@ -1050,6 +1060,13 @@ public:
         view_as_skill = new ShemiViewAsSkill;
     }
 
+    virtual int getPriority(TriggerEvent event) const{
+        if(event == TurnedOver)
+            return -1;
+        else
+            return 1;
+    }
+
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
         if(e == PhaseChange){
             return emperor->getPhase() == Player::Discard && !emperor->isNude() &&
@@ -1152,8 +1169,7 @@ HarePackage::HarePackage()
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
 
-    General *zhugui = new General(this, "zhugui", "kou");
-    zhugui->addSkill("#hp-1");
+    General *zhugui = new General(this, "zhugui", "kou", "3/4");
     zhugui->addSkill(new Shihao);
     zhugui->addSkill(new Shihaodo);
     related_skills.insertMulti("shihao", "#shihao-do");

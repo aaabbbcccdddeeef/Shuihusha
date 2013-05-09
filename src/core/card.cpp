@@ -5,7 +5,6 @@
 #include "room.h"
 #include "carditem.h"
 #include "lua-wrapper.h"
-#include <QFile>
 
 const Card::Suit Card::AllSuits[4] = {
     Card::Spade,
@@ -200,7 +199,7 @@ QString Card::getPixmapPath() const{
 #else
     QString path = QString("image/card/%1.jpg").arg(objectName());
 #endif
-    return QFile::exists(path) ? path : QString("image/card/%1.jpg").arg(objectName());
+    return Sanguosha->isExist(path) ? path : "image/card/unknown.jpg";
 }
 
 QString Card::getIconPath() const{
@@ -220,7 +219,7 @@ QString Card::getEffectPath(bool is_male) const{
 }
 
 bool Card::isNDTrick() const{
-    return getTypeId() == Trick && !inherits("DelayedTrick");
+    return getTypeId() == Trick && !isKindOf("DelayedTrick");
 }
 
 QString Card::getEffectPath() const{
