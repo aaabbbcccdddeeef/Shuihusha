@@ -140,11 +140,17 @@ void Engine::addSkills(const QList<const Skill *> &all_skills){
 
         if(skill->isKindOf("ClientSkill"))
             client_skills << qobject_cast<const ClientSkill *>(skill);
+        else if (skill->inherits("TargetModSkill"))
+            targetmod_skills << qobject_cast<const TargetModSkill *>(skill);
     }
 }
 
 QList<const ClientSkill *> Engine::getClientSkills() const{
     return client_skills;
+}
+
+QList<const TargetModSkill *> Engine::getTargetModSkills() const{
+    return targetmod_skills;
 }
 
 void Engine::addPackage(Package *package){
@@ -570,7 +576,7 @@ QList<Card*> Engine::getCards() const{
     return cards;
 }
 
-QStringList Engine::getLords() const{
+QStringList Engine::getLords(bool contain_banned) const{
     QStringList lords;
 
     // add intrinsic lord
@@ -581,8 +587,15 @@ QStringList Engine::getLords() const{
             continue;
         if(ban_package.contains(general->getPackage()))
             continue;
-        if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
-            continue;
+        if(!contain_banned){
+            if(ServerInfo.GameMode.endsWith("p")
+               || ServerInfo.GameMode.endsWith("pd")
+               || ServerInfo.GameMode.endsWith("pz"))
+                if (Config.value("Banlist/Roles", "").toStringList().contains(lord))
+                    continue;
+            if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
+                continue;
+        }
         lords << lord;
     }
 
@@ -825,6 +838,16 @@ const Skill *Engine::getSkill(const QString &skill_name) const{
     return skills.value(skill_name, NULL);
 }
 
+const Skill *Engine::getSkill(const EquipCard *equip) const{
+    const Skill* skill;
+    if (equip == NULL) skill = NULL;
+    else {
+        skill = Sanguosha->getSkill(equip->objectName());
+        if (skill == NULL) skill = equip->getSkill();
+    }
+    return skill;
+}
+
 QStringList Engine::getSkillNames() const{
     return skills.keys();
 }
@@ -901,3 +924,37 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
 
     return x;
 }
+
+int Engine::correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const{
+    int x = 0;
+
+    if (type == TargetModSkill::Residue) {
+        foreach (const TargetModSkill *skill, targetmod_skills) {
+            ExpPattern p(skill->getPattern());
+            if (p.match(from, card)) {
+                int residue = skill->getResidueNum(from, card);
+                if (residue >= 998) return residue;
+                x += residue;
+            }
+        }
+    } else if (type == TargetModSkill::DistanceLimit) {
+        foreach (const TargetModSkill *skill, targetmod_skills) {
+            ExpPattern p(skill->getPattern());
+            if (p.match(from, card)) {
+                int distance_limit = skill->getDistanceLimit(from, card);
+                if (distance_limit >= 998) return distance_limit;
+                x += distance_limit;
+            }
+        }
+    } else if (type == TargetModSkill::ExtraTarget) {
+        foreach (const TargetModSkill *skill, targetmod_skills) {
+            ExpPattern p(skill->getPattern());
+            if (p.match(from, card)) {
+                x += skill->getExtraTargetNum(from, card);
+            }
+        }
+    }
+
+    return x;
+}
+

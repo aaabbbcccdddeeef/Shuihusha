@@ -364,7 +364,7 @@ void CheatDialog::seeCard(){
         QIcon suit_icon = card->getSuitIcon();
         QString point = card->getNumberString();
 
-        QString card_info = point + "  " + card_name + "\t" + Sanguosha->translate(card->getSubtype());
+        QString card_info = QString("%1  %2").arg(point).arg(card_name);
         QListWidgetItem *item = new QListWidgetItem(card_info, cards_list);
         item->setIcon(suit_icon);
         item->setData(Qt::UserRole, card->getId());

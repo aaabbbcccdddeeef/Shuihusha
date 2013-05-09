@@ -812,6 +812,16 @@ Duel::Duel(Suit suit, int number)
     setObjectName("duel");
 }
 
+bool Duel::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
+        return false;
+    if (to_select == Self)
+        return false;
+
+    return true;
+}
+
 void Duel::onEffect(const CardEffectStruct &effect) const{
     ServerPlayer *first = effect.to;
     ServerPlayer *second = effect.from;
@@ -856,7 +866,8 @@ Snatch::Snatch(Suit suit, int number):SingleTargetTrick(suit, number, true) {
 }
 
 bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
 
     if(to_select->isAllNude())
@@ -865,10 +876,12 @@ bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to
     if(to_select == Self)
         return false;
 
-    if(Self->distanceTo(to_select) < 3 && Self->hasSkill("shentou"))
-        return true;
+    int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
+    int rangefix = 0;
+    if (Self->getOffensiveHorse() && subcards.contains(Self->getOffensiveHorse()->getId()))
+        rangefix += 1;
 
-    if(Self->distanceTo(to_select) > 1 && !Self->hasSkill("qicai"))
+    if (Self->distanceTo(to_select, rangefix) > distance_limit)
         return false;
 
     return true;
@@ -892,7 +905,8 @@ Dismantlement::Dismantlement(Suit suit, int number)
 }
 
 bool Dismantlement::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    if (targets.length() >= total_num)
         return false;
 
     if(to_select->isAllNude())

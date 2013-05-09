@@ -192,7 +192,7 @@ bool Player::isBetweenAandB(const Player *a, const Player *b) const{
     return metoa + metob == atob;
 }
 
-int Player::distanceTo(const Player *other) const{
+int Player::distanceTo(const Player *other, int distance_fix) const{
     if(this == other)
         return 0;
 
@@ -219,6 +219,7 @@ int Player::distanceTo(const Player *other) const{
         }
     }
     distance += Sanguosha->correctClient("distance", this, other);
+    distance += distance_fix;
 
     // keep the distance >=1
     if(distance < 1)

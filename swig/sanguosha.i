@@ -142,7 +142,7 @@ public:
 	void setFaceUp(bool face_up);
 
 	virtual int aliveCount() const = 0;
-	int distanceTo(const Player *other) const;
+	int distanceTo(const Player *other, int distance_fix = 0) const;
 	void setFixedDistance(const Player *player, int distance);
 	const General *getAvatarGeneral() const;
 	const General *getGeneral() const;
@@ -758,12 +758,13 @@ public:
 	const TriggerSkill *getTriggerSkill(const char *skill_name) const;
 	const ViewAsSkill *getViewAsSkill(const char *skill_name) const;
 	QList<const ClientSkill *> getClientSkills() const;
+	QList<const TargetModSkill *> getTargetModSkills() const;
 	void addSkills(const QList<const Skill *> &skills);
 
 	int getCardCount() const;
 	const Card *getCard(int index) const;
 
-	QStringList getLords() const;
+	QStringList getLords(bool contain_banned = false) const;
 	QStringList getRandomLords() const;
 	QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
 	QList<int> getRandomCards() const;
@@ -777,6 +778,7 @@ public:
 	const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 	const ClientSkill *isPenetrate(const Player *from, const Player *to, const Card *card) const;
 	int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
+	int correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const;
 };
 
 extern Engine *Sanguosha;

@@ -238,6 +238,28 @@ public:
     SlashSkill(const QString &name);
 };
 
+class TargetModSkill: public Skill {
+    Q_OBJECT
+    Q_ENUMS(ModType)
+
+public:
+    enum ModType {
+        Residue,
+        DistanceLimit,
+        ExtraTarget
+    };
+
+    TargetModSkill(const QString &name);
+    virtual QString getPattern() const;
+
+    virtual int getResidueNum(const Player *from, const Card *card) const;
+    virtual int getDistanceLimit(const Player *from, const Card *card) const;
+    virtual int getExtraTargetNum(const Player *from, const Card *card) const;
+
+protected:
+    QString pattern;
+};
+
 class WeaponSkill: public TriggerSkill{
     Q_OBJECT
 
