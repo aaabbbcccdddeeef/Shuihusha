@@ -21,12 +21,7 @@ slash_ex1 = sgs.CreateTargetModSkill{
 	end,
 }
 
---杀的无距离限制,  
---[[
-	对于【杀】来说有个bug，目前0224版本的return值小于1000的话是没有效果的, 
-	所以暂且无法实现“攻击范围为3”这样的效果，只能实现无距离限制的效果
-	这个bug在最新的git开发代码上已经修复
-]]
+--杀的无距离限制
 slash_ex2 = sgs.CreateTargetModSkill{
 	name = "slash_ex2",
 	pattern = "Slash",
@@ -37,8 +32,8 @@ slash_ex2 = sgs.CreateTargetModSkill{
 	end,
 }
 
-
 --可使用两张杀，也就是额外使用一张杀
+--@todo 实测杀无次数限制
 slash_ex3 = sgs.CreateTargetModSkill{
 	name = "slash_ex3",
 	pattern = "Slash",
@@ -48,7 +43,6 @@ slash_ex3 = sgs.CreateTargetModSkill{
 		end
 	end,
 }
-
 
 --同时顺两个玩家
 snatch_ex1 = sgs.CreateTargetModSkill{
@@ -82,7 +76,6 @@ dismantlement_ex1 = sgs.CreateTargetModSkill{
 		end
 	end,
 }
-
 
 -- 决斗可同时决斗两个玩家
 duel_ex1 = sgs.CreateTargetModSkill{
@@ -140,8 +133,6 @@ chongmei:addSkill(duel_ex1)
 chongmei:addSkill(fireattack_ex1)
 chongmei:addSkill(ironchain_ex1)
 chongmei:addSkill(analeptic_ex1)
-
-
 
 sgs.LoadTranslationTable {
 	["chongmei"] = "虫妹",
