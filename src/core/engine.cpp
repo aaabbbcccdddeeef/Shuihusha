@@ -884,6 +884,8 @@ const ClientSkill *Engine::isPenetrate(const Player *from, const Player *to, con
 
 int Engine::correctClient(const QString &type, const Player *from, const Player *to, const Card *slash) const{
     int x = 0;
+    if(slash == NULL)
+        slash = cloneCard("slash", Card::NoSuit, 0);
 
     foreach(const ClientSkill *skill, client_skills){
         if(type == "maxcard"){
