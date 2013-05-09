@@ -816,10 +816,8 @@ bool Duel::targetFilter(const QList<const Player *> &targets, const Player *to_s
     int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
     if (targets.length() >= total_num)
         return false;
-    if (to_select == Self)
-        return false;
 
-    return true;
+    return to_select != Self;
 }
 
 void Duel::onEffect(const CardEffectStruct &effect) const{

@@ -54,6 +54,10 @@ Card::CardType EquipCard::getTypeId() const{
     return Equip;
 }
 
+bool EquipCard::isAvailable(const Player *player) const{
+    return !player->isProhibited(player, this) && Card::isAvailable(player);
+}
+
 QString EquipCard::getEffectPath(bool is_male) const{
     return "audio/card/common/equip.ogg";
 }

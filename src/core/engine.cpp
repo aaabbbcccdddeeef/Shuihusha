@@ -838,16 +838,6 @@ const Skill *Engine::getSkill(const QString &skill_name) const{
     return skills.value(skill_name, NULL);
 }
 
-const Skill *Engine::getSkill(const EquipCard *equip) const{
-    const Skill* skill;
-    if (equip == NULL) skill = NULL;
-    else {
-        skill = Sanguosha->getSkill(equip->objectName());
-        if (skill == NULL) skill = equip->getSkill();
-    }
-    return skill;
-}
-
 QStringList Engine::getSkillNames() const{
     return skills.keys();
 }
@@ -910,6 +900,7 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
             if(y < -200) // use slash never
                 return y;
             x += y;
+            x += correctCardTarget(TargetModSkill::Residue, from, slash);
         }
         else if(type == "attackrange"){
             int y = skill->getSlashRange(from, to, slash);
@@ -917,9 +908,12 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
                 return y;
             if(y > x) // use longest range
                 x = y;
+            x += correctCardTarget(TargetModSkill::DistanceLimit, from, slash);
         }
-        else if(type == "extragoals")
+        else if(type == "extragoals"){
             x += skill->getSlashExtraGoals(from, to, slash);
+            x += correctCardTarget(TargetModSkill::ExtraTarget, from, slash);
+        }
     }
 
     return x;

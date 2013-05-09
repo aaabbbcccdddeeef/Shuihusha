@@ -1062,6 +1062,20 @@ public:
     }
 };
 
+class ZhaoanTargetMod: public TargetModSkill {
+public:
+    ZhaoanTargetMod(): TargetModSkill("#zhaoan-target"){
+        pattern = "Analeptic";
+    }
+
+    virtual int getResidueNum(const Player *from, const Card *) const{
+        if(from->hasFlag("%zhaoan"))
+            return -998;
+        else
+            return 0;
+    }
+};
+
 class Fuxu:public MasochismSkill{
 public:
     Fuxu():MasochismSkill("fuxu"){
@@ -1165,6 +1179,8 @@ SnakePackage::SnakePackage()
     General *suyuanjing = new General(this, "suyuanjing", "guan", 3);
     suyuanjing->addSkill(new Zhaoan);
     suyuanjing->addSkill(new Fuxu);
+    suyuanjing->addSkill(new ZhaoanTargetMod);
+    related_skills.insertMulti("zhaoan", "#zhaoan-target");
 
     addMetaObject<SinueCard>();
     addMetaObject<FangzaoCard>();

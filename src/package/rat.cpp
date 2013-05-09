@@ -551,6 +551,20 @@ public:
     }
 };
 
+class XiayaoTargetMod: public TargetModSkill {
+public:
+    XiayaoTargetMod(): TargetModSkill("#xiayao-target"){
+        pattern = "Ecstasy";
+    }
+
+    virtual int getExtraTargetNum(const Player *from, const Card *card) const{
+        if(from->hasSkill("xiayao"))
+            return 1;
+        else
+            return 0;
+    }
+};
+
 class Shudan: public TriggerSkill{
 public:
     Shudan():TriggerSkill("shudan"){
@@ -614,6 +628,20 @@ public:
         snatch->addSubcard(first->getId());
         snatch->setSkillName(objectName());
         return snatch;
+    }
+};
+
+class ShentouTargetMod: public TargetModSkill {
+public:
+    ShentouTargetMod(): TargetModSkill("#shentou-target"){
+        pattern = "Snatch";
+    }
+
+    virtual int getDistanceLimit(const Player *from, const Card *) const{
+        if(from->hasSkill("shentou"))
+            return 1;
+        else
+            return 0;
     }
 };
 
@@ -887,10 +915,14 @@ RatPackage::RatPackage()
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Xiayao);
     baisheng->addSkill(new Shudan);
+    baisheng->addSkill(new XiayaoTargetMod);
+    related_skills.insertMulti("xiayao", "#xiayao-target");
 
     General *shiqian = new General(this, "shiqian", "kou", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
+    shiqian->addSkill(new ShentouTargetMod);
+    related_skills.insertMulti("shentou", "#shentou-target");
 
     General *shiwengong = new General(this, "shiwengong", "jiang");
     shiwengong->addSkill(new Dujian);

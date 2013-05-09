@@ -43,14 +43,17 @@ QString Analeptic::getEffectPath(bool ) const{
     return Card::getEffectPath();
 }
 
-bool Analeptic::IsAvailable(const Player *player){
-    if(player->hasFlag("%zhaoan"))
+bool Analeptic::IsAvailable(const Player *player, const Card *analeptic){
+    Analeptic *newanal = new Analeptic(Card::NoSuit, 0);
+    newanal->deleteLater();
+    if(player->isProhibited(player, analeptic == NULL ? newanal : analeptic))
         return false;
-    return !player->hasUsed("Analeptic") || player->hasSkill("huafo");
+
+    return player->usedTimes("Analeptic") <= Sanguosha->correctCardTarget(TargetModSkill::Residue, player, analeptic == NULL ? newanal : analeptic);
 }
 
 bool Analeptic::isAvailable(const Player *player) const{
-    return IsAvailable(player);
+    return IsAvailable(player, this) && BasicCard::isAvailable(player);
 }
 
 void Analeptic::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
