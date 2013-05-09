@@ -591,7 +591,7 @@ QStringList Engine::getLords(bool contain_banned) const{
             if(ServerInfo.GameMode.endsWith("p")
                || ServerInfo.GameMode.endsWith("pd")
                || ServerInfo.GameMode.endsWith("pz"))
-                if (Config.value("Banlist/Roles", "").toStringList().contains(lord))
+                if (Config.value("Banlist/Roles", QStringList()).toStringList().contains(lord))
                     continue;
             if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
                 continue;

@@ -1349,14 +1349,20 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << Damaged << ConjuringProbability;
+    events << DamagedProceed << Damaged << ConjuringProbability;
 }
 
 int ConjuringRule::getPriority(TriggerEvent e) const{
-    if(e == DamageDone || e == AskForPeaches || e == ConjuringProbability)
+    switch(e){
+    case DamageDone:
+    case AskForPeaches:
+    case ConjuringProbability:
         return 1;
-    else
+    case DamagedProceed:
+        return 2;
+    default:
         return -1;
+    }
 }
 
 bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -1370,6 +1376,15 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         else if(conjur.startsWith("dizzy"))
             percent = 75;
         data = QString("%1*%2").arg(conjur).arg(percent); //sleep_jur*75
+        break;
+    }
+    case DrawNCards:{
+        if(player->hasMark("lucky_jur")){
+            int n = data.toInt();
+            if(qrand() % 100 + 1 <= 75)
+                n ++;
+            data = n;
+        }
         break;
     }
     case PhaseChange:{
@@ -1416,6 +1431,15 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             QStringList jurs = player->getAllMarkName(3, "_jur");
             foreach(QString jur, jurs)
                 player->loseMark(jur);
+        }
+        break;
+    }
+    case DamagedProceed:{
+        if(player->hasMark("reflex_jur")){
+            DamageStruct damage = data.value<DamageStruct>();
+            damage.to = damage.from;
+            room->damage(damage);
+            return true;
         }
         break;
     }
