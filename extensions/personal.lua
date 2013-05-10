@@ -175,7 +175,7 @@ tianshuang:addSkill(dragonfistt)
 luamaichong=sgs.CreateTriggerSkill{
 	name="luamaichong",
 	frequency = sgs.Skill_Compulsory,
-	events={sgs.Damaged, sgs.ConjuringProbability},
+	events={sgs.Damaged, sgs.PreConjuring},
 	priority = -1,
 
 	can_trigger = function(self, player)
@@ -185,10 +185,12 @@ luamaichong=sgs.CreateTriggerSkill{
 
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()
-		if event == sgs.ConjuringProbability then
-		-- 本事件用于设置咒术的附加概率
+		if event == sgs.PreConjuring then
+		-- 本事件用于设置咒术的附加概率，若返回true，则该咒术不附加（注意和概率为0的区别）
+		-- 可以捕获sgs.Conjured事件来设置触发概率，主要用于幸运、反弹等咒术，方法和此事件相同
 			if player:hasFlag("iswoman") then
-				-- 传递的data为字符串类型，形似dizzy_jur*75，星号前面为咒术名，后面为概率（默认为100）
+				-- 传递的data为字符串类型，形似dizzy_jur*75，星号前面为咒术名，后面为概率
+				-- 不同的咒术有不同的附加概率，一般默认为100，昏睡和晕眩为75
 				local dataa = data:toString():split("*")
 				local conjur = dataa[1]
 				local percent = dataa[2]:toInt()
@@ -230,6 +232,7 @@ luashepin=sgs.CreateTriggerSkill{
 			local x = data:toInt()
 			room:playSkillEffect(self:objectName())
 			player:gainJur("shensu_jur", 1)
+			-- 注意咒术内部名必须以_jur结尾
 			data:setValue(x-1)
 		end
 		return false
