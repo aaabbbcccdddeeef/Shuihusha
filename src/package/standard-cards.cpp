@@ -77,7 +77,6 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
 
 Jink::Jink(Suit suit, int number):BasicCard(suit, number){
     setObjectName("jink");
-
     target_fixed = true;
 }
 

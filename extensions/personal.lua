@@ -4,7 +4,7 @@ extension = sgs.Package("personal")
 tianqi = sgs.General(extension, "tianqi", "god", 5, false)
 tianyin = sgs.General(extension, "tianyin", "god", 3)
 tianshuang = sgs.General(extension, "tianshuang", "god", 3)
-tianlong = sgs.General(extension, "tianlong", "god", 3)
+tianlong = sgs.General(extension, "tianlong", "god", "3/4", sgs.General_Neuter)
 
 eatdeath=sgs.CreateTriggerSkill{
 	name="eatdeath",

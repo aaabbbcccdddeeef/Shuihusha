@@ -1349,11 +1349,14 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << DamagedProceed << Damaged << PreConjuring;
+    events << DrawNCards
+           << DamagedProceed << Damaged
+           << PreConjuring << Conjured;
 }
 
 int ConjuringRule::getPriority(TriggerEvent e) const{
     switch(e){
+    case DrawNCards:
     case DamageDone:
     case AskForPeaches:
     case PreConjuring:
