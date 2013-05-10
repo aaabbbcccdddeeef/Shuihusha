@@ -307,6 +307,7 @@ public:
 	void loseAllMarks(const char *mark_name);
 	void gainJur(const char *jur, int n, bool overlying = false);
 	void removeJur(const char *jur);
+	bool hasJur(const char *jur);
 
 	void setAI(AI *ai);
 	AI *getAI() const;

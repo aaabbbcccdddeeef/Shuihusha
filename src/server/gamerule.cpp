@@ -1366,14 +1366,6 @@ int ConjuringRule::getPriority(TriggerEvent e) const{
     }
 }
 
-bool ConjuringRule::conjurTrigger(PlayerStar player, const QString &conjur) const{
-    QVariant data = QString("%1*%2").arg(conjur).arg(100); //lucky_jur*75
-    Room* room = player->getRoom();
-    room->getThread()->trigger(Conjured, room, player, data);
-    int percent = QString(data.toString().split("*").last()).toInt();
-    return qrand() % 100 + 1 <= percent;
-}
-
 bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
     switch(event){
     case PreConjuring:{
@@ -1399,17 +1391,13 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case DrawNCards:{
-        if(player->hasMark("lucky_jur")){
-            int n = data.toInt();
-            if(conjurTrigger(player, "lucky_jur"))
-                n ++;
-            data = n;
-        }
+        if(player->hasJur("lucky_jur"))
+            data = data.toInt() + 1;
         break;
     }
     case PhaseChange:{
         if(player->getPhase() == Player::RoundStart){
-            if(player->hasMark("poison_jur")){
+            if(player->hasJur("poison_jur")){
                 LogMessage log;
                 log.from = player;
                 log.type = "#Poison";
@@ -1438,7 +1426,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                     room->throwCard(card, player);
                 }
             }
-            if(player->hasMark("sleep_jur"))
+            if(player->hasJur("sleep_jur"))
                 player->setFlags("ShutUp");
         }
         else if(player->getPhase() == Player::NotActive){
@@ -1455,7 +1443,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case DamagedProceed:{
-        if(player->hasMark("reflex_jur") && conjurTrigger(player, "reflex_jur")){
+        if(player->hasJur("reflex_jur")){
             DamageStruct damage = data.value<DamageStruct>();
             damage.to = damage.from;
             room->damage(damage);
@@ -1491,12 +1479,12 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             }
         }
 
-        if(player->hasMark("sleep_jur"))
+        if(player->hasJur("sleep_jur"))
             player->removeJur("sleep_jur");
         break;
     }
     case AskForPeaches:{
-        if(player->hasMark("sleep_jur")){
+        if(player->hasJur("sleep_jur")){
             if(player->getPhase() == Player::NotActive){
                 LogMessage log;
                 log.from = player;
@@ -1512,7 +1500,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         QString pattern = data.toString();
         if(pattern.startsWith("@"))
             break;
-        if(player->hasMark("sleep_jur")){
+        if(player->hasJur("sleep_jur")){
             if(player->getPhase() == Player::NotActive){
                 LogMessage log;
                 log.from = player;
@@ -1524,9 +1512,9 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case Dying:{
-        if(player->hasMark("dizzy_jur")){
+        if(player->hasJur("dizzy_jur")){
             room->setPlayerMark(player, "scarecrow", 0);
-            player->removeMark("dizzy_jur");
+            player->removeJur("dizzy_jur");
         }
         break;
     }

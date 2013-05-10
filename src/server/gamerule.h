@@ -64,7 +64,6 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual int getPriority(TriggerEvent event = NonTrigger) const;
-    bool conjurTrigger(PlayerStar player, const QString &conjur) const;
 };
 
 #endif // GAMERULE_H

@@ -665,21 +665,29 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
 
     QVariant data = QString("%1*%2").arg(jur).arg(100); //sleep_jur*50
     bool interrupt = room->getThread()->trigger(PreConjuring, room, this, data);
-    if(interrupt)
-        return;
-    else{
+    int probability = qrand() % 100 + 1;
+    qDebug("conjuring gain probability: %s %s(%s)",
+           qPrintable(objectName()), qPrintable(data.toString()), qPrintable(QString::number(probability)));
+    if(!interrupt){
         int percent = QString(data.toString().split("*").last()).toInt();
-        if(qrand() % 100 + 1 > percent)
-            return;
+        if(probability > percent)
+            interrupt = true;
+    }
+    if(hasFlag("full_jur")) // this flag for cheat only
+        interrupt = false;
+    LogMessage log;
+    log.from = this;
+    log.arg = jur;
+    if(interrupt){
+        log.type = "#ForbidJur";
+        room->sendLog(log);
+        return;
     }
 
     foreach(QString mark, getAllMarkName(3, "_jur"))
         removeJur(mark);
 
-    LogMessage log;
     log.type = "#GainJur";
-    log.from = this;
-    log.arg = jur;
     room->sendLog(log);
 
     room->setEmotion(this, "conjuring/" + jur.split("_").first());
@@ -702,6 +710,27 @@ void ServerPlayer::removeJur(const QString &jur){
     if(jur.startsWith("dizzy"))
         room->setPlayerMark(this, "scarecrow", 0);
     emit conjuring_changed();
+}
+
+bool ServerPlayer::hasJur(const QString &jur){
+    if(!hasMark(jur))
+        return false;
+    QVariant data = QString("%1*%2").arg(jur).arg(100); //lucky_jur*75
+    room->getThread()->trigger(Conjured, room, this, data);
+    int probability = qrand() % 100 + 1;
+    qDebug("conjuring trigger probability: %s %s(%s)",
+           qPrintable(objectName()), qPrintable(data.toString()), qPrintable(QString::number(probability)));
+    int percent = QString(data.toString().split("*").last()).toInt();
+    if(probability > percent){
+        LogMessage log;
+        log.type = "#UntriggerJur";
+        log.from = this;
+        log.arg = jur;
+        room->sendLog(log);
+        return false;
+    }
+    else
+        return true;
 }
 
 bool ServerPlayer::isOnline() const {

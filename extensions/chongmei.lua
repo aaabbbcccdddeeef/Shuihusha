@@ -33,7 +33,6 @@ slash_ex2 = sgs.CreateTargetModSkill{
 }
 
 --可使用两张杀，也就是额外使用一张杀
---@todo 实测杀无次数限制
 slash_ex3 = sgs.CreateTargetModSkill{
 	name = "slash_ex3",
 	pattern = "Slash",

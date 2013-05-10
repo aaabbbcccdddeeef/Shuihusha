@@ -952,7 +952,10 @@ int Engine::correctCardTarget(const TargetModSkill::ModType type, const Player *
         if(sp.match(from, card)){
             switch(type){
             case TargetModSkill::Residue : {
-                x += skill->getResidueNum(from, card);
+                int history = from->usedTimes(card->getClassName());
+                if(card->isKindOf("Slash"))
+                    history = from->getSlashCount();
+                x += qMax(1 + skill->getResidueNum(from, card) - history, 0);
                 break;
             }
             case TargetModSkill::DistanceLimit : {

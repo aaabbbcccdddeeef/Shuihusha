@@ -1371,9 +1371,8 @@ const Scenario *Room::getScenario() const{
 
 void Room::broadcast(const QString &message, ServerPlayer *except){
     foreach(ServerPlayer *player, m_players){
-        if(player != except){
+        if(player != except)
             player->unicast(message);
-        }
     }
 }
 
@@ -4154,8 +4153,11 @@ void Room::makeState(const QString &name, const QString &str){
                 player->invoke("addHistory", value);
             }
         }
-        else if(key.endsWith("_jur"))
+        else if(key.endsWith("_jur")){
+            player->setFlags("full_jur");
             player->gainJur(key, value.toInt());
+            player->setFlags("-full_jur");
+        }
         else if(key == "flag")
             setPlayerFlag(player, value);
         else if(key == "mark"){

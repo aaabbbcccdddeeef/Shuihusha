@@ -1,7 +1,6 @@
 %{
 
 #include "standard.h"
-#include "maneuvering.h"
 #include "events.h"
 
 %}
@@ -138,11 +137,4 @@ public:
 
 protected:
 	DamageStruct::Nature nature;
-};
-
-class Analeptic: public BasicCard {
-public:
-	Analeptic(Card::Suit suit, int number);
-
-	static bool IsAvailable(const Player *player, const Card *analeptic = NULL);
 };
