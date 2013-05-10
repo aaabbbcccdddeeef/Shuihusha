@@ -7,11 +7,14 @@ Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 }
 
 bool Ecstasy::IsAvailable(const Player *player){
-    return !player->hasUsed("Ecstasy");
+    Ecstasy *ecs = new Ecstasy(Card::NoSuit, 0);
+    ecs->deleteLater();
+    return player->usedTimes("Ecstasy") <= Sanguosha->correctCardTarget(TargetModSkill::Residue, player, ecs);
+    //return !player->hasUsed("Ecstasy");
 }
 
 bool Ecstasy::isAvailable(const Player *player) const{
-    return IsAvailable(player);
+    return IsAvailable(player) && BasicCard::isAvailable(player);
 }
 
 QString Ecstasy::getSubtype() const{

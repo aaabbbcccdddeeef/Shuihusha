@@ -523,27 +523,31 @@ QWidget *CheatDialog::createSetStateTab(){
     conjur_group = new QButtonGroup();
     poison = new QRadioButton(tr("Poison"));
     poison->setObjectName("poison_jur");
-    poison->setToolTip(Sanguosha->translate(":poison_jur"));
     conjur_group->addButton(poison);
     sleep = new QRadioButton(tr("Sleep"));
     sleep->setObjectName("sleep_jur");
-    sleep->setToolTip(Sanguosha->translate(":sleep_jur"));
     conjur_group->addButton(sleep);
     dizzy = new QRadioButton(tr("Dizzy"));
     dizzy->setObjectName("dizzy_jur");
-    dizzy->setToolTip(Sanguosha->translate(":dizzy_jur"));
     conjur_group->addButton(dizzy);
     stealth = new QRadioButton(tr("Stealth"));
     stealth->setObjectName("stealth_jur");
-    stealth->setToolTip(Sanguosha->translate(":stealth_jur"));
     stealth->setEnabled(false);
     conjur_group->addButton(stealth);
     lucky = new QRadioButton(tr("Lucky"));
     lucky->setObjectName("lucky_jur");
-    lucky->setToolTip(Sanguosha->translate(":lucky_jur"));
     conjur_group->addButton(lucky);
+    chaos = new QRadioButton(tr("Chaos"));
+    chaos->setObjectName("chaos_jur");
+    conjur_group->addButton(chaos);
+    reflex = new QRadioButton(tr("Reflex"));
+    reflex->setObjectName("reflex_jur");
+    conjur_group->addButton(reflex);
+    foreach(QAbstractButton *tmp, conjur_group->buttons())
+        tmp->setToolTip(Sanguosha->translate(":" + tmp->objectName()));
     conjur_layout->addRow(HLay(poison, sleep));
     conjur_layout->addRow(HLay(dizzy, stealth));
+    conjur_layout->addRow(HLay(lucky, chaos));
 
     conjur_text = new QLineEdit();
     conjur_text->setValidator(new QIntValidator(0, 99, conjur_text));

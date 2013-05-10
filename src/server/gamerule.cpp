@@ -1349,11 +1349,15 @@ ConjuringRule::ConjuringRule(QObject *parent)
     :GameRule(parent)
 {
     setObjectName("conjuring_rule");
-    events << DamagedProceed << Damaged << PreConjuring;
+    events << DrawNCards
+           << DamagedProceed << Damaged
+           << PreConjuring << Conjured;
 }
 
 int ConjuringRule::getPriority(TriggerEvent e) const{
     switch(e){
+    case DrawNCards:
+    case CardUsed:
     case DamageDone:
     case AskForPeaches:
     case PreConjuring:
@@ -1384,6 +1388,8 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         QString conjur = dataa.first();
         int percent = QString(dataa.last()).toInt();
         if(conjur.startsWith("lucky"))
+            percent = 75;
+        else if(conjur.startsWith("chaos"))
             percent = 75;
         else if(conjur.startsWith("reflex"))
             percent = 25;
@@ -1491,6 +1497,24 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                 log.type = "#Sleep";
                 room->sendLog(log);
                 return true;
+            }
+        }
+        break;
+    }
+    case CardUsed: {
+        if(data.canConvert<CardUseStruct>()){
+            CardUseStruct card_use = data.value<CardUseStruct>();
+            const Card *card = card_use.card;
+            if(card->isKindOf("Slash") || card->isKindOf("Duel") || card->isKindOf("Assassinate")){
+                if(player->hasJur("chaos_jur")){
+                    QList<ServerPlayer *> use_to = card_use.to;
+                    foreach(ServerPlayer *tmp, use_to){
+                        QList<ServerPlayer *> others = room->getOtherPlayers(tmp);
+                        qShuffle(others);
+                        card_use.to.replace(use_to.indexOf(tmp), others.first());
+                    }
+                    data = QVariant::fromValue(card_use);
+                }
             }
         }
         break;

@@ -3,6 +3,41 @@ extension = sgs.Package("slob")
 
 chongmei = sgs.General(extension, 'chongmei', 'god', '7/10', sgs.General_Neuter, sgs.General_Hidden)
 
+--[[
+注意：若pattern=Slash，虽然TargetModSkill也能用，但最好使用SlashSkill. SlashSkill的示例见personal.lua
+
+******  使用参考表  ******
+==== 图例：√：可以用；×：不能用或无意义
+			使用距离	额外目标	额外次数
+杀			√			√			√
+肉			×			×			×
+过河拆桥	×			√			×
+顺手牵羊	√			√			×
+决斗		×			√			×
+无中生有	×			×			×
+借刀杀人	×			×			×
+乐不思蜀	×			×			×
+无懈可击	×			×			×
+酒			×			×			√
+铁索连环	×			√			×
+火攻		×			√			×
+粮尽援绝	√			×			×
+迷			×			√			√
+行刺		×			√			×
+探听		×			×			×
+逼上梁山	×			√			×
+积草屯粮	×			×			×
+
+天灾锦囊	×			×			×
+AOE锦囊		×			×			×
+全局锦囊	×			×			×
+礼物卡		×			×			×
+生死之战	×			×			×
+技能卡		×			×			×
+******  使用参考表  ******
+]]
+
+
 slash_ex1 = sgs.CreateTargetModSkill{
 	name = "slash_ex1",
 	pattern = "Slash",
@@ -153,7 +188,7 @@ sgs.LoadTranslationTable {
 	['fireattack_ex1'] ='纵火',
 	[':fireattack_ex1'] ='你红桃2~9的火攻可额外指定一个目标',
 
-	['ironchain_ex1'] ='银锁',
+	['ironchain_ex1'] ='金锁',
 	[':ironchain_ex1'] ='你的铁锁可额外指定一个目标',
 
 	['driver_ex1'] ='紧逼',

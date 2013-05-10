@@ -64,7 +64,7 @@ private:
     QPushButton *extra_button, *clear_button;
     QButtonGroup *conjur_group;
     QAbstractButton *poison, *sleep, *dizzy, *stealth,
-                    *lucky;
+                    *lucky, *chaos, *reflex;
     QLineEdit *conjur_text;
     QLineEdit *flags, *marks, *propty, *tag;
     QPushButton *flag_option;

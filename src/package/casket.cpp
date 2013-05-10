@@ -293,6 +293,32 @@ public:
     }
 };
 
+class Tiaonong: public TriggerSkill{
+public:
+    Tiaonong():TriggerSkill("tiaonong"){
+        events << PhaseEnd;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *player, QVariant &) const{
+        if(player->getPhase() == Player::Play && player->getSlashCount() == 0){
+            QList<ServerPlayer *> goose = room->findPlayersBySkillName(objectName());
+            foreach(ServerPlayer *ligu, goose){
+                if(ligu == player)
+                    continue;
+                if(player->hasMark("chaos_jur"))
+                    break;
+                if(ligu->askForSkillInvoke(objectName()))
+                    player->gainJur("chaos_jur", 2);
+            }
+        }
+        return false;
+    }
+};
+
 class Gouxian: public TriggerSkill{
 public:
     Gouxian():TriggerSkill("gouxian"){
@@ -366,6 +392,7 @@ CasketPackage::CasketPackage()
     moon_jiashi->addSkill(new Dingxin);
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
+    sun_ligu->addSkill(new Tiaonong);
     sun_ligu->addSkill(new Gouxian);
     sun_ligu->addRelateSkill("rugou");
     skills << new Rugou;
