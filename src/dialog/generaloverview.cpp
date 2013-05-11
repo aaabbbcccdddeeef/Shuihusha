@@ -233,7 +233,11 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
     setProperty("GeneralName", general_name);
     const General *general = Sanguosha->getGeneral(general_name);
-    ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
+    QPixmap cardmap(general->getPixmapPath("card"));
+    if(!cardmap.isNull())
+        ui->generalPhoto->setPixmap(cardmap);
+    else
+        ui->generalPhoto->setText(QString("If this general is code by Lua,\nPlease Input %1.jpg in\n\"extensions/generals/card\"").arg(general_name));
 
     if(ServerInfo.isPlay && Config.value("Cheat/FreeChange", false).toBool()){
         addChangeAction(ui->changeGeneralButton);

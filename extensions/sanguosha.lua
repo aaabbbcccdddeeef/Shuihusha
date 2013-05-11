@@ -1,8 +1,8 @@
 module("extensions.sanguosha", package.seeall)
 extension = sgs.Package("sanguosha")
 
-miheng = sgs.General(extension, "miheng", "god", 3)
-xiahoudun = sgs.General(extension, "xiahoudun", "god", "10/13", sgs.General_Neuter)
+mi0heng = sgs.General(extension, "mi0heng", "god", 3)
+xia0houdun = sgs.General(extension, "xia0houdun", "god", "10/13", sgs.General_Neuter)
 
 jieao=sgs.CreateTriggerSkill{
 	name="jieao",
@@ -551,26 +551,26 @@ xuehen=sgs.CreateTriggerSkill{
 	end
 }
 
-miheng:addSkill(yulu)
-miheng:addSkill(numa)
-miheng:addSkill(jieao)
+mi0heng:addSkill(yulu)
+mi0heng:addSkill(numa)
+mi0heng:addSkill(jieao)
 
 local skills = sgs.SkillList()
 if not sgs.Sanguosha:getSkill("fanchun") then skills:append(fanchun) end
 sgs.Sanguosha:addSkills(skills)
 
-xiahoudun:addSkill(fenyong)
-xiahoudun:addSkill(xuehen)
+xia0houdun:addSkill(fenyong)
+xia0houdun:addSkill(xuehen)
 
 sgs.LoadTranslationTable{
 	["sanguosha"] = "伞国沙",
 
-	["$miheng"] = "SGS1",
-	["#miheng"] = "孤胆愤青",
-	["miheng"] = "祢衡",
-	["designer:miheng"] = "Log67、宇文天启",
-	["illustrator:miheng"] = "dannyke画客",
-	["cv:miheng"] = "",
+	["$mi0heng"] = "SGS1",
+	["#mi0heng"] = "孤胆愤青",
+	["mi0heng"] = "祢衡",
+	["designer:mi0heng"] = "Log67、宇文天启",
+	["illustrator:mi0heng"] = "dannyke画客",
+	["cv:mi0heng"] = "",
 	["yulu"] = "语录",
 	[":yulu"] = "出牌阶段，你可以将2~5张手牌按一定顺序移出游戏作为语录的词汇：红桃视为〖我〗，黑桃视为〖日〗，方片视为〖你〗，梅花视为〖妹〗",
 	["numa"] = "怒骂",
@@ -624,18 +624,18 @@ sgs.LoadTranslationTable{
 	["numat:lhyes"] = "龙魂？神技啊，我喜欢~",
 	["#Numa_wds"] = "语录系统故障，原因为负载过多……效果：觉醒技，减去2点体力上限并永久获得技能【无言】和【不屈】",
 	["#Numa_git"] = "语录词汇匹配失败！你没有获得任何效果",
-	["~miheng"] = "失言降祸，客死他乡……",
+	["~mi0heng"] = "失言降祸，客死他乡……",
 
-	["$xiahoudun"] = "SGS2",
-	["#xiahoudun"] = "狼奔豕突",
-	["xiahoudun"] = "夏侯惇",
-	["designer:xiahoudun"] = "舟亢",
-	["illustrator:xiahoudun"] = "陈晓Dog",
-	["cv:xiahoudun"] = "",
+	["$xia0houdun"] = "SGS2",
+	["#xia0houdun"] = "狼奔豕突",
+	["xia0houdun"] = "夏侯惇",
+	["designer:xia0houdun"] = "舟亢",
+	["illustrator:xia0houdun"] = "陈晓Dog",
+	["cv:xia0houdun"] = "",
 	["fenyong"] = "奋勇",
 	[":fenyong"] = "锁定技，游戏开始时，你须对自己造成1点伤害。",
 	["xuehen"] = "雪恨",
 	[":xuehen"] = "锁定技，每当你受到一次伤害，伤害来源须弃置五张手牌，否则受到你对其造成的1点伤害。",
 	["#Xuehen"] = "%from 的锁定技【%arg】被触发，%to 须弃置5张手牌",
-	["~xiahoudun"] = "艺术就是八哥哈子！",
+	["~xia0houdun"] = "艺术就是八哥哈子！",
 }

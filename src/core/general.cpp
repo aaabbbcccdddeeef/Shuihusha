@@ -99,11 +99,8 @@ bool General::isLuaGeneral() const{
 
 QString General::getPixmapPath(const QString &category) const{
     QString suffix = category == "card" ? "jpg" : "png";
-
-    QString path = QString("image/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
-    if(!QFile::exists(path))
-        path = QString("extensions/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
-    return path;
+    QString pathtype = !isLuaGeneral() ? "image" : "extensions";
+    return QString("%1/generals/%2/%3.%4").arg(pathtype).arg(category).arg(objectName()).arg(suffix);;
 }
 
 void General::addSkill(Skill *skill){
@@ -196,8 +193,6 @@ QString General::getSkillDescription() const{
 
 void General::lastWord() const{
     QString filename = QString("audio/death/%1.dat").arg(objectName());
-    //if(!QFile::exists(filename))
-    //    filename = QString("audio/death/%1.ogg").arg(objectName());
     if(!QFile::exists(filename))
         filename = QString("extensions/audio/death/%1.ogg").arg(objectName());
     QFile file(filename);
@@ -224,11 +219,16 @@ void General::lastWord() const{
 
 void General::winWord() const{
     QString filename = QString("audio/win/%1.dat").arg(objectName());
+    if(!QFile::exists(filename))
+        filename = QString("extensions/audio/win/%1.ogg").arg(objectName());
     QFile file(filename);
     if(!file.open(QIODevice::ReadOnly)){
         QStringList origin_generals = objectName().split("_");
-        if(origin_generals.length()>1)
+        if(origin_generals.length()>1){
             filename = QString("audio/win/%1.dat").arg(origin_generals.at(1));
+            if(!QFile::exists(filename))
+                filename = QString("extensions/audio/win/%1.ogg").arg(origin_generals.at(1));
+        }
     }
     if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
         QString origin_general = objectName();

@@ -57,8 +57,6 @@ void Skill::initMediaSource(){
     for(int i=1; ;i++){
         QString effect_file = QString("audio/skill/%1%2.dat").arg(objectName()).arg(i);
         if(!Sanguosha->isExist(effect_file))
-            effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-        if(!Sanguosha->isExist(effect_file))
             effect_file = QString("extensions/audio/skill/%1%2.ogg").arg(objectName()).arg(i);
         if(Sanguosha->isExist(effect_file))
             sources << effect_file;
@@ -68,8 +66,6 @@ void Skill::initMediaSource(){
 
     if(sources.isEmpty()){
         QString effect_file = QString("audio/skill/%1.dat").arg(objectName());
-        //if(!Sanguosha->isExist(effect_file))
-        //    effect_file = QString("audio/skill/%1.ogg").arg(objectName());
         if(!Sanguosha->isExist(effect_file))
             effect_file = QString("extensions/audio/skill/%1.ogg").arg(objectName());
         if(Sanguosha->isExist(effect_file))
