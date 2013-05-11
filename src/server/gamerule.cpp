@@ -1397,8 +1397,13 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         break;
     }
     case DrawNCards:{
-        if(player->hasJur("lucky_jur"))
+        if(player->hasJur("lucky_jur")){
+            LogMessage log;
+            log.from = player;
+            log.type = "#Lucky";
+            room->sendLog(log);
             data = data.toInt() + 1;
+        }
         break;
     }
     case PhaseChange:{
@@ -1513,6 +1518,11 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                         qShuffle(others);
                         card_use.to.replace(use_to.indexOf(tmp), others.first());
                     }
+                    LogMessage log;
+                    log.type = "#Chaos";
+                    log.from = player;
+                    log.to = card_use.to;
+                    room->sendLog(log);
                     data = QVariant::fromValue(card_use);
                 }
             }

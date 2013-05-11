@@ -1,3 +1,21 @@
+-- conjur
+sgs.ai_skill_choice["poison_jur"] = function(self, choices)
+	if self:getCardsNum("Analeptic") + self:getCardsNum("Peach") == 0 then
+		return "cd"
+	else
+		return "hp"
+	end
+end
+
+-- toumingzhuang
+sgs.ai_skill_invoke["getJunShi"] = true
+sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
+	local targetlist=sgs.QList2Table(targets)
+	self:sort(targetlist, "hp_handcard2")
+	return targetlist[1]
+end
+
+-- guanxing
 sgs.ai_judgestring = 
 {
 	indulgence = "heart",

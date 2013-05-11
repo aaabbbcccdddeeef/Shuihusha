@@ -3586,17 +3586,9 @@ function SmartAI:doNotSave(player)
 	return false
 end
 
-sgs.ai_skill_invoke["getJunShi"] = true
-sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
-	local targetlist=sgs.QList2Table(targets)
-	self:sort(targetlist, "hp_handcard2")
-	return targetlist[1]
-end
-
 dofile "lua/ai/general_config.lua"
 dofile "lua/ai/skill_config.lua"
 dofile "lua/ai/value_config.lua"
-dofile "lua/ai/guanxing-ai.lua"
 dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
@@ -3605,6 +3597,7 @@ dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/mini-ai.lua"
 dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/chat-ai.lua"
+dofile "lua/ai/other-ai.lua"
 dofile "lua/ai/crazyai.lua"
 
 local loaded = "standard|standard_cards|maneuvering|plough|events"

@@ -436,7 +436,7 @@
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="78"/>
-        <location filename="src/dialog/cheatdialog.cpp" line="563"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="558"/>
         <source>Apply</source>
         <translation>应用</translation>
     </message>
@@ -482,12 +482,14 @@
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="156"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="303"/>
         <source>Source</source>
         <translation>来源</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="157"/>
-        <location filename="src/dialog/cheatdialog.cpp" line="416"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="352"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="415"/>
         <source>Target</source>
         <translation>目标</translation>
     </message>
@@ -542,201 +544,186 @@
         <translation>卡牌ID</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="433"/>
-        <location filename="src/dialog/cheatdialog.cpp" line="445"/>
-        <location filename="src/dialog/cheatdialog.cpp" line="458"/>
-        <location filename="src/dialog/cheatdialog.cpp" line="568"/>
-        <location filename="src/dialog/cheatdialog.cpp" line="569"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="432"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="444"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="457"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="563"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="564"/>
         <source>Option</source>
         <translation>备选项</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="490"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="489"/>
         <source>Draw One</source>
         <translation>摸一张牌</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="491"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="490"/>
         <source>Discard One</source>
         <translation>弃一张牌</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="471"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="470"/>
         <source>Load Base</source>
         <translation>获取信息</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="472"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="471"/>
         <source>Clear Base</source>
         <translation>清空列表</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="475"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="474"/>
         <source>General</source>
         <translation>武将</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="477"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="476"/>
         <source>Kingdom</source>
         <translation>势力</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="476"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="475"/>
         <source>HpSlot</source>
         <translation>体力</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="478"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="477"/>
         <source>Role</source>
         <translation>身份</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="479"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="478"/>
         <source>Sex</source>
         <translation>性别</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="485"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="484"/>
         <source>Turned</source>
         <translation>翻面状态</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="486"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="485"/>
         <source>Chained</source>
         <translation>连环状态</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="487"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="486"/>
         <source>Ecst</source>
         <translation>迷状态</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="488"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="487"/>
         <source>Drank</source>
         <translation>酒状态</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="489"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="488"/>
         <source>Tie</source>
         <translation>紧缚状态</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="493"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="492"/>
         <source>Add skills</source>
         <translation>添加技能</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="494"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="493"/>
         <source>Add history</source>
         <translation>添加历史</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="497"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="496"/>
         <source>Equiped one</source>
         <translation>安装装备</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="495"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="494"/>
         <source>Remove extra skills</source>
         <translation>移除额外技能</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="315"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="316"/>
         <source>See</source>
         <translation>展示</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="324"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="335"/>
         <source>DrawPile</source>
         <translation>摸牌堆</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="327"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="333"/>
         <source>Discarded</source>
         <translation>弃牌堆</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="330"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="327"/>
         <source>Handcards</source>
         <translation>手牌区</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="333"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="329"/>
         <source>Equips</source>
         <translation>装备区</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="336"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="331"/>
         <source>Judges</source>
         <translation>判定区</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="339"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="325"/>
         <source>Piles</source>
         <translation>红灯区</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="496"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="495"/>
         <source>Clear History</source>
         <translation>清除使用历史</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="525"/>
-        <source>Poison</source>
-        <translation>中毒状态</translation>
+        <location filename="src/dialog/cheatdialog.cpp" line="530"/>
+        <source>%1Conjur</source>
+        <translation>%1状态</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="529"/>
-        <source>Sleep</source>
-        <translation>昏睡状态</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="533"/>
-        <source>Dizzy</source>
-        <translation>晕眩状态</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="537"/>
-        <source>Stealth</source>
-        <translation>隐形状态</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="548"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="543"/>
         <source>Surplus</source>
         <translation>状态剩余回合</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="562"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="557"/>
         <source>Clear</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="566"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="561"/>
         <source>Expert Warning</source>
         <translation>警告：不懂别乱改，否则后果自负！</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="578"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="573"/>
         <source>Base</source>
         <translation>基本</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="579"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="574"/>
         <source>Adhere</source>
         <translation>附加</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="580"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="575"/>
         <source>Conjur</source>
         <translation>咒术</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="581"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="576"/>
         <source>Expert</source>
         <translation>专家</translation>
     </message>
     <message>
-        <location filename="src/dialog/cheatdialog.cpp" line="660"/>
+        <location filename="src/dialog/cheatdialog.cpp" line="655"/>
         <source>Clear All</source>
         <translation>清除全部</translation>
     </message>
@@ -2053,22 +2040,22 @@
         <translation>重复技能: %1</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="185"/>
+        <location filename="src/core/engine.cpp" line="191"/>
         <source>Duplicated general : %1</source>
         <translation>重复武将: %1</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="461"/>
+        <location filename="src/core/engine.cpp" line="467"/>
         <source>%1 [Scenario mode]</source>
         <translation>%1 【剧情模式】</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="743"/>
+        <location filename="src/core/engine.cpp" line="756"/>
         <source>%1 package, total: %2</source>
         <translation>%1扩展包，共有 %2 名可选武将</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="749"/>
+        <location filename="src/core/engine.cpp" line="762"/>
         <source>%1, total: %2</source>
         <translation>%1，共有 %2 张卡牌</translation>
     </message>
@@ -3669,22 +3656,22 @@
 <context>
     <name>Player</name>
     <message>
-        <location filename="src/core/player.cpp" line="953"/>
+        <location filename="src/core/player.cpp" line="956"/>
         <source>&lt;font color=red size=4&gt;Main:&lt;/font&gt;&lt;br/&gt;%1</source>
         <translation>&lt;font color=red size=4&gt;★主武将技能：&lt;/font&gt;&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/core/player.cpp" line="954"/>
+        <location filename="src/core/player.cpp" line="957"/>
         <source>&lt;font color=blue size=4&gt;Extra:&lt;/font&gt;&lt;br/&gt;%1</source>
         <translation>&lt;font color=blue size=4&gt;☆副武将技能：&lt;/font&gt;&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/core/player.cpp" line="958"/>
+        <location filename="src/core/player.cpp" line="961"/>
         <source>&lt;font color=green size=4&gt;Acquired:&lt;/font&gt;&lt;br/&gt;</source>
         <translation>&lt;font color=green size=4&gt;☻获得技能：&lt;/font&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/core/player.cpp" line="978"/>
+        <location filename="src/core/player.cpp" line="981"/>
         <source>&lt;font color=deeppink size=4&gt;Conjuring:&lt;/font&gt;&lt;br/&gt;</source>
         <translation>&lt;font color=deeppink size=4&gt;♣咒术状态：&lt;/font&gt;&lt;br/&gt;</translation>
     </message>
@@ -4049,71 +4036,71 @@
 <context>
     <name>Room</name>
     <message>
-        <location filename="src/server/room.cpp" line="1805"/>
+        <location filename="src/server/room.cpp" line="1804"/>
         <source>disconnected</source>
         <translation>断开</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2038"/>
+        <location filename="src/server/room.cpp" line="2037"/>
         <source>Computer %1</source>
         <translation>电脑 %1</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1827"/>
-        <location filename="src/server/room.cpp" line="2129"/>
-        <location filename="src/server/room.cpp" line="4412"/>
+        <location filename="src/server/room.cpp" line="1826"/>
+        <location filename="src/server/room.cpp" line="2128"/>
+        <location filename="src/server/room.cpp" line="4421"/>
         <source>Contestant</source>
         <translation>选手</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1828"/>
+        <location filename="src/server/room.cpp" line="1827"/>
         <source>&lt;font color=#000000&gt;Player &lt;b&gt;%1&lt;/b&gt; left the game&lt;/font&gt;</source>
         <translation>&lt;font color=#000000&gt;玩家 %1 离开了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2020"/>
+        <location filename="src/server/room.cpp" line="2019"/>
         <source>%1: %2 is not invokable</source>
         <translation>%1: 不可调用的方法名 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2058"/>
+        <location filename="src/server/room.cpp" line="2057"/>
         <source>Hello, I&apos;m a robot</source>
         <translation>大家好，我是一个机器人</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2128"/>
+        <location filename="src/server/room.cpp" line="2127"/>
         <source>&lt;font color=#EEB422&gt;Player &lt;b&gt;%1&lt;/b&gt; joined the game&lt;/font&gt;</source>
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 加入了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2555"/>
+        <location filename="src/server/room.cpp" line="2554"/>
         <source>Unable to parse player</source>
         <translation>不可分析的玩家</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2559"/>
+        <location filename="src/server/room.cpp" line="2558"/>
         <source>Server is not waiting for reply from %1</source>
         <translation>服务正在等待 %1 的响应</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2563"/>
+        <location filename="src/server/room.cpp" line="2562"/>
         <source>Reply command should be %1 instead of %2</source>
         <translation>应答指令应为 %1 而不是 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2568"/>
+        <location filename="src/server/room.cpp" line="2567"/>
         <source>Reply serial should be %1 instead of %2</source>
         <translation>玩家序号应为 %1 而不是 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="3500"/>
+        <location filename="src/server/room.cpp" line="3499"/>
         <source>Card can not parse:
  %1</source>
         <translation>卡牌字符串无法解析:
 %1</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="4411"/>
+        <location filename="src/server/room.cpp" line="4420"/>
         <source>&lt;font color=#EEB422&gt;The network delay of player &lt;b&gt;%1&lt;/b&gt; is %2 milliseconds.&lt;/font&gt;</source>
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 的网络延迟为 %2 毫秒&lt;/font&gt;</translation>
     </message>
@@ -5181,7 +5168,7 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>匿名</translation>
     </message>
     <message>
-        <location filename="src/server/serverplayer.cpp" line="844"/>
+        <location filename="src/server/serverplayer.cpp" line="875"/>
         <source>Contestant</source>
         <translation>选手</translation>
     </message>

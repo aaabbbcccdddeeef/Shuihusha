@@ -520,34 +520,22 @@ QWidget *CheatDialog::createSetStateTab(){
     QWidget *conjur = new QWidget;
     QFormLayout *conjur_layout = new QFormLayout;
 
+    QStringList conjurs;
+    conjurs
+            << "poison_jur" << "sleep_jur" << "dizzy_jur" << "stealth_jur"
+            << "lucky_jur" << "chaos_jur" << "reflex_jur";
     conjur_group = new QButtonGroup();
-    poison = new QRadioButton(tr("Poison"));
-    poison->setObjectName("poison_jur");
-    conjur_group->addButton(poison);
-    sleep = new QRadioButton(tr("Sleep"));
-    sleep->setObjectName("sleep_jur");
-    conjur_group->addButton(sleep);
-    dizzy = new QRadioButton(tr("Dizzy"));
-    dizzy->setObjectName("dizzy_jur");
-    conjur_group->addButton(dizzy);
-    stealth = new QRadioButton(tr("Stealth"));
-    stealth->setObjectName("stealth_jur");
-    stealth->setEnabled(false);
-    conjur_group->addButton(stealth);
-    lucky = new QRadioButton(tr("Lucky"));
-    lucky->setObjectName("lucky_jur");
-    conjur_group->addButton(lucky);
-    chaos = new QRadioButton(tr("Chaos"));
-    chaos->setObjectName("chaos_jur");
-    conjur_group->addButton(chaos);
-    reflex = new QRadioButton(tr("Reflex"));
-    reflex->setObjectName("reflex_jur");
-    conjur_group->addButton(reflex);
-    foreach(QAbstractButton *tmp, conjur_group->buttons())
-        tmp->setToolTip(Sanguosha->translate(":" + tmp->objectName()));
-    conjur_layout->addRow(HLay(poison, sleep));
-    conjur_layout->addRow(HLay(dizzy, stealth));
-    conjur_layout->addRow(HLay(lucky, chaos));
+    QAbstractButton *conjur_tmp_button = NULL;
+    foreach(QString conjur, conjurs){
+        QAbstractButton *conjur_button = new QRadioButton(tr("%1Conjur").arg(Sanguosha->translate(conjur)));
+        conjur_button->setObjectName(conjur);
+        conjur_button->setToolTip(Sanguosha->translate(":" + conjur));
+        conjur_group->addButton(conjur_button);
+        if(conjurs.indexOf(conjur) % 2 == 0)
+            conjur_tmp_button = conjur_button;
+        else
+            conjur_layout->addRow(HLay(conjur_tmp_button, conjur_button));
+    }
 
     conjur_text = new QLineEdit();
     conjur_text->setValidator(new QIntValidator(0, 99, conjur_text));

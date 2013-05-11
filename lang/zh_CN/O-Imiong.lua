@@ -38,4 +38,6 @@ return {
 	["poison_jur:cd"] = "丢两张牌",
 	["poison_jur:hp"] = "掉一点体力",
 	["#Sleep"] = "%from 在昏睡，无法使用或打出牌！",
+	["#Lucky"] = "%from 被幸福敲门，额外摸了1张牌 ^_^",
+	["#Chaos"] = "%from 陷入混乱，竟然向 %to 发动了攻击！",
 }

@@ -233,7 +233,6 @@ sgs.ai_skill_invoke.luaqianlv=function(self,data)
 	return true end
 	return false
 end
-dofile "lua/ai/guanxing-ai.lua"
 
 function getLeftAlive(player)
 	local i=player
