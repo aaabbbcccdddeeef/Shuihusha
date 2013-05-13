@@ -291,7 +291,7 @@ LiejiCard::LiejiCard(){
 bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(targets.length() >= 2)
         return false;
-    return to_select != Self;
+    return Self->canSlash(to_select, false);
 }
 
 void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{
