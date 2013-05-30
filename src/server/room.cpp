@@ -2622,8 +2622,11 @@ void Room::useCard(const CardUseStruct &use, bool add_history){
             card_use.from->hasWeapon("crossbow");
 
         if(!slash_record){
-            card_use.from->addHistory(key);
-            card_use.from->invoke("addHistory", key);
+            QVariant data = QVariant::fromValue(card_use);
+            if(!thread->trigger(CardRecord, this, card_use.from, data)){ // return true mean not add history
+                card_use.from->addHistory(key);
+                card_use.from->invoke("addHistory", key);
+            }
         }
 
         broadcastInvoke("addHistory","pushPile");
@@ -3119,12 +3122,19 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
     else
         sendLog(log);
 
-    moveCardTo(card, NULL, Player::DiscardedPile);
-
+    CardStar card_ptr = card;
+    QVariant data = QVariant::fromValue(card_ptr);
+    bool interrupt = false;
     if(who){
-        CardStar card_ptr = card;
-        QVariant data = QVariant::fromValue(card_ptr);
-        thread->trigger(CardDiscarded, this, who, data);
+        QVariant data2 = QString("%1:%2").arg(card->getEffectIdString()).arg(thrower ? thrower->objectName() : QString());
+        interrupt = thread->trigger(CardThrow, this, who, data2);
+        if(!interrupt)
+            interrupt = thread->trigger(CardDiscard, this, who, data);
+    }
+    if(!interrupt){
+        moveCardTo(card, NULL, Player::DiscardedPile);
+        if(who)
+            thread->trigger(CardDiscarded, this, who, data);
     }
 }
 

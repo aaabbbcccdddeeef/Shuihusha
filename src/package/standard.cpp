@@ -42,6 +42,22 @@ bool TrickCard::isCancelable(const CardEffectStruct &effect) const{
     return cancelable;
 }
 
+int TrickCard::geteTargetsCount(const Player *from, const Card *card) const{
+    return Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, from, card);
+}
+
+int TrickCard::geteRange(const Player *from, const Card *card) const{
+    /*
+    if(from->hasSkill("qicai"))
+        return 998;
+    if(from->hasSkill("shentou") && card->isKindOf("Snatch"))
+        return 1;
+    (if trick defined range like snatch, return for plus, FE: snatch range 1, shentou return 1, total range = 2)
+    (if trick undefined range like duel, return for define range, FE: duel range max, bingkubei return 3, total range = 3)
+    */
+    return Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, from, card);
+}
+
 TriggerSkill *EquipCard::getSkill() const{
     return skill;
 }

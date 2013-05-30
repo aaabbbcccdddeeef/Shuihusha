@@ -272,17 +272,20 @@ FireAttack::FireAttack(Card::Suit suit, int number)
 }
 
 bool FireAttack::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
-        return false;
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    int trick_distance = TrickCard::geteRange(Self, this);
 
+    trick_etargets ++;
+    if(targets.length() >= trick_etargets)
+        return false;
     if(to_select->isKongcheng())
         return false;
-
-    if(to_select == Self)
-        return Self->getHandcardNum() >= 2;
-    else
-        return true;
+    if(to_select == Self && Self->getHandcardNum() < 2)
+        return false;
+    if(trick_distance != 0 && Self->distanceTo(to_select) > trick_distance)
+        return false;
+    // If the original is the infinite distance, it returns the new distance constraints
+    return true;
 }
 
 void FireAttack::onEffect(const CardEffectStruct &effect) const{
@@ -326,19 +329,21 @@ QString IronChain::getEffectPath(bool is_male) const{
 }
 
 bool IronChain::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 2 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    trick_etargets += 2;
+    if(targets.length() >= trick_etargets)
         return false;
 
     return true;
 }
 
 bool IronChain::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
-    int total_num = 2 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    trick_etargets += 2;
     if(getSkillName() == "huace" || getSkillName() == "linmo" || getSkillName() == "fangzao")
-        return targets.length() > 0 && targets.length() <= total_num;
+        return targets.length() > 0 && targets.length() <= trick_etargets;
     else
-        return targets.length() <= total_num;
+        return targets.length() <= trick_etargets;
 }
 
 void IronChain::onUse(Room *room, const CardUseStruct &card_use) const{
@@ -371,6 +376,12 @@ SupplyShortage::SupplyShortage(Card::Suit suit, int number)
 }
 
 bool SupplyShortage::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int trick_distance = TrickCard::geteRange(Self, this);
+
+    if(trick_distance == 0)
+        trick_distance = 1; //Is not specified, set default
+    else
+        trick_distance ++;
     if(!targets.isEmpty())
         return false;
 
@@ -380,12 +391,12 @@ bool SupplyShortage::targetFilter(const QList<const Player *> &targets, const Pl
     if(to_select->containsTrick(objectName()))
         return false;
 
-    int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
+    //int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
     int rangefix = 0;
     if (Self->getOffensiveHorse() && subcards.contains(Self->getOffensiveHorse()->getId()))
         rangefix += 1;
 
-    if (Self->distanceTo(to_select, rangefix) > distance_limit)
+    if (Self->distanceTo(to_select, rangefix) > trick_distance)
         return false;
 
     return true;

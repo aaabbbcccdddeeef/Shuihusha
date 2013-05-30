@@ -58,10 +58,20 @@ Drivolt::Drivolt(Suit suit, int number)
 }
 
 bool Drivolt::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    int trick_distance = TrickCard::geteRange(Self, this);
+
+    trick_etargets ++;
+    if(targets.length() >= trick_etargets)
         return false;
-    return to_select != Self && to_select->getKingdom() != Self->getKingdom();
+    if(to_select == Self)
+        return false;
+    if(to_select->getKingdom() == Self->getKingdom())
+        return false;
+    if(trick_distance != 0 && Self->distanceTo(to_select) > trick_distance)
+        return false;
+    // If the original is the infinite distance, it returns the new distance constraints
+    return true;
 }
 
 void Drivolt::onEffect(const CardEffectStruct &effect) const{
@@ -161,10 +171,18 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
 }
 
 bool Assassinate::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    int trick_distance = TrickCard::geteRange(Self, this);
+
+    trick_etargets ++;
+    if(targets.length() >= trick_etargets)
         return false;
-    return to_select != Self;
+    if(to_select == Self)
+        return false;
+    if(trick_distance != 0 && Self->distanceTo(to_select) > trick_distance)
+        return false;
+    // If the original is the infinite distance, it returns the new distance constraints
+    return true;
 }
 
 Counterplot::Counterplot(Suit suit, int number)
@@ -185,10 +203,15 @@ Provistore::Provistore(Suit suit, int number)
 
 bool Provistore::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const
 {
+    int trick_distance = TrickCard::geteRange(Self, this);
     if(!targets.isEmpty())
         return false;
     if(to_select->containsTrick(objectName()))
         return false;
+
+    if(trick_distance != 0 && Self->distanceTo(to_select) > trick_distance)
+        return false;
+    // If the original is the infinite distance, it returns the new distance constraints
     return true;
 }
 

@@ -814,11 +814,18 @@ Duel::Duel(Suit suit, int number)
 }
 
 bool Duel::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
-        return false;
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    int trick_distance = TrickCard::geteRange(Self, this); //if return 0 then use default
 
-    return to_select != Self;
+    trick_etargets ++;
+    if(targets.length() >= trick_etargets)
+        return false;
+    if(to_select == Self)
+        return false;
+    if(trick_distance != 0)
+        return Self->distanceTo(to_select) <= trick_distance;
+    else
+        return true;
 }
 
 void Duel::onEffect(const CardEffectStruct &effect) const{
@@ -865,22 +872,27 @@ Snatch::Snatch(Suit suit, int number):SingleTargetTrick(suit, number, true) {
 }
 
 bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
-        return false;
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    int trick_distance = TrickCard::geteRange(Self, this);
 
+    trick_etargets ++;
+    if(trick_distance == 0)
+        trick_distance = 1; //Is not specified, set default
+    else
+        trick_distance ++;
+    if(targets.length() >= trick_etargets)
+        return false;
     if(to_select->isAllNude())
         return false;
-
     if(to_select == Self)
         return false;
 
-    int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
+    //int distance_limit = 1 + Sanguosha->correctCardTarget(TargetModSkill::DistanceLimit, Self, this);
     int rangefix = 0;
     if (Self->getOffensiveHorse() && subcards.contains(Self->getOffensiveHorse()->getId()))
         rangefix += 1;
 
-    if (Self->distanceTo(to_select, rangefix) > distance_limit)
+    if (Self->distanceTo(to_select, rangefix) > trick_distance)
         return false;
 
     return true;
@@ -904,16 +916,19 @@ Dismantlement::Dismantlement(Suit suit, int number)
 }
 
 bool Dismantlement::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int total_num = 1 + Sanguosha->correctCardTarget(TargetModSkill::ExtraTarget, Self, this);
-    if (targets.length() >= total_num)
-        return false;
+    int trick_etargets = TrickCard::geteTargetsCount(Self, this);
+    int trick_distance = TrickCard::geteRange(Self, this);
 
+    trick_etargets ++;
+    if(targets.length() >= trick_etargets)
+        return false;
     if(to_select->isAllNude())
         return false;
-
     if(to_select == Self)
         return false;
-
+    if(trick_distance != 0 && Self->distanceTo(to_select) > trick_distance)
+        return false;
+    // If the original is the infinite distance, it returns the new distance constraints
     return true;
 }
 
@@ -942,15 +957,16 @@ Indulgence::Indulgence(Suit suit, int number)
 
 bool Indulgence::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const
 {
+    int trick_distance = TrickCard::geteRange(Self, this);
+
     if(!targets.isEmpty())
         return false;
-
-    if(to_select->containsTrick(objectName()))
-        return false;
-
     if(to_select == Self)
         return false;
-
+    if(to_select->containsTrick(objectName()))
+        return false;
+    if(trick_distance != 0 && Self->distanceTo(to_select) > trick_distance)
+        return false;
     return true;
 }
 

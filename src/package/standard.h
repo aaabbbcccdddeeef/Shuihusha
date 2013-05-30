@@ -42,6 +42,8 @@ public:
     virtual QString getType() const;
     virtual CardType getTypeId() const;
     virtual bool isCancelable(const CardEffectStruct &effect) const;
+    virtual int geteTargetsCount(const Player *from, const Card *card) const;
+    virtual int geteRange(const Player *from, const Card *card) const;
 
 private:
     bool aggressive;
