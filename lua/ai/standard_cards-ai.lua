@@ -14,6 +14,7 @@ local function hasGoldArmor(self, enemy)
 end
 
 function SmartAI:slashProhibit(enemy,card,from)
+	if not enemy then return false end
 	from = from or self.player
 	card = card or sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	for _, askill in sgs.qlist(enemy:getVisibleSkillList()) do

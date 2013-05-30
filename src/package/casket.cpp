@@ -319,6 +319,39 @@ public:
     }
 };
 
+class Misaki: public TriggerSkill{
+public:
+    Misaki():TriggerSkill("misaki"){
+        events << CardAsked;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(room->getCurrent() == player)
+            return false;
+        const CardPattern *pattern = Sanguosha->getPattern(data.toString());
+        if(player->askForSkillInvoke(objectName())){
+            int peek = room->getDrawPile().at(0);
+            room->showCard(player, peek);
+            const Card *card = Sanguosha->getCard(peek);
+            if(pattern->match(player, card)){
+                room->showCard(player, room->getDrawPile().at(1));
+                room->provide(card);
+                return false;
+            }
+            else{
+                peek = room->getDrawPile().at(1);
+                room->showCard(player, peek);
+                card = Sanguosha->getCard(peek);
+                if(pattern->match(player, card)){
+                    room->provide(card);
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+};
+
 class Gouxian: public TriggerSkill{
 public:
     Gouxian():TriggerSkill("gouxian"){
@@ -393,6 +426,7 @@ CasketPackage::CasketPackage()
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
     sun_ligu->addSkill(new Tiaonong);
+    sun_ligu->addSkill(new Misaki);
     sun_ligu->addSkill(new Gouxian);
     sun_ligu->addRelateSkill("rugou");
     skills << new Rugou;
