@@ -218,14 +218,15 @@ public:
 
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
-/*
+
 class ProhibitSkill: public ClientSkill{
     Q_OBJECT
 
 public:
     ProhibitSkill(const QString &name);
+    virtual bool prohibitable(const Player *to) const;
 };
-*/
+
 class DistanceSkill: public ClientSkill{
     Q_OBJECT
 

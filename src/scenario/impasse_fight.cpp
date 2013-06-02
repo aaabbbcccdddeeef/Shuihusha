@@ -230,13 +230,13 @@ public:
     }
 };
 
-class Duduan: public ClientSkill{
+class Duduan: public ProhibitSkill{
 public:
-    Duduan():ClientSkill("duduan"){
+    Duduan():ProhibitSkill("duduan"){
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
-        return to->hasSkill(objectName()) && card->isKindOf("DelayedTrick");
+        return card->isKindOf("DelayedTrick");
     }
 };
 

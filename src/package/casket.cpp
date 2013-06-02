@@ -1,9 +1,13 @@
 #include "casket.h"
 #include "standard.h"
 
-class Stealth: public ClientSkill{
+class Stealth: public ProhibitSkill{
 public:
-    Stealth():ClientSkill("stealth_jur"){
+    Stealth():ProhibitSkill("stealth_jur"){
+    }
+
+    virtual bool prohibitable(const Player *) const{
+        return true;
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{

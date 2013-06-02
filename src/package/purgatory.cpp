@@ -173,9 +173,13 @@ bool EdoTensei::isAvailable(const Player *) const{
     return false;
 }
 
-class ProudBannerChain: public ClientSkill{
+class ProudBannerChain: public ProhibitSkill{
 public:
-    ProudBannerChain():ClientSkill("#proud_chain"){
+    ProudBannerChain():ProhibitSkill("#proud_chain"){
+    }
+
+    virtual bool prohibitable(const Player *) const{
+        return true;
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{

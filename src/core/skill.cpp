@@ -338,11 +338,15 @@ bool ClientSkill::isSlashPenetrate(const Player *, const Player *, const Card *)
 bool ClientSkill::isProhibited(const Player *, const Player *, const Card *) const{
     return false;
 }
-/*
+
+bool ProhibitSkill::prohibitable(const Player *to) const{
+    return to->hasSkill(objectName());
+}
+
 ProhibitSkill::ProhibitSkill(const QString &name)
     :ClientSkill(name){
 }
-*/
+
 DistanceSkill::DistanceSkill(const QString &name)
     :ClientSkill(name){
 }

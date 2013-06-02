@@ -602,14 +602,13 @@ public:
     }
 };
 
-class Feiyan: public ClientSkill{
+class Feiyan: public ProhibitSkill{
 public:
-    Feiyan():ClientSkill("feiyan"){
+    Feiyan():ProhibitSkill("feiyan"){
     }
 
-    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
-        return to->hasSkill(objectName()) &&
-                (card->isKindOf("Snatch") || card->isKindOf("SupplyShortage"));
+    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
+        return card->isKindOf("Snatch") || card->isKindOf("SupplyShortage");
     }
 };
 

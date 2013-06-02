@@ -1527,13 +1527,13 @@ public:
     }
 };
 
-class Jueming: public ClientSkill{
+class Jueming: public ProhibitSkill{
 public:
-    Jueming():ClientSkill("jueming"){
+    Jueming():ProhibitSkill("jueming"){
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
-        return to->hasSkill(objectName()) && to->getHp() == 1 &&
+        return to->getHp() == 1 &&
                 (card->isKindOf("Slash") || card->isKindOf("Duel") || card->isKindOf("Assassinate"));
     }
 };
