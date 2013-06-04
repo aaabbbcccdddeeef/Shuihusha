@@ -36,10 +36,22 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
     QStringList general_names;
     foreach(const General *general, generals)
         general_names << general->objectName();
-
+/*
+    if(Config.value("3v3/UsingNewMode", false).toBool()){
+          QStringList list_remove, list_add;
+          list_remove << "zhangshun";
+          list_add << "zhangbao";
+          foreach(QString general_name, list_remove)
+              general_names.removeOne(general_name);
+          foreach(QString general_name, list_add)
+              general_names << general_name;
+    }
+*/
     QStringList bans = GetConfigFromLuaState(lua, "savsa_ban", "ban_list").toStringList();
     foreach(QString ban, bans)
         general_names.removeOne(ban);
+
+    Q_ASSERT(general_names.length() >= 16);
 
     return general_names;
 }

@@ -2,7 +2,7 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130531",
+	version = "20130604",
 	version_name = "F5.4",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
@@ -138,6 +138,9 @@ ban_list = { -- 初始禁表设置
 		"gongsunsheng",
 		"yanxijiao",
 		"zhuwu",
+		"ruanxiaoqi",
+		"weidingguo",
+		"shantinggui"
 	},
 	basara_ban = { -- 暗将模式
 		"dingdesun",

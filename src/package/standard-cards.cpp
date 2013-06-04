@@ -801,7 +801,21 @@ ExNihilo::ExNihilo(Suit suit, int number)
 }
 
 void ExNihilo::onEffect(const CardEffectStruct &effect) const{
-    effect.to->drawCards(2);
+    int n = 2;
+    if(Sanguosha->useNew3v3()){
+        Room *room = effect.from->getRoom();
+        int i = 0;
+        int u = 0;
+        foreach(ServerPlayer *other, room->getAlivePlayers()){
+            if(Sanguosha->is3v3Friend(effect.to, other))
+                i ++;
+            else
+                u ++;
+        }
+        if(i < u)
+            n++;
+    }
+    effect.to->drawCards(n);
 }
 
 bool ExNihilo::isAvailable(const Player *player) const{
@@ -1084,8 +1098,12 @@ public:
     }
 
     virtual int getSlashResidue(const Player *target) const{
-        if(target->hasWeapon("crossbow"))
-            return 998;
+        if(target->hasWeapon("crossbow")){
+            if(Sanguosha->useNew3v3())
+                return 4 - target->getSlashCount();
+            else
+                return 998;
+        }
         else
             return 0;
     }

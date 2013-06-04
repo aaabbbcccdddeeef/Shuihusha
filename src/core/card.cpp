@@ -268,6 +268,10 @@ void Card::setSkillName(const QString &name){
 
 QString Card::getDescription() const{
     QString desc = Sanguosha->translate(":" + objectName());
+    if(Sanguosha->useNew3v3()){
+        if(!Sanguosha->translate(":3v3:" + objectName()).startsWith(":3v3:"))
+            desc = Sanguosha->translate(":3v3:" + objectName());
+    }
     desc.replace("\n", "<br/>");
     return tr("<b>[%1]</b> %2").arg(getName()).arg(desc);
 }

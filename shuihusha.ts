@@ -4619,6 +4619,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>标准模式</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="641"/>
+        <source>New Mode</source>
+        <translation>新版模式</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="789"/>
         <source>Extension mode</source>
         <translation>扩展模式</translation>
