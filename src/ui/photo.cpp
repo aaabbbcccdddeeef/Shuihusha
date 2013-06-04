@@ -329,7 +329,7 @@ void Photo::setActionState(){
     if(action_item == NULL){
         action_item = new QGraphicsPixmapItem(this);
         action_item->setPixmap(QPixmap("image/system/3v3/actioned.png"));
-        action_item->setPos(75, 40);
+        action_item->setPos(28, 14);
     }
 
     action_item->setVisible(player->hasFlag("actioned"));

@@ -478,6 +478,33 @@ QString Haiqiu::getEffectPath(bool ) const{
     return "audio/card/common/haiqiu.ogg";
 }
 
+Yuukirito::Yuukirito(Suit suit, int number)
+    :SingleTargetTrick(suit, number, false) {
+    setObjectName("yuukirito");
+    target_fixed = true;
+}
+
+void Yuukirito::onUse(Room *room, const CardUseStruct &card_use) const{
+    if(room->getMode() != "02_1v1"){
+        room->moveCardTo(this, NULL, Player::DiscardedPile);
+        card_use.from->playCardEffect("@recast");
+        room->setEmotion(card_use.from, "cards/recast");
+        card_use.from->drawCards(1);
+    }else
+        TrickCard::onUse(room, card_use);
+}
+
+void Yuukirito::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    source->playCardEffect(objectName());
+    ServerPlayer *target = room->getOtherPlayers(source).first();
+    QString choice = !target->hasEquip() ? "hvp" :
+                     room->askForChoice(target, "yuukirito", "eqp+hvp", QVariant());
+    if(choice == "hvp")
+        room->loseHp(target);
+    else
+        target->throwAllEquips();
+}
+
 New3v3CardPackage::New3v3CardPackage()
     :CardPackage("new_3v3_card")
 {

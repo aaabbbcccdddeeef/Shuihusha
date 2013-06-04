@@ -1276,13 +1276,14 @@ ExCardPackage::ExCardPackage()
 {
     QList<Card *> cards;
     cards
-            << new IceSword(Card::Spade, 2)
+            << new IceSword(Card::Spade, 5)
             << new RenwangShield(Card::Club, 2)
             << new Lightning(Card::Heart, 12)
             << new Nullification(Card::Diamond, 12)
             << new Tsunami(Card::Diamond, 1)
             << new Inspiration(Card::Spade, 4)
-            << new Haiqiu(Card::Club, 5);
+            << new Haiqiu(Card::Club, 5)
+            << new Yuukirito(Card::Club, 7);
 
     foreach(Card *card, cards)
         card->setParent(this);

@@ -975,8 +975,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     QVariant asked = pattern;
     if(thread->trigger(CardAsk, this, player, asked))
         return NULL;
-    if(thread->trigger(CardAsked, this, player, asked))
-        return NULL;
+    if(trigger_event == CardResponsed || trigger_event == JinkUsed)
+        if(thread->trigger(CardAsked, this, player, asked))
+            return NULL;
     if(has_provided){
         card = provided;
         provided = NULL;
@@ -1265,7 +1266,7 @@ void Room::setPlayerCardLock(ServerPlayer *player, const QString &name){
 }
 
 void Room::clearPlayerCardLock(ServerPlayer *player){
-    player->setCardLocked(".");
+    player->setCardLocked("--");
     player->invoke("cardLock", ".");
 }
 
@@ -2620,6 +2621,9 @@ void Room::useCard(const CardUseStruct &use, bool add_history){
             key.contains("Slash") &&
             card_use.from->getSlashCount() > 0 &&
             card_use.from->hasWeapon("crossbow");
+
+        if(Sanguosha->useNew3v3())
+            slash_record = false;
 
         if(!slash_record){
             QVariant data = QVariant::fromValue(card_use);

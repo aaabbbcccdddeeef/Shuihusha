@@ -140,6 +140,16 @@ public:
     virtual QString getEffectPath(bool is_male) const;
 };
 
+class Yuukirito: public SingleTargetTrick{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Yuukirito(Card::Suit suit, int number);
+
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class New3v3CardPackage: public CardPackage{
     Q_OBJECT
 
