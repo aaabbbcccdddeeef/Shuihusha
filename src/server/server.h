@@ -151,6 +151,7 @@ private:
     QSpinBox *ai_delay_spinbox, *ai_delay_ad_spinbox;
     QCheckBox *disable_gongsunsheng;
     QRadioButton *standard_3v3_radiobutton;
+    QRadioButton *new_3v3_radiobutton;
     QComboBox *role_choose_combobox;
     QCheckBox *exclude_disaster_checkbox;
 

@@ -716,6 +716,7 @@ public:
         room->playSkillEffect(objectName());
         sq->drawCards(a + 1);
         if(sq->isWounded()){
+            a = qMin(sq->getLostHp(), a);
             RecoverStruct rev;
             rev.recover = a;
             room->recover(sq, rev, a > 0);

@@ -694,6 +694,8 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
+    bool using_new_3v3 = Config.GameMode == "06_3v3" && Config.value("3v3/UsingNewMode", false).toBool();
+
     QList<int> list;
     foreach(Card *card, cards){
         card->clearFlags();
@@ -719,7 +721,15 @@ QList<int> Engine::getRandomCards() const{
             if(card->getPackage() == "gift")
                 continue;
         }
-        if(!ban_package.contains(card->getPackage()))
+        if(card->getPackage() == "new_3v3_card"){
+            if(!using_new_3v3)
+                continue;
+            else{
+                list << card->getId();
+                list.removeOne(98);
+            }
+        }
+        else if(!ban_package.contains(card->getPackage()))
             list << card->getId();
     }
 

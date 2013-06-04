@@ -478,4 +478,24 @@ QString Haiqiu::getEffectPath(bool ) const{
     return "audio/card/common/haiqiu.ogg";
 }
 
+New3v3CardPackage::New3v3CardPackage()
+    :CardPackage("new_3v3_card")
+{
+    QList<Card *> cards;
+    cards << new SupplyShortage(Card::Spade, 1)
+          << new SupplyShortage(Card::Club, 12)
+          << new Nullification(Card::Heart, 12)
+
+          << new Assassinate(Card::Spade, 2)
+          << new Wiretap(Card::Heart, 2)
+          << new Provistore(Card::Diamond, 12)
+          << new Counterplot(Card::Club, 12);
+
+    foreach(Card *card, cards)
+        card->setParent(this);
+
+    type = CardPack;
+}
+
+ADD_PACKAGE(New3v3Card)
 ADD_PACKAGE(Plough)

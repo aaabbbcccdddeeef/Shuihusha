@@ -12,6 +12,7 @@ config = {
 		"Maneuvering",
 		"ExCard",
 		"Events",
+		"New3v3Card",
 		"Purgatory",
 		"Gift",
 --		"Kuso",

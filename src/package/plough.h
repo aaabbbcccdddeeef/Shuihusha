@@ -140,4 +140,11 @@ public:
     virtual QString getEffectPath(bool is_male) const;
 };
 
+class New3v3CardPackage: public CardPackage{
+    Q_OBJECT
+
+public:
+    New3v3CardPackage();
+};
+
 #endif // PLOUGHPACKAGE_H
