@@ -255,6 +255,57 @@ public:
     }
 };
 
+class Shana: public TriggerSkill {
+public:
+    Shana(): TriggerSkill("Shana") {
+        events << CardRecord << CardUsed;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() != Player::Play)
+            return false;
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(!use.card->isKindOf("Slash"))
+            return false;
+        if(event == CardRecord){
+            ServerPlayer *guanping = room->findPlayerBySkillName(objectName());
+            if(guanping && !guanping->isNude()){
+                QString propty = QString("@Shana:%1:%2:%3:%4")
+                                 .arg(use.from->objectName())
+                                 .arg(use.to.first()->objectName())
+                                 .arg(use.card->objectName())
+                                 .arg(use.card->getSuitString());
+                const Card *exc = room->askForCard(guanping, "..", propty, data, CardDiscarded);
+                if(exc && exc != use.card){
+                    room->playSkillEffect(objectName());
+                    use.card->setFlags("Shana");
+                    return true;
+                }
+            }
+        }
+        else{
+            if(use.from == player && use.card->hasFlag("Shana")){
+                use.card->setFlags("-Shana");
+                ServerPlayer *guanping = room->findPlayerBySkillName(objectName());
+                LogMessage log;
+                log.type = "#Shana";
+                log.from = guanping;
+                log.to << player;
+                log.arg = objectName();
+                room->sendLog(log);
+
+                if(use.card->isRed())
+                    guanping->drawCards(1);
+            }
+        }
+        return false;
+    }
+};
+
 class Dingxin: public TriggerSkill{
 public:
     Dingxin():TriggerSkill("dingxin"){
@@ -425,15 +476,16 @@ CasketPackage::CasketPackage()
     addMetaObject<FanyinCard>();
 
     General *moon_jiashi = new General(this, "moon_jiashi", "moon", 3, false);
-    moon_jiashi->addSkill(new Kaizi);
-    moon_jiashi->addSkill(new Dingxin);
+    //moon_jiashi->addSkill(new Kaizi);
+    moon_jiashi->addSkill(new Shana);
+    //moon_jiashi->addSkill(new Dingxin);
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
-    sun_ligu->addSkill(new Tiaonong);
+    //sun_ligu->addSkill(new Tiaonong);
     sun_ligu->addSkill(new Misaki);
-    sun_ligu->addSkill(new Gouxian);
-    sun_ligu->addRelateSkill("rugou");
-    skills << new Rugou;
+    //sun_ligu->addSkill(new Gouxian);
+    //sun_ligu->addRelateSkill("rugou");
+    //skills << new Rugou;
 }
 
 ADD_PACKAGE(Casket)

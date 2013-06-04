@@ -694,9 +694,22 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool using_new_3v3 = Config.GameMode == "06_3v3" && Config.value("3v3/UsingNewMode", false).toBool();
-
     QList<int> list;
+    if(Config.GameMode == "02_1v1"){
+        list
+                << 78 << 63 << 90 << 86 << 209 << 57 << 1 << 2 << 5 << 6 << 87 << 59 << 75
+                << 77 << 31 << 46 << 47 << 147 << 103 << 81 << 82 << 51 << 23 << 24 << 95 << 195
+                << 79 << 210 << 93 << 10 << 11 << 12 << 216 << 14 << 16 << 18 << 20 << 225 << 100
+                << 55 << 35 << 36 << 89 << 60 << 25 << 40 << 41 << 28 << 43 << 44 << 53 << 30
+                << 228 << 230 << 187 << 231;
+        foreach(int id, list){
+            int index = list.indexOf(id);
+            id --;
+            list.replace(index, id);
+        }
+        qShuffle(list);
+        return list;
+    }
     foreach(Card *card, cards){
         card->clearFlags();
 
@@ -722,7 +735,7 @@ QList<int> Engine::getRandomCards() const{
                 continue;
         }
         if(card->getPackage() == "new_3v3_card"){
-            if(!using_new_3v3)
+            if(!(Config.GameMode == "06_3v3" && Config.value("3v3/UsingNewMode", false).toBool()))
                 continue;
             else{
                 list << card->getId();
