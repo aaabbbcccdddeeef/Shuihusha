@@ -988,3 +988,11 @@ int Engine::correctCardTarget(const TargetModSkill::ModType type, const Player *
     return x;
 }
 
+bool Engine::useNew3v3(){
+    return Config.GameMode == "06_3v3" && Config.value("3v3/UsingNewMode", false).toBool();
+}
+
+bool Engine::is3v3Friend(const ServerPlayer *a, const ServerPlayer *b){
+    QChar c = a->getRole().at(0);
+    return b->getRole().startsWith(c);
+}

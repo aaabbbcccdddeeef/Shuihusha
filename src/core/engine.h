@@ -101,6 +101,8 @@ public:
     int correctClient(const ClientSkill::ClientType type, const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
     int correctCardTarget(const TargetModSkill::ModType type, const Player *from, const Card *card) const;
 
+    bool useNew3v3();
+    bool is3v3Friend(const ServerPlayer *a, const ServerPlayer *b);
 private:
     QHash<QString, QString> translations;
     QHash<QString, const General *> generals, hidden_generals;
