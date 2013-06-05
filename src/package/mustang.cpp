@@ -707,7 +707,7 @@ public:
     }
 
     virtual int getPriority(TriggerEvent) const{
-        return 2;
+        return -2;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
