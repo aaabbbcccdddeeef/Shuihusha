@@ -257,9 +257,12 @@ public:
 
 XiepoCard::XiepoCard(){
     target_fixed = true;
+    will_throw = false;
 }
 
-void XiepoCard::use(Room *, ServerPlayer *, const QList<ServerPlayer *> &) const{
+void XiepoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    PlayerStar jiashi = source->tag["XiepoSource"].value<PlayerStar>();
+    jiashi->obtainCard(this);
 }
 
 class XiepoViewAsSkill: public ViewAsSkill{
@@ -315,15 +318,14 @@ public:
             return false;
 
         QList<ServerPlayer *> jiashis = room->findPlayersBySkillName(objectName());
-        foreach(ServerPlayer *jiashi, jiashis){
+        foreach(PlayerStar jiashi, jiashis){
             int handum = player->getHandcardNum();
             int hpum = player->getHp() + jiashi->getHp();
             if(handum >= hpum && jiashi->askForSkillInvoke(objectName())){
-                const Card *card = room->askForCard(player, "@@xiepo", "@xiepo:" + jiashi->objectName(), data, NonTrigger);
-                if(card)
-                    room->obtainCard(jiashi, card);
-                else
+                player->tag["XiepoSource"] = QVariant::fromValue(jiashi);
+                if(!room->askForUseCard(player, "@@xiepo", "@xiepo:" + jiashi->objectName()))
                     player->turnOver();
+                player->tag.remove("XiepoSource");
             }
         }
         return false;

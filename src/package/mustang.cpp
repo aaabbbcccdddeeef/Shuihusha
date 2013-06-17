@@ -185,52 +185,45 @@ public:
     Tianyan():PhaseChangeSkill("tianyan"){
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
-        if(player->getPhase() != Player::Judge || player->getHandcardNum() < 3)
+        if(player->getPhase() != Player::Start)
             return false;
         Room *room = player->getRoom();
-        ServerPlayer *tianqi = room->findPlayerBySkillName(objectName());
-        if(tianqi && tianqi->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
+        if(player->hasSkill(objectName()))
+            player->loseAllMarks("@blind");
+        QList<ServerPlayer *>tianqis = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *tianqi, tianqis){
+            if(tianqi == player)
+                continue;
+            if(!tianqi->hasMark("@blind") && tianqi->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
 
-            tianqi->tag["TianyanTarget"] = QVariant::fromValue((PlayerStar)player);
-            QList<int> cards = room->getNCards(3);
-            if(!cards.isEmpty()){
+                QList<int> cards = room->getNCards(3);
                 room->fillAG(cards, tianqi);
-                while(!cards.isEmpty()){
-                    int card_id = room->askForAG(tianqi, cards, true, objectName());
-                    if(card_id == -1)
-                        break;
-                    if(!cards.contains(card_id))
-                        continue;
+                int card_id = room->askForAG(tianqi, cards, true, objectName());
+                if(card_id > -1){
                     cards.removeOne(card_id);
-                    room->throwCard(card_id, tianqi);
                     room->takeAG(NULL, card_id);
                 }
-                for(int i = cards.length() - 1; i >= 0; i--){
-                    room->throwCard(cards.at(i));
-                    const Card *tmp = Sanguosha->getCard(cards.at(i));
-                    room->moveCardTo(tmp, NULL, Player::DrawPile);
-                }
-                tianqi->invoke("clearAG");
+                tianqi->gainMark("@blind");
             }
         }
-        tianqi->tag.remove("TianyanTarget");
+
         return false;
     }
 };
 
-class Tiansuan: public TriggerSkill{
+class Jingsuan: public TriggerSkill{
 public:
-    Tiansuan():TriggerSkill("tiansuan"){
+    Jingsuan():TriggerSkill("Jingsuan"){
         events << Pindian;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
+    virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
 
@@ -240,12 +233,12 @@ public:
             return false;
         PindianStar pindian = data.value<PindianStar>();
         QStringList choices;
-        QString from_card = Sanguosha->translate(QString("@tiansuan:%1:%2:%3:%4").
+        QString from_card = Sanguosha->translate(QString("@Jingsuan:%1:%2:%3:%4").
                             arg(pindian->from->getGeneralName()).
                             arg(pindian->from_card->getSuitString()).
                             arg(pindian->from_card->getNumberString()).
                             arg(pindian->from_card->objectName()));
-        QString to_card = Sanguosha->translate(QString("@tiansuan:%1:%2:%3:%4").
+        QString to_card = Sanguosha->translate(QString("@Jingsuan:%1:%2:%3:%4").
                           arg(pindian->to->getGeneralName()).
                           arg(pindian->to_card->getSuitString()).
                           arg(pindian->to_card->getNumberString()).
@@ -270,68 +263,23 @@ public:
     }
 };
 
-HuazhuCard::HuazhuCard(){
-    once = true;
-    will_throw = false;
-}
-
-bool HuazhuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
-}
-
-void HuazhuCard::use(Room *, ServerPlayer *iszjj, const QList<ServerPlayer *> &targets) const{
-    iszjj->pindian(targets.first(), "huazhu", this);
-}
-
-class HuazhuViewAsSkill: public OneCardViewAsSkill{
+class Huazhu: public DrawCardsSkill{
 public:
-    HuazhuViewAsSkill():OneCardViewAsSkill("huazhu"){
-
+    Huazhu():DrawCardsSkill("huazhu"){
+        frequency = Frequent;
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("HuazhuCard") && !player->isKongcheng();
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new HuazhuCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Huazhu: public TriggerSkill{
-public:
-    Huazhu():TriggerSkill("huazhu"){
-        events << Pindian;
-        view_as_skill = new HuazhuViewAsSkill;
-    }
-
-    virtual int getPriority(TriggerEvent) const{
-        return -1;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        PindianStar pindian = data.value<PindianStar>();
-        if(pindian->reason != "huazhu" || !pindian->from->hasSkill(objectName()))
-            return false;
-        if(pindian->isSuccess()){
-            int x = (pindian->from_card->getNumber() + 1) / 2;
-            ServerPlayer *target = room->askForPlayerChosen(pindian->from, room->getAllPlayers(), objectName());
-            if(target->getHandcardNum() > x)
-                room->askForDiscard(target, objectName(), target->getHandcardNum() - x);
-            else if(target->getHandcardNum() < x)
-                target->drawCards(x - target->getHandcardNum());
+    virtual int getDrawNum(ServerPlayer *player, int n) const{
+        if(player->askForSkillInvoke(objectName())){
+            int x = player->getHandcardNum();
+            foreach(ServerPlayer *tmp, player->getRoom()->getOtherPlayers(player))
+                if(tmp->getHandcardNum() > x)
+                    x = tmp->getHandcardNum();
+            x = qMin(2, qAbs(x - player->getHandcardNum()));
+            player->playSkillEffect(objectName());
+            return n + x;
         }
-        return false;
+        return n;
     }
 };
 
@@ -403,7 +351,7 @@ public:
         CardStar card = judge->card;
 
         QVariant data_card = QVariant::fromValue(card);
-        if(judge->card->inherits("BasicCard") && yuehe->askForSkillInvoke(objectName(), data_card)){
+        if(judge->card->isKindOf("BasicCard") && yuehe->askForSkillInvoke(objectName(), data_card)){
             if(card->objectName() == "shit"){
                 QString result = room->askForChoice(yuehe, objectName(), "yes+no");
                 if(result == "no"){
@@ -440,14 +388,14 @@ public:
                 judge.time_consuming = true;
 
                 room->judge(judge);
-                if(judge.card->inherits("BasicCard"))
+                if(judge.card->isKindOf("BasicCard") || judge.card->isKindOf("EventsCard"))
                     break;
             }
         }
         else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
             if(judge->reason == objectName()){
-                if(!judge->card->inherits("BasicCard")){
+                if(!judge->card->isKindOf("BasicCard") && !judge->card->isKindOf("EventsCard")){
                     Room *room = yuehe->getRoom();
                     room->throwCard(judge->card->getId());
                     ServerPlayer *target = room->askForPlayerChosen(yuehe, room->getAllPlayers(), objectName());
@@ -853,9 +801,8 @@ MustangPackage::MustangPackage()
     addMetaObject<MaiyiCard>();
 
     General *jiangjing = new General(this, "jiangjing", "jiang");
-    jiangjing->addSkill(new Tiansuan);
     jiangjing->addSkill(new Huazhu);
-    addMetaObject<HuazhuCard>();
+    jiangjing->addSkill(new Jingsuan);
 
     General *guosheng = new General(this, "guosheng", "jiang");
     guosheng->addSkill(new Bingji);

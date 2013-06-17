@@ -126,6 +126,7 @@ scenario = { -- 非身份局模式下的一些设置
 
 ban_list = { -- 初始禁表设置
 	roles_ban = { -- 身份局单禁
+		"taozongwang",
 	},
 	kof_ban = { -- 1v1模式
 		"andaoquan",
@@ -159,6 +160,7 @@ ban_list = { -- 初始禁表设置
 	pairs_ban = { -- 双将
 		"caijing", -- 双将全禁
 		"zhangheng",
+		"taozongwang",
 		"+tongguan", -- 副将禁用
 		"+tora",
 -- 1 ~ 10
