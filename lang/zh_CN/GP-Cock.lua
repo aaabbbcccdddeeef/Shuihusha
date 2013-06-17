@@ -22,18 +22,6 @@ return {
 	["$foyuan2"] = "佛牙可否借妹妹一观。",
 	["unknown"] = "未知",
 
-	["#duansanniang"] = "大虫窝", -- min 4hp (qlfd)
-	["duansanniang"] = "段三娘",
-	["cv:duansanniang"] = "南宫泓【「御」】",
-	["zishi"] = "自恃",
-	[":zishi"] = "任意男性角色的摸牌阶段开始时，你可以弃置至多两张黑色牌，令该角色在其摸牌阶段多摸或少摸等量的牌。",
-	["@zishi"] = "你可以弃置至多两张黑色牌来发动【自恃】，令 %src 多摸或少摸等量的牌。",
-	["duo"] = "多摸",
-	["shao"] = "少摸",
-	["#Zishi"] = "%from 令 %to %arg2了 %arg 张牌",
-	["$zishi1"] = "老娘替你做主了！",
-	["$zishi2"] = "原银在此，将了去！",
-
 	["#baixiuying"] = "白罂粟", -- min 3hp (qlfd)
 	["baixiuying"] = "白秀英",
 	["cv:baixiuying"] = "蒲小猫【夜澜锦音】",

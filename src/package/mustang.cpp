@@ -116,15 +116,15 @@ public:
     }
 };
 
-HengsaoCard::HengsaoCard(){
+J1zhanCard::J1zhanCard(){
     will_throw = false;
 }
 
-bool HengsaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool J1zhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     return to_select != Self;
 }
 
-void HengsaoCard::onUse(Room *room, const CardUseStruct &card_use) const{
+void J1zhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
     Slash *slash = (Slash*)Sanguosha->getCard(getSubcards().first());
     slash->setSkillName(skill_name);
     CardUseStruct use;
@@ -134,9 +134,9 @@ void HengsaoCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->useCard(use);
 }
 
-class HengsaoViewAsSkill: public OneCardViewAsSkill{
+class J1zhanViewAsSkill: public OneCardViewAsSkill{
 public:
-    HengsaoViewAsSkill():OneCardViewAsSkill("hengsao"){
+    J1zhanViewAsSkill():OneCardViewAsSkill("J1zhan"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -148,17 +148,17 @@ public:
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        HengsaoCard *card = new HengsaoCard;
+        J1zhanCard *card = new J1zhanCard;
         card->addSubcard(card_item->getCard()->getId());
         return card;
     }
 };
 
-class Hengsao: public TriggerSkill{
+class J1zhan: public TriggerSkill{
 public:
-    Hengsao():TriggerSkill("hengsao"){
+    J1zhan():TriggerSkill("j1zhan"){
         events << SlashMissed;
-        view_as_skill = new HengsaoViewAsSkill;
+        view_as_skill = new J1zhanViewAsSkill;
     }
 
     virtual int getPriority(TriggerEvent) const{
@@ -169,7 +169,7 @@ public:
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         if(effect.slash->getSkillName() == objectName()){
             LogMessage log;
-            log.type = "#Hengsao";
+            log.type = "#J1zhan";
             log.from = pilipili;
             log.arg = objectName();
             room->sendLog(log);
@@ -744,6 +744,104 @@ public:
     }
 };
 
+NaxianCard::NaxianCard(){
+    mute = true;
+}
+
+bool NaxianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(Self->getPhase() == Player::Draw)
+        return to_select != Self;
+    else
+        return !to_select->isKongcheng();
+}
+
+void NaxianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = targets.first();
+    if(source->getPhase() == Player::Draw){
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
+        target->drawCards(2);
+    }else{
+        int l = qMin(qMax(1, source->getLostHp()), target->getHandcardNum());
+        if(l < 1)
+            return;
+        QList<int> cards = target->handCards();
+        qShuffle(cards);
+        cards = cards.mid(l);
+        DummyCard *dummy = new DummyCard;
+        foreach(int id, cards)
+            dummy->addSubcard(id);
+        room->playSkillEffect(skill_name, qrand() % 2 + 3);
+        source->obtainCard(dummy);
+        target->drawCards(l);
+    }
+}
+
+class NaxianViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    NaxianViewAsSkill(): ZeroCardViewAsSkill("Naxian"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new NaxianCard;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@naxian";
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("NaxianCard");
+    }
+};
+
+class Naxian:public PhaseChangeSkill{
+public:
+    Naxian():PhaseChangeSkill("naxian"){
+        view_as_skill = new NaxianViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *duqian) const{
+        Room *room = duqian->getRoom();
+        if(duqian->getPhase() == Player::Draw &&
+           room->askForUseCard(duqian, "@@naxian", "@naxian", true))
+            return true;
+        else
+            return false;
+    }
+};
+
+class Yiguan:public TriggerSkill{
+public:
+    Yiguan():TriggerSkill("yiguan"){
+        events << CardUsed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *tianxi, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->isKindOf("Slash") && use.card->isBlack() && tianxi->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            tianxi->drawCards(2);
+        }
+        return false;
+    }
+};
+
+class Qiangzhan: public PhaseChangeSkill{
+public:
+    Qiangzhan():PhaseChangeSkill("qiangzhan"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        if(player->getPhase() == Player::Finish)
+            room->askForCard(player, "@@qiangzhan", "@qiangzhan");
+        else if(player->getPhase() == Player::RoundStart){
+            room->askForCard(player, "@@qiangzhan", "@qiangzhan");
+        }
+        return false;
+    }
+};
+
 MustangPackage::MustangPackage()
     :GeneralPackage("mustang")
 {
@@ -769,9 +867,10 @@ MustangPackage::MustangPackage()
 
     General *duqian = new General(this, "duqian", "kou");
     duqian->addSkill(new Naxian);
+    addMetaObject<NaxianCard>();
 
     General *hancunbao = new General(this, "hancunbao", "guan");
-    hancunbao->addSkill(new Jizhan);
+    hancunbao->addSkill(new J1zhan);
 
     General *yintianxi = new General(this, "yintianxi", "guan", 3);
     yintianxi->addSkill(new Yiguan);
@@ -790,7 +889,7 @@ MustangPackage::MustangPackage()
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
 
-    addMetaObject<HengsaoCard>();
+    addMetaObject<J1zhanCard>();
 }
 
-//ADD_PACKAGE(Mustang)
+ADD_PACKAGE(Mustang)
