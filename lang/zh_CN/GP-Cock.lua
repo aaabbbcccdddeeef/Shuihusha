@@ -95,7 +95,6 @@ return {
 -- last words
 --	["~panjinlian"] = "庆哥哥，说好的幸福呢……",
 	["~panqiaoyun"] = "一了百了～",
-	["~duansanniang"] = "大王！我，此生无悔！",
 	["~baixiuying"] = "谁都帮不了我了～",
 	["~liqiaonu"] = "早知如此，何必～当初。",
 	["~jincuilian"] = "大恩大德，永世～不忘。",
