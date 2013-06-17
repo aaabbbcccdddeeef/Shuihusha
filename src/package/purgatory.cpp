@@ -7,10 +7,18 @@ ChaosJink::ChaosJink(Suit suit, int number)
     setObjectName("chaos_jink");
 }
 
+QString ChaosJink::getEffectPath(bool ) const{
+    return Card::getEffectPath();
+}
+
 ChaosSlash::ChaosSlash(Suit suit, int number)
     :Slash(suit, number)
 {
     setObjectName("chaos_slash");
+}
+
+QString ChaosSlash::getEffectPath(bool ) const{
+    return Card::getEffectPath();
 }
 
 Shit::Shit(Suit suit, int number):

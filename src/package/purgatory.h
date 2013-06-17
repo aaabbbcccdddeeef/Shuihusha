@@ -17,6 +17,7 @@ class ChaosJink: public Jink{
 
 public:
     Q_INVOKABLE ChaosJink(Card::Suit suit, int number);
+    virtual QString getEffectPath(bool is_male) const;
 };
 
 class ChaosSlash: public Slash{
@@ -24,6 +25,7 @@ class ChaosSlash: public Slash{
 
 public:
     Q_INVOKABLE ChaosSlash(Card::Suit suit, int number);
+    virtual QString getEffectPath(bool is_male) const;
 };
 
 class Shit:public BasicCard{

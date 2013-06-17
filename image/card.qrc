@@ -76,5 +76,7 @@
 		<file>card/edo_tensei.jpg</file>
 		<file>card/proud_banner.jpg</file>
 		<file>card/lash_gun.jpg</file>
+		<file>card/chaos_slash.jpg</file>
+		<file>card/chaos_jink.jpg</file>
 	</qresource>
 </RCC>
