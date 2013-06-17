@@ -116,15 +116,15 @@ public:
     }
 };
 
-J1zhanCard::J1zhanCard(){
+JizhanCard::JizhanCard(){
     will_throw = false;
 }
 
-bool J1zhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool JizhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     return to_select != Self;
 }
 
-void J1zhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
+void JizhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
     Slash *slash = (Slash*)Sanguosha->getCard(getSubcards().first());
     slash->setSkillName(skill_name);
     CardUseStruct use;
@@ -134,9 +134,9 @@ void J1zhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->useCard(use);
 }
 
-class J1zhanViewAsSkill: public OneCardViewAsSkill{
+class JizhanViewAsSkill: public OneCardViewAsSkill{
 public:
-    J1zhanViewAsSkill():OneCardViewAsSkill("J1zhan"){
+    JizhanViewAsSkill():OneCardViewAsSkill("jizhan"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -148,17 +148,17 @@ public:
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        J1zhanCard *card = new J1zhanCard;
+        JizhanCard *card = new JizhanCard;
         card->addSubcard(card_item->getCard()->getId());
         return card;
     }
 };
 
-class J1zhan: public TriggerSkill{
+class Jizhan: public TriggerSkill{
 public:
-    J1zhan():TriggerSkill("j1zhan"){
+    Jizhan():TriggerSkill("jizhan"){
         events << SlashMissed;
-        view_as_skill = new J1zhanViewAsSkill;
+        view_as_skill = new JizhanViewAsSkill;
     }
 
     virtual int getPriority(TriggerEvent) const{
@@ -169,7 +169,7 @@ public:
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         if(effect.slash->getSkillName() == objectName()){
             LogMessage log;
-            log.type = "#J1zhan";
+            log.type = "#Jizhan";
             log.from = pilipili;
             log.arg = objectName();
             room->sendLog(log);
@@ -870,7 +870,7 @@ MustangPackage::MustangPackage()
     addMetaObject<NaxianCard>();
 
     General *hancunbao = new General(this, "hancunbao", "guan");
-    hancunbao->addSkill(new J1zhan);
+    hancunbao->addSkill(new Jizhan);
 
     General *yintianxi = new General(this, "yintianxi", "guan", 3);
     yintianxi->addSkill(new Yiguan);
@@ -889,7 +889,7 @@ MustangPackage::MustangPackage()
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
 
-    addMetaObject<J1zhanCard>();
+    addMetaObject<JizhanCard>();
 }
 
 ADD_PACKAGE(Mustang)
