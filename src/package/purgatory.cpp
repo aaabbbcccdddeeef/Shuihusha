@@ -1,6 +1,18 @@
 #include "purgatory.h"
 #include "maneuvering.h"
 
+ChaosJink::ChaosJink(Suit suit, int number)
+    :Jink(suit, number)
+{
+    setObjectName("chaos_jink");
+}
+
+ChaosSlash::ChaosSlash(Suit suit, int number)
+    :Slash(suit, number)
+{
+    setObjectName("chaos_slash");
+}
+
 Shit::Shit(Suit suit, int number):
     BasicCard(suit, number){
     setObjectName("shit");

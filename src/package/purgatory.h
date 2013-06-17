@@ -12,6 +12,20 @@ public:
     PurgatoryPackage();
 };
 
+class ChaosJink: public Jink{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ChaosJink(Card::Suit suit, int number);
+};
+
+class ChaosSlash: public Jink{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ChaosSlash(Card::Suit suit, int number);
+};
+
 class Shit:public BasicCard{
     Q_OBJECT
 
