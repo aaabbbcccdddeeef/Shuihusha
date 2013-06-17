@@ -750,37 +750,47 @@ MustangPackage::MustangPackage()
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
+    General *xueyong = new General(this, "xueyong", "min", "3/4");
+    xueyong->addSkill(new Maiyi);
+    addMetaObject<MaiyiCard>();
+
     General *jiangjing = new General(this, "jiangjing", "jiang");
     jiangjing->addSkill(new Tiansuan);
     jiangjing->addSkill(new Huazhu);
+    addMetaObject<HuazhuCard>();
 
     General *guosheng = new General(this, "guosheng", "jiang");
     guosheng->addSkill(new Bingji);
+    addMetaObject<BingjiCard>();
 
-    General *taozongwang = new General(this, "taozongwang", "min", 3);
-    taozongwang->addSkill(new Qiaogong);
-    taozongwang->addSkill(new Manli);
+    General *duansanniang = new General(this, "duansanniang", "min", 4, false);
+    duansanniang->addSkill(new Zishi);
+    addMetaObject<ZishiCard>();
+
+    General *duqian = new General(this, "duqian", "kou");
+    duqian->addSkill(new Naxian);
+
+    General *hancunbao = new General(this, "hancunbao", "guan");
+    hancunbao->addSkill(new Jizhan);
+
+    General *yintianxi = new General(this, "yintianxi", "guan", 3);
+    yintianxi->addSkill(new Yiguan);
+    yintianxi->addSkill(new Qiangzhan);
 
     General *yuehe = new General(this, "yuehe", "min", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
 
-    General *xueyong = new General(this, "xueyong", "min", "3/4");
-    xueyong->addSkill(new Maiyi);
-
     General *zhufu = new General(this, "zhufu", "min", 3);
     zhufu->addSkill(new Hunjiu);
     zhufu->addSkill(new Guitai);
+    addMetaObject<HunjiuCard>();
 
-    General *duansanniang = new General(this, "duansanniang", "min", 4, false);
-    duansanniang->addSkill(new Zishi);
+    General *taozongwang = new General(this, "taozongwang", "min", 3);
+    taozongwang->addSkill(new Qiaogong);
+    taozongwang->addSkill(new Manli);
 
     addMetaObject<HengsaoCard>();
-    addMetaObject<HuazhuCard>();
-    addMetaObject<BingjiCard>();
-    addMetaObject<MaiyiCard>();
-    addMetaObject<HunjiuCard>();
-    addMetaObject<ZishiCard>();
 }
 
 //ADD_PACKAGE(Mustang)

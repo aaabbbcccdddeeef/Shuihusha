@@ -1350,7 +1350,7 @@ ConjuringRule::ConjuringRule(QObject *parent)
 {
     setObjectName("conjuring_rule");
     events << DrawNCards
-           << DamagedProceed << Damaged
+           << DamagedProceed << Damage << Damaged
            << PreConjuring << Conjured;
 }
 
@@ -1453,6 +1453,16 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
         break;
     }
+    case SlashMissed:{
+        //chaos_jink
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.jink->objectName() == "chaos_jink"){
+            QStringList jurs = effect.to->getAllMarkName(3, "_jur");
+            if(!jurs.isEmpty())
+                effect.to->removeJur(jurs.first());
+        }
+        break;
+    }
     case DamagedProceed:{
         if(player->hasJur("reflex_jur")){
             DamageStruct damage = data.value<DamageStruct>();
@@ -1469,6 +1479,19 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             PlayerStar life = damage.to->tag["DtoL"].value<PlayerStar>();
             if(life)
                 room->setPlayerMark(life, "mind", damage.damage);
+        }
+        break;
+    }
+    case Damage:{
+        //chaos_slash
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to->isAlive() && damage.card->objectName() == "chaos_slash"){
+            QStringList conjurs;
+            conjurs
+                    << "poison_jur" << "sleep_jur" << "dizzy_jur" << "stealth_jur"
+                    << "lucky_jur" << "chaos_jur" << "reflex_jur";
+            qShuffle(conjurs);
+            damage.to->gainJur(conjurs.first(), 4);
         }
         break;
     }

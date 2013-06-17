@@ -476,16 +476,16 @@ CasketPackage::CasketPackage()
     addMetaObject<FanyinCard>();
 
     General *moon_jiashi = new General(this, "moon_jiashi", "moon", 3, false);
-    //moon_jiashi->addSkill(new Kaizi);
+    moon_jiashi->addSkill(new Kaizi);
     moon_jiashi->addSkill(new Shana);
-    //moon_jiashi->addSkill(new Dingxin);
+    moon_jiashi->addSkill(new Dingxin);
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
-    //sun_ligu->addSkill(new Tiaonong);
+    sun_ligu->addSkill(new Tiaonong);
     sun_ligu->addSkill(new Misaki);
-    //sun_ligu->addSkill(new Gouxian);
-    //sun_ligu->addRelateSkill("rugou");
-    //skills << new Rugou;
+    sun_ligu->addSkill(new Gouxian);
+    sun_ligu->addRelateSkill("rugou");
+    skills << new Rugou;
 }
 
 ADD_PACKAGE(Casket)

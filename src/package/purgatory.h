@@ -19,7 +19,7 @@ public:
     Q_INVOKABLE ChaosJink(Card::Suit suit, int number);
 };
 
-class ChaosSlash: public Jink{
+class ChaosSlash: public Slash{
     Q_OBJECT
 
 public:

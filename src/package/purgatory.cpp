@@ -301,6 +301,8 @@ PurgatoryPackage::PurgatoryPackage()
     QList<Card *> cards;
 
     cards
+            << new ChaosJink(Card::Heart, 11)
+            << new ChaosSlash(Card::Diamond, 10)
             << new Shit(Card::Heart, 10)
             << new Mastermind(Card::Spade, 4)
             << new Mastermind(Card::Diamond, 9)

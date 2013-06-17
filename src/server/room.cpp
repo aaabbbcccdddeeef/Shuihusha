@@ -450,30 +450,37 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     QVariant data = QVariant::fromValue(effect);
     playExtra(SlashEffect, data);
 
-    switch(effect.nature){
+    SlashEffectStruct new_effect = effect;
+    if(effect.slash->objectName().startsWith("chaos")){
+        QList<DamageStruct::Nature> nats;
+        nats << DamageStruct::Thunder << DamageStruct::Fire << DamageStruct::Normal;
+        qShuffle(nats);
+        new_effect.nature = nats.first();
+    }
+    switch(new_effect.nature){
     case DamageStruct::Thunder:{
-        setEmotion(effect.from, "thunder_slash");
+        setEmotion(new_effect.from, "thunder_slash");
         break;
     }
     case DamageStruct::Fire:{
-        setEmotion(effect.from, "fire_slash");
+        setEmotion(new_effect.from, "fire_slash");
         break;
     }
     default:
-        if(effect.slash->isBlack())
-            setEmotion(effect.from, "slash_black");
-        else if(effect.slash->isRed())
-            setEmotion(effect.from, "slash_red");
+        if(new_effect.slash->isBlack())
+            setEmotion(new_effect.from, "slash_black");
+        else if(new_effect.slash->isRed())
+            setEmotion(new_effect.from, "slash_red");
         else
-            setEmotion(effect.from, "killer");
+            setEmotion(new_effect.from, "killer");
         break;
     }
-    setEmotion(effect.to, effect.to->getGeneral()->isMale() ? "victim" : "victimf");
+    setEmotion(new_effect.to, new_effect.to->getGeneral()->isMale() ? "victim" : "victimf");
 
     setTag("LastSlashEffect", data);
-    bool broken = thread->trigger(SlashEffect, this, effect.from, data);
+    bool broken = thread->trigger(SlashEffect, this, new_effect.from, data);
     if(!broken)
-        thread->trigger(SlashEffected, this, effect.to, data);
+        thread->trigger(SlashEffected, this, new_effect.to, data);
 }
 
 void Room::slashResult(const SlashEffectStruct &effect, const Card *jink){
