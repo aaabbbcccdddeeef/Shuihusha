@@ -226,9 +226,9 @@ public:
     }
 };
 
-class Kaizi: public MasochismSkill{
+class Suqing: public MasochismSkill{
 public:
-    Kaizi():MasochismSkill("Kaizi"){
+    Suqing():MasochismSkill("suqing"){
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -243,7 +243,7 @@ public:
         foreach(ServerPlayer *huhu, huhuhu){
             if(player->hasMark("lucky_jur"))
                 continue;
-            if(room->askForCard(huhu, "..", "@kaizi:" + player->objectName(), true, QVariant::fromValue(damage), CardDiscarded)){
+            if(room->askForCard(huhu, "..", "@suqing:" + player->objectName(), true, QVariant::fromValue(damage), CardDiscarded)){
                 LogMessage g;
                 g.type = "#InvokeSkill";
                 g.from = huhu;
@@ -255,51 +255,75 @@ public:
     }
 };
 
-class Shana: public TriggerSkill {
+XiepoCard::XiepoCard(){
+    target_fixed = true;
+}
+
+void XiepoCard::use(Room *, ServerPlayer *, const QList<ServerPlayer *> &) const{
+}
+
+class XiepoViewAsSkill: public ViewAsSkill{
 public:
-    Shana(): TriggerSkill("Shana") {
-        events << CardRecord << CardUsed;
+    XiepoViewAsSkill():ViewAsSkill("xiepo"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() > 1)
+            return false;
+        if(selected.isEmpty())
+            return to_select->getCard()->isKindOf("Slash") || to_select->getCard()->isKindOf("Jink");
+        else{
+            if(selected.first()->getCard()->isKindOf("Slash"))
+                return to_select->getCard()->isKindOf("Jink");
+            else
+                return to_select->getCard()->isKindOf("Slash");
+        }
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        XiepoCard *card = new XiepoCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@xiepo";
+    }
+};
+
+class Xiepo: public TriggerSkill {
+public:
+    Xiepo(): TriggerSkill("xiepo"){
+        view_as_skill = new XiepoViewAsSkill;
+        events << PhaseEnd;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }
 
-    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
-        if(player->getPhase() != Player::Play)
+    virtual bool trigger(TriggerEvent , Room *room, ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() != Player::Draw)
             return false;
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(!use.card->isKindOf("Slash"))
+        if(player->hasSkill(objectName()))
             return false;
-        if(event == CardRecord){
-            ServerPlayer *guanping = room->findPlayerBySkillName(objectName());
-            if(guanping && !guanping->isNude()){
-                QString propty = QString("@Shana:%1:%2:%3:%4")
-                                 .arg(use.from->objectName())
-                                 .arg(use.to.first()->objectName())
-                                 .arg(use.card->objectName())
-                                 .arg(use.card->getSuitString());
-                const Card *exc = room->askForCard(guanping, "..", propty, data, CardDiscarded);
-                if(exc && exc != use.card){
-                    room->playSkillEffect(objectName());
-                    use.card->setFlags("Shana");
-                    return true;
-                }
-            }
-        }
-        else{
-            if(use.from == player && use.card->hasFlag("Shana")){
-                use.card->setFlags("-Shana");
-                ServerPlayer *guanping = room->findPlayerBySkillName(objectName());
-                LogMessage log;
-                log.type = "#Shana";
-                log.from = guanping;
-                log.to << player;
-                log.arg = objectName();
-                room->sendLog(log);
 
-                if(use.card->isRed())
-                    guanping->drawCards(1);
+        QList<ServerPlayer *> jiashis = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *jiashi, jiashis){
+            int handum = player->getHandcardNum();
+            int hpum = player->getHp() + jiashi->getHp();
+            if(handum >= hpum && jiashi->askForSkillInvoke(objectName())){
+                const Card *card = room->askForCard(player, "@@xiepo", "@xiepo:" + jiashi->objectName(), data, NonTrigger);
+                if(card)
+                    room->obtainCard(jiashi, card);
+                else
+                    player->turnOver();
             }
         }
         return false;
@@ -374,34 +398,47 @@ public:
     }
 };
 
-class Misaki: public TriggerSkill{
+class Caimi: public PhaseChangeSkill{
 public:
-    Misaki():TriggerSkill("misaki"){
-        events << CardAsked;
+    Caimi():PhaseChangeSkill("caimi"){
+        frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(room->getCurrent() == player)
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() != Player::Finish)
             return false;
-        const CardPattern *pattern = Sanguosha->getPattern(data.toString());
-        if(player->askForSkillInvoke(objectName())){
-            int peek = room->getDrawPile().at(0);
-            room->showCard(player, peek);
-            const Card *card = Sanguosha->getCard(peek);
-            if(pattern->match(player, card)){
-                room->showCard(player, room->getDrawPile().at(1));
-                room->provide(card);
+        Room *room = player->getRoom();
+        int maxc = room->getOtherPlayers(player).first()->getHandcardNum();
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
+            int thc = tmp->getHandcardNum();
+            if(thc > maxc)
+                maxc = thc;
+            if(thc < player->getHandcardNum())
                 return false;
-            }
-            else{
-                peek = room->getDrawPile().at(1);
-                room->showCard(player, peek);
-                card = Sanguosha->getCard(peek);
-                if(pattern->match(player, card)){
-                    room->provide(card);
-                    return false;
-                }
-            }
+        }
+
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = player;
+        log.arg = objectName();
+        room->sendLog(log);
+
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(player))
+            if(tmp->getHandcardNum() == maxc)
+                targets << tmp;
+        ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+        DamageStruct damage;
+        damage.from = target;
+        damage.to = player;
+        room->damage(damage);
+        if(!target->isNude()){
+            int card_id = room->askForCardChosen(player, target, "he", objectName());
+            room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
+        }
+        if(!target->isNude()){
+            int card_id = room->askForCardChosen(player, target, "he", objectName());
+            room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
         }
         return false;
     }
@@ -466,23 +503,23 @@ CasketPackage::CasketPackage()
     moon_panqiaoyun->addSkill(new Qingdu);
     moon_panqiaoyun->addSkill(new Tumi);
     moon_panqiaoyun->addSkill(new Jueyuan);
+    addMetaObject<TumiCard>();
 
     General *sun_peiruhai = new General(this, "sun_peiruhai", "sun", 3);
     sun_peiruhai->addSkill(new Fanyin);
     sun_peiruhai->addSkill(new Lichen);
     sun_peiruhai->addSkill(new Lunhui);
-
-    addMetaObject<TumiCard>();
     addMetaObject<FanyinCard>();
 
     General *moon_jiashi = new General(this, "moon_jiashi", "moon", 3, false);
-    moon_jiashi->addSkill(new Kaizi);
-    moon_jiashi->addSkill(new Shana);
+    moon_jiashi->addSkill(new Suqing);
+    moon_jiashi->addSkill(new Xiepo);
     moon_jiashi->addSkill(new Dingxin);
+    addMetaObject<XiepoCard>();
 
     General *sun_ligu = new General(this, "sun_ligu", "sun", 3);
     sun_ligu->addSkill(new Tiaonong);
-    sun_ligu->addSkill(new Misaki);
+    sun_ligu->addSkill(new Caimi);
     sun_ligu->addSkill(new Gouxian);
     sun_ligu->addRelateSkill("rugou");
     skills << new Rugou;

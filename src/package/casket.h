@@ -23,6 +23,15 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class XiepoCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE XiepoCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class CasketPackage : public GeneralPackage
 {
     Q_OBJECT
