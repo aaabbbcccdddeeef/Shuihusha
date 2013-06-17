@@ -5,6 +5,7 @@ dofile "extensions/ai/funs.lua"
 yzdisnum={3};
 
 --ADD Generals--
+--sproxiel=sgs.General(extension,"sproxiel","min",4)
 
 splujunyi=sgs.General(extension,"splujunyi$","min",4)
 splinchong=sgs.General(extension,"splinchong$","kou",4)
@@ -13,9 +14,12 @@ spwusong=sgs.General(extension,"spwusong","min",4)
 spzhulei=sgs.General(extension,"spzhulei","kou",4)
 spzhuwu=sgs.General(extension,"spzhuwu","min",3)
 sphuyanzhuo=sgs.General(extension,"sphuyanzhuo","guan",4)
-spbird=sgs.General(extension,"spbird","god",4)
+--spbird=sgs.General(extension,"spbird","god",4)
+--spyuefei=sgs.General(extension,"spyuefei","god",4)
 spyuefei=sgs.General(extension,"spyuefei","god",4)
+spyangzhi=sgs.General(extension,"spyangzhi","guan",4)
 sphuangxin=sgs.General(extension,"sphuangxin","guan",4)
+g1=sgs.General(extension,"g1","min",3)
 ---------------
 luajueding=sgs.CreateTriggerSkill{
 	name="luajueding",
@@ -762,275 +766,6 @@ sgs.LoadTranslationTable{
 	["@luasaodangdiscard"]="请弃2张牌 否则将受到1点伤害",
 }
 
-luajinshucard=sgs.CreateSkillCard{
-name="luajinshucard",
-target_fixed=true,
-will_throw=true,
-on_use=function(self,room,source,targets)
-	local x=self:getSubcards():length()
-	for i=1,x,1 do
-		local card_id = room:drawCard()
-		local card=sgs.Sanguosha:getCard(card_id)
-		if source:addToPile("spxi",card) then
-			local log=sgs.LogMessage()
-			log.from =source
-			log.type ="#luajinshu"
-			log.arg  =card:objectName()
-			log.arg2 =card:getSuitString()
-			room:sendLog(log)
-		end
-	end
-	room:throwCard(self)
-end
-}
-
-luajinshuvs=sgs.CreateViewAsSkill{
-name="luajinshuvs",
-n=999,
-view_filter=function(self, selected, to_select)
-	return not to_select:isEquipped()
-end,
-view_as=function(self, cards)
-	if #cards==0 then return end
-	local acard=luajinshucard:clone()
-	for var=1,#cards,1 do
-        acard:addSubcard(cards[var])
-    end
-	acard:setSkillName("luajinshucard")
-	--assert(acard)
-	return acard
-end,
-enabled_at_play=function()
-	return false
-end,
-enabled_at_response=function(self,player,pattern)
-	return pattern == "@@luajinshucard"
-end,
-}
-
-luajinshu=sgs.CreateTriggerSkill{
-name="luajinshu",
-events={sgs.TurnStart,sgs.Predamage,sgs.Predamaged,sgs.Damage,sgs.Damaged,sgs.PhaseChange},
-priority=3,
-view_as_skill=luajinshuvs,
-can_trigger=function(self,player)
-	return true
-end,
-frequency=sgs.Skill_NotFrequent,
-on_trigger=function(self,event,player,data)
-	local room=player:getRoom()
-	local owner=room:findPlayerBySkillName(self:objectName())
-	if not owner then return end
-	if not owner:isAlive() then return end
-	local baoguo=sgs.Sanguosha:getTriggerSkill("baoguo")
-	local duijue=sgs.Sanguosha:getTriggerSkill("duijue")
-	local dujian=sgs.Sanguosha:getTriggerSkill("dujian")
-if event==sgs.TurnStart and player:objectName()==owner:objectName() then
-	if owner:getPile("spxi"):length()==0 then
-		local log=sgs.LogMessage()
-		log.type="#luajinshudraw"
-		log.from=player
-		room:sendLog(log)
-		player:drawCards(1)
-	end
-elseif event==sgs.PhaseChange and player:getPhase()==sgs.Player_Discard then
-	if player:objectName()~=owner:objectName() then return end
-	room:askForUseCard(player, "@@luajinshucard", "@luajinshu")
-elseif event==sgs.Predamaged then
-	if owner:getPile("spxi"):length()==0 then return end
-	local damage=data:toDamage()
-	if damage.to:objectName()==owner:objectName() then return end
-		if (room:askForSkillInvoke(owner,"luajinshubaoguo2",data)~=true) then return end
-		room:playSkillEffect("baoguo",math.random(1,2))
-		local cd = room:askForCard(owner, "BasicCard", "@luajinshubaoguo2",data)
-		if cd then
-			local tmp=sgs.DamageStruct()
-			tmp.damage=damage.damage
-			tmp.from=damage.from
-			tmp.to=owner
-			room:damage(tmp)
-			return true
-		end
-elseif event==sgs.Predamage then
-	if player:objectName()==owner:objectName() then
-		local damage=data:toDamage()
-		if damage.to:canSlash(damage.from) then return end
-		if owner:getPile("spxi"):length()==0 then return end
-		if (room:askForSkillInvoke(owner,"luajinshudujian",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("dujian",math.random(1,2))
-		damage.to:turnOver()
-		return true
-	end
-elseif event==sgs.Damaged or sgs.Damage then
-	if owner:getPile("spxi"):length()==0 then return end
-	local damage=data:toDamage()
-	if event==sgs.Damaged and player:objectName()==owner:objectName() then
-		if owner:getPile("spxi"):length()==0 then return end
-		if (room:askForSkillInvoke(owner,"luajinshubaoguo",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("baoguo",math.random(1,2))
-		player:drawCards(player:getLostHp())
-	end
-	if not damage.card then return end
-	if event==sgs.Damaged and damage.card:inherits("Slash") then
-		if not damage.to:hasSkill(self:objectName()) then return end
-		if owner:getPile("spxi"):length()==0 then  return end
-		if (room:askForSkillInvoke(owner,"luajinshuduijue",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("duijue",2)
-		if not owner:hasSkill("duijue") then room:acquireSkill(owner,"duijue") end
-		duijue:trigger(event,room,owner,data)
-		room:detachSkillFromPlayer(owner,"duijue")
-	elseif event==sgs.Damage and damage.card:inherits("Slash") then
-		if not damage.from:hasSkill(self:objectName()) then return end
-		if owner:getPile("spxi"):length()==0 then  return end
-		if (room:askForSkillInvoke(owner,"luajinshuduijue",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("duijue",2)
-		if not owner:hasSkill("duijue") then room:acquireSkill(owner,"duijue") end
-		duijue:trigger(event,room,owner,data)
-		room:detachSkillFromPlayer(owner,"duijue")
-	end
-end
-end,
-}
-
-luazhuoxie=sgs.CreateTriggerSkill{
-name="luazhuoxie",
-frequency=sgs.Skill_NotFrequent,
-events={sgs.Damage},
-can_trigger=function(self,target)
-return not target:hasSkill(self:objectName())
-end,
-on_trigger=function(self,event,player,data)
-        local room=player:getRoom()
-		local damage=data:toDamage()
-		if not damage.from then return end
-		if not damage.from:isAlive() then return end
-		local owner = room:findPlayerBySkillName(self:objectName())
-		if not owner then return end
-		if owner:getMark("luazhuanshi_wake")>0 then return end
-		if damage.from:isAllNude() then return end
-        if not room:askForSkillInvoke(owner,self:objectName(),data) then return end
-		room:loseHp(owner,1)
-		local card_id = room:askForCardChosen(owner,damage.from,"hej",self:objectName())
-		room:throwCard(card_id)
-		owner:drawCards(1)
-end
-}
-
-luazhuanshi=sgs.CreateTriggerSkill{
-name="luazhuanshi",
-events={sgs.TurnStart,sgs.Dying,sgs.Predamage,sgs.Predamaged,sgs.Damage,sgs.Damaged,sgs.PhaseChange},
-priority=3,
-view_as_skill=luajinshuvs,
-can_trigger=function(self,player)
-	return true
-end,
-frequency=Skill_NotFrequent,
-on_trigger=function(self,event,player,data)
-	local room=player:getRoom()
-	local owner=room:findPlayerBySkillName(self:objectName())
-	if not owner then return end
-	if not owner:isAlive() then return end
-	local baoguo=sgs.Sanguosha:getTriggerSkill("baoguo")
-	local duijue=sgs.Sanguosha:getTriggerSkill("duijue")
-	local dujian=sgs.Sanguosha:getTriggerSkill("dujian")
-if event==sgs.Dying then
-		local dying=data:toDying()
-		if dying.who:objectName()~=owner:objectName() then return end
-		if not dying.who:hasSkill(self:objectName()) then return end
-		if dying.who:getMark("luazhuanshi_wake")==1 then return end
-		local room=player:getRoom()
-		room:setPlayerMark(dying.who,"luazhuanshi_wake",1)
-		local recover=sgs.RecoverStruct()
-		recover.recover=1
-		recover.who=dying.who
-		room:recover(dying.who,recover)
-		dying.who:drawCards(2)
-		room:detachSkillFromPlayer(dying.who,"luazhuoxie")
-		local log=sgs.LogMessage()
-		log.type="#luazhuanshi"
-		log.from=dying.who
-		room:sendLog(log)
-elseif event==sgs.TurnStart and player:objectName()==owner:objectName() then
-	if player:getMark("luazhuanshi_wake")~=1 then return end
-	if owner:getPile("spxi"):length()==0 then
-		local log=sgs.LogMessage()
-		log.type="#luajinshudraw"
-		log.from=player
-		room:sendLog(log)
-		player:drawCards(1)
-	end
-elseif event==sgs.PhaseChange and player:getPhase()==sgs.Player_Discard then
-	if player:objectName()~=owner:objectName() then return end
-	if player:getMark("luazhuanshi_wake")~=1 then return end
-	room:askForUseCard(player, "@@luajinshucard", "@luajinshu")
-elseif event==sgs.Predamaged then
-	if player:getMark("luazhuanshi_wake")~=1 then return end
-	if owner:getPile("spxi"):length()==0 then return end
-	local damage=data:toDamage()
-	if damage.to:objectName()==owner:objectName() then return end
-		if (room:askForSkillInvoke(owner,"luajinshubaoguo2",data)~=true) then return end
-		room:playSkillEffect("baoguo",math.random(1,2))
-		local cd = room:askForCard(owner, "BasicCard", "@luajinshubaoguo2",data)
-		if cd then
-			local tmp=sgs.DamageStruct()
-			tmp.damage=damage.damage
-			tmp.from=damage.from
-			tmp.to=owner
-			room:damage(tmp)
-			return true
-		end
-elseif event==sgs.Predamage then
-	if player:getMark("luazhuanshi_wake")~=1 then return end
-	if player:objectName()==owner:objectName() then
-		local damage=data:toDamage()
-		if damage.to:canSlash(damage.from) then return end
-		if owner:getPile("spxi"):length()==0 then return end
-		if (room:askForSkillInvoke(owner,"luajinshudujian",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("dujian",math.random(1,2))
-		damage.to:turnOver()
-		return true
-	end
-elseif event==sgs.Damaged or sgs.Damage then
-	if owner:getMark("luazhuanshi_wake")~=1 then return end
-	if owner:getPile("spxi"):length()==0 then return end
-	local damage=data:toDamage()
-	if event==sgs.Damaged and player:objectName()==owner:objectName() then
-		if owner:getPile("spxi"):length()==0 then return end
-		if (room:askForSkillInvoke(owner,"luajinshubaoguo",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("baoguo",math.random(1,2))
-		player:drawCards(player:getLostHp())
-	end
-	if not damage.card then return end
-	if event==sgs.Damaged and damage.card:inherits("Slash") then
-		if not damage.to:hasSkill(self:objectName()) then return end
-		if owner:getPile("spxi"):length()==0 then  return end
-		if (room:askForSkillInvoke(owner,"luajinshuduijue",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("duijue",2)
-		if not owner:hasSkill("duijue") then room:acquireSkill(owner,"duijue") end
-		duijue:trigger(event,room,owner,data)
-		room:detachSkillFromPlayer(owner,"duijue")
-	elseif event==sgs.Damage and damage.card:inherits("Slash") then
-		if not damage.from:hasSkill(self:objectName()) then return end
-		if owner:getPile("spxi"):length()==0 then  return end
-		if (room:askForSkillInvoke(owner,"luajinshuduijue",data)~=true) then return end
-		room:throwCard(owner:getPile("spxi"):first())
-		room:playSkillEffect("duijue",2)
-		if not owner:hasSkill("duijue") then room:acquireSkill(owner,"duijue") end
-		duijue:trigger(event,room,owner,data)
-		room:detachSkillFromPlayer(owner,"duijue")
-	end
-end
-end,
-}
-
-
 luayizongcard=sgs.CreateSkillCard{
 name="luayizongcard",
 target_fixed=true,
@@ -1132,43 +867,292 @@ if event == sgs.CardDiscarded and player:getPhase()==sgs.Player_Discard then
 end
 end,
 }
+--============20130514===========
+luakunshoucard=sgs.CreateSkillCard{
+name="luakunshoucard",
+filter=function(self,targets,to_select,player)
+if (#targets>=2) then return false end
+if not to_select:faceUp() then return false end
+return true
+end,
+on_effect=function(self,effect)
+	local room=effect.from:getRoom()
+	effect.to:turnOver()
+end
+}
+luakunshouvs=sgs.CreateViewAsSkill{
+name="luakunshouvs",
+n=0,
+view_filter=function(self, selected, to_select)
+	return false
+end,
+view_as=function(self, cards)
+	if #cards==0 then
+	local acard=luakunshoucard:clone()
+	acard:setSkillName("luakunshoucard")
+	return acard end
+end,
+enabled_at_play=function()
+	return false
+end,
+enabled_at_response=function(self,player,pattern)
+	return pattern == "@@luakunshoucard"
+end,
+}
 
-spyuefei:addSkill(luajinshu)
-spbird:addSkill(luazhuanshi)
-spbird:addSkill(luazhuoxie)
+luakunshou=sgs.CreateTriggerSkill{
+name="luakunshou",
+events={sgs.PhaseEnd,sgs.Predamage,sgs.CardDiscarded},
+priority=3,
+view_as_skill=luakunshouvs,
+frequency=sgs.Skill_NotFrequent,
+on_trigger=function(self,event,player,data)
+	local room=player:getRoom()
+	if event==sgs.PhaseEnd and player:getPhase()==sgs.Player_Finish then
+	local facedownCounter=1
+	for _,theplayer in sgs.qlist(room:getAlivePlayers()) do
+		if not theplayer:faceUp() then facedownCounter=facedownCounter+1 end
+	end
+	--facedownCounter=facedownCounter+1
+	if facedownCounter>(player:getHandcardNum()+player:getEquips():length()) then return end
+	if (room:askForSkillInvoke(player,"luakunshou",data)~=true) then return end
+	player:turnOver()
+	player:drawCards(facedownCounter+1)
+	room:askForDiscard(player,"luakunshou",facedownCounter,facedownCounter,false,true)
+elseif event == sgs.CardDiscarded and player:getPhase()==sgs.Player_Finish then
+	local card = data:toCard()
+	local kscardids=sgs.IntList()
+		if not card:isVirtualCard() then
+			kscardids:append(card:getId())
+		else
+			for _, cid in sgs.qlist(card:getSubcards()) do
+				kscardids:append(cid)
+			end
+		end
+	for _,cid in sgs.qlist(kscardids) do
+		player:addToPile("spDou",cid)
+	end
+	--table.insert(kstargetdiscarded,kscardids:length())--AiNeed 弃牌量
+	--table.insert(kstarget,player)--AiNeed 目标角色
+elseif event==sgs.Predamage then
+	if player:getPile("spDou"):length()==0 then return end
+	local damage=data:toDamage()
+	if not damage.card:inherits("Slash") then return end
+	if (room:askForSkillInvoke(player,"luakunshou2",data)~=true) then return end
+		local parts=player:getPile("spDou")--获取
+ 		room:fillAG(parts,player)--填充ag界面
+		local cdid=room:askForAG(player,parts,false,"luakunshou")
+		local cd=sgs.Sanguosha:getCard(cdid)
+		if cd:inherits("EventsCard") then
+			if room:askForUseCard(player, "@@luakunshoucard", "@luakunshou") then
+				room:throwCard(cdid,player)--弃掉
+				player:invoke("clearAG")
+				return
+			end
+		end
+		room:throwCard(cdid,player)--弃掉
+		player:invoke("clearAG")
+	damage.damage=damage.damage+1
+	data:setValue(damage)
+	return false
+end
+end,
+}
+
+guonanTarget={}
+luaguonan=sgs.CreateTriggerSkill{
+name="luaguonan",
+events={sgs.CardFinished,sgs.Damage,sgs.SlashMissed,sgs.CardDiscarded,sgs.PhaseEnd},
+priority=3,
+can_trigger=function(self,player)
+	return true
+end,
+frequency=sgs.Skill_NotFrequent,
+on_trigger=function(self,event,player,data)
+	local room=player:getRoom()
+	local owner=room:findPlayerBySkillName(self:objectName())
+	if not owner then return end
+	if not owner:isAlive() then
+		for _,theplayer in sgs.qlist(room:getAlivePlayers()) do
+			if theplayer:hasMark("@bgMarkEffect") then room:setPlayerMark(theplayer,"@bgMarkEffect",0)	end
+		end
+	return end
+if event==sgs.CardFinished and player:objectName()==owner:objectName() then
+	local cd=data:toCardUse().card
+	if not cd:inherits("Slash") then return end
+	if owner:isKongcheng() then return end
+	if owner:getPhase()~=sgs.Player_Play then return end
+	if (room:askForSkillInvoke(owner,"luaguonan",data)~=true) then
+		if owner:hasMark("guonanMissed") then
+			room:setPlayerMark(owner,"guonanMissed",0)
+		end
+		return
+	end
+	room:setPlayerMark(owner,"bgStart",1)
+	local x=owner:getHandcardNum()
+	room:askForDiscard(owner,"luaguonan",x,x,false,false)
+		local x=owner:getMark("baoguoPlus")
+		owner:gainMark("@bgMark",x)
+		--room:setPlayerMark(owner,"@bgMark",x+y)
+		room:setPlayerMark(owner,"baoguoPlus",0)
+	if owner:hasMark("guonanMissed") then
+		local z=owner:getMark("jingzhongPlus")
+		owner:gainMark("@jingzhong",z)
+		room:setPlayerMark(owner,"jingzhongPlus",0)
+		room:setPlayerMark(owner,"guonanMissed",0)
+	elseif owner:hasMark("guonanHasEquip")	then
+		local d=owner:getMark("damagePlus")
+		local damage = sgs.DamageStruct()
+			damage.from = owner
+			damage.to = guonanTarget[1]
+			damage.damage=d
+			room:damage(damage)
+		owner:drawCards(d)
+		table.remove(guonanTarget)
+		room:setPlayerMark(owner,"guonanHasEquip",0)
+	end
+elseif event == sgs.CardDiscarded and owner:getPhase()~=sgs.Player_Discard then
+	if player:objectName()~=owner:objectName() then return end
+	if not owner:hasMark("bgStart") then return end
+	local card = data:toCard()
+	local kscardids=sgs.IntList()
+		if not card:isVirtualCard() then
+			kscardids:append(card:getId())
+		else
+			for _, cid in sgs.qlist(card:getSubcards()) do
+				kscardids:append(cid)
+			end
+		end
+	for _,cid in sgs.qlist(kscardids) do
+		local cd=sgs.Sanguosha:getCard(cid)
+		if	cd:inherits("EquipCard") then
+			room:setPlayerMark(owner,"damagePlus",owner:getMark("damagePlus")+1)
+			owner:speak("DamageUpgraded:"..tostring(owner:getMark("damagePlus")))
+		elseif	cd:inherits("TrickCard") then
+			room:setPlayerMark(owner,"baoguoPlus",owner:getMark("baoguoPlus")+1)
+		elseif cd:inherits("BasicCard") then
+
+			room:setPlayerMark(owner,"jingzhongPlus",owner:getMark("jingzhongPlus")+1)
+		end
+		owner:speak("精忠Plus:"..tostring(owner:getMark("jingzhongPlus")))
+	end
+elseif event==sgs.Damage and player:objectName()==owner:objectName() then
+	local damage=data:toDamage()
+	if not damage.card or not damage.card:inherits("Slash") then return end
+	room:setPlayerMark(owner,"guonanHasEquip",1)
+	table.insert(guonanTarget,damage.to)
+	owner:speak("Damage Upgrading...")
+	return false
+elseif event==sgs.SlashMissed and player:objectName()==owner:objectName() then
+		owner:speak("Target Missed")
+		room:setPlayerMark(owner,"guonanMissed",1)
+elseif event==sgs.PhaseEnd and 	player:objectName()==owner:objectName() and owner:getPhase()==sgs.Player_Finish then
+	room:setPlayerMark(owner,"damagePlus",0)
+	room:setPlayerMark(owner,"baoguoPlus",0)
+	room:setPlayerMark(owner,"jingzhongPlus",0)
+	room:setPlayerMark(owner,"bgStart",0)
+end
+end,
+}
+
+
+
+luaciyincard=sgs.CreateSkillCard{
+name="luaciyincard",
+filter=function(self,targets,to_select,player)
+if (#targets>=player:getMark("@bgMark")) then return false end
+return true--not to_select:hasMark("@bgMarkEffect")
+end,
+on_effect=function(self,effect)
+		if not effect.from:hasMark("@bgMark") then return end
+		local room=effect.from:getRoom()
+		effect.to:gainMark("@bgMarkEffect")
+		effect.from:loseMark("@bgMark")
+end
+}
+luaciyinvs=sgs.CreateViewAsSkill{
+name="luaciyinvs",
+n=0,
+view_filter=function(self, selected, to_select)
+	return false
+end,
+view_as=function(self, cards)
+	if #cards==0 then
+	local acard=luaciyincard:clone()
+	acard:setSkillName("luaciyincard")
+	return acard end
+end,
+enabled_at_play=function(self,player)
+	return false
+end,
+enabled_at_response=function(self,player,pattern)
+	return pattern=="@@luaciyincard"
+end,
+}
+
+
+luaciyin=sgs.CreateTriggerSkill{
+name="luaciyin",
+events={sgs.SlashProceed,sgs.DamageComplete,sgs.PhaseEnd},
+view_as_skill=luaciyinvs,
+--priority=3,
+can_trigger=function(self,player)
+	return true
+end,
+frequency=sgs.Skill_NotFrequent,
+on_trigger=function(self,event,player,data)
+	local room=player:getRoom()
+	local owner=room:findPlayerBySkillName(self:objectName())
+	if not owner then return end
+	if not owner:isAlive() then	return end
+if event==sgs.SlashProceed then
+	if owner:getMark("@jingzhong")<4 then return end
+	local effect=data:toSlashEffect()
+	if effect.from:objectName()~=owner:objectName() then return end
+	if (room:askForSkillInvoke(owner,"luaciyin",data)~=true) then return end
+	owner:loseMark("@jingzhong",4)
+	room:slashResult(effect,nil)--结算杀中了，然后无效原来的
+	return true
+elseif event==sgs.DamageComplete then
+	local who=data:toDamage().to
+	if not who:hasMark("@bgMarkEffect") then return end
+	--if (room:askForSkillInvoke(player,"luaciyinbaoguo",data)~=true) then return end
+	owner:drawCards(who:getLostHp())
+	--room:setPlayerMark(player,"@bgMarkEffect",0)
+	who:loseMark("@bgMarkEffect")
+	return false
+elseif event==sgs.PhaseEnd and owner:getPhase()==sgs.Player_Finish then
+	if not owner:hasMark("@bgMark") then return end
+	if room:askForUseCard(owner, "@@luaciyincard", "@luaciyin")~=nil then
+		owner:gainMark("@jingzhong")
+	end
+end
+end,
+}
+spyangzhi:addSkill(luakunshou)
+spyuefei:addSkill(luaguonan)
+spyuefei:addSkill(luaciyin)
+--spbird:addSkill(luazhuanshi)
+--spbird:addSkill(luazhuoxie)
 spzhulei:addSkill(luayizong)
 
 sgs.LoadTranslationTable{
-	["#spbird"]="护法明王",
-	["spbird"]="大鹏金翅鸟",
-	["luazhuanshi"]="转世",
-	[":luazhuanshi"]="<b>觉醒技</b>,当你处于濒死状态时,你须回复至1点体力并\
-    摸两张牌,然后你须失去技能【啄邪】并获得技能【尽术】的效果:\
-    弃牌阶段开始时,你可以弃置任意张牌,然后亮出牌堆顶等量的牌放置在你的武将牌上，称为“习”\
-    你可以在合理时机弃置一张“习”发动【对决】【毒箭】【报国】.\
-    额外的，回合开始阶段，你无【习】，则你摸一张牌.",
-	["#luazhuanshi"]="%from 【转世】觉醒了，获得了技能【尽术】的效果",
-	["luazhuoxie"]="啄邪",
-	[":luazhuoxie"]="其他角色造成伤害后,你可以自减一点体力,然后弃置其一张牌,若如此做,你摸一张牌",
-	["#spyuefei"]="金翅雏鹰",
-	["spyuefei"]="少年岳飞",
-	["@luajinshu"]="请选择任意张手牌用以发动【尽术】",
-	["luajinshu"]="尽术",
-	["luajinshuvs"]="尽术",
-	["luajinshucard"]="尽术",
-	[":luajinshu"]="弃牌阶段开始时,你可以弃置任意张牌,然后亮出牌堆顶等量的牌放置在你的武将牌上，称为“习”\
-	你可以在合理时机弃置一张“习”发动【对决】【毒箭】【报国】.\
-	额外的，回合开始阶段，你无【习】，则你摸一张牌.",
-	["#luajinshu"]="%from把%arg2%arg被锻炼成了【习】",
-	["#luajinshudraw"]="%from 【尽术】的效果被触发,因求知欲旺盛将额外获得1张牌 ",
-	["spxi"]="【习】",
-	["#test"]="There is %from using card",
-	["luajinshubaoguo"]="学武·报国(你每受到一次伤害，可以摸X张牌（X为你已损失的体力值）)",
-	["luajinshubaoguo2"]="学武·报国(当其他角色受到伤害时，你可以弃置一张基本牌，将该伤害转移给你)",
-	["@luajinshubaoguo2"]="弃置一张基本牌，将该伤害转移给你",
-	["luajinshuduijue"]="学武·对决(你每使用【杀】造成一次伤害或受到一次其他角色使用【杀】造成的伤害，可以令除你外的任一角色进行一次判定\
-	若结果不为黑桃，则视为你对其使用一张【决斗】)",
-	["luajinshudujian"]="学武·毒箭(当你对其他角色造成伤害时，若你不在其攻击范围内，则你可以防止该伤害，令该角色将其武将牌翻面)",
+	["#sproxiel"]="叫兽",
+	["sproxiel"]="李云",
+	["luaPoisonBody"]="毒体",
+	[":luaPoisonBody"]="对你造成伤害的角色，都将中毒，持续5个回合",
+	["luaDeathMagic"]="即死",
+	["luaDeathMagicCard"]="即死魔法",
+	[":luaDeathMagic"]="<font color=deeppink><b>咒术技</b></font>,出牌阶段，你可以用一张锦囊牌，对任意一名角色施加【即死魔法】祖咒。每阶段限1次\
+	<font color=green><b>目标角色若未受伤，则附加概率为38%，默认概率20%，持续2个回合</b></font>",
+	["luadeathmagic_jur"] = "即死",
+	[":luadeathmagic_jur"] = "目标角色回合开始时，进行一次判定，若判定结果为【黑桃】，目标角色流失其当前体力值；\
+	若判定结果为梅花，除施放者外的其它角色均将被即死魔法诅咒，持续1个回合。",
+	["#luaDeathMagicFailed"]="%from 对%arg的即死魔法失效了",
+	["#luaDeathMagicOK"]="%from 中了%arg的即死魔法",
+	["#luaDeathMagicDoom"]="%from的变异即死诅咒使得其它所有人均被诅咒",
+
+
 	["#spzhulei"]="义不容辞",
 	["spzhulei"]="朱仝雷横",
 	["luayizong"] = "义纵",
@@ -1180,8 +1164,134 @@ sgs.LoadTranslationTable{
 	[":luayizong"] = "其他角色弃牌阶段结束时,若其已受伤,你可以弃置X张手牌,	将其弃牌中X张弃牌返回其手牌,然后你可以选择弃置其等量的牌或摸1张牌。",
 	["luayizong:dis"] = "弃他牌",
     ["luayizong:draw"] = "摸1张",
+	["#spyangzhi"]="青面禽兽",
+	["spyangzhi"]="杨志",
+	["~spyangzhi"]="杨志",
+	["luakunshou"]="困兽",
+	["luakunshoucard"]="困兽",
+	["luakunshou2"]="困兽",
+	[":luakunshou"]="回合结束阶段，你可以将你的武将牌翻面，然后摸X+1张并将X张牌置于你的武将牌上，称为“斗”，\	X为场上背面朝上的武将数；出牌阶段，你使用的【杀】造成伤害时，可以弃置一张“斗”，此伤害+1。\
+	额外的，你弃置的“斗”为事件牌，则可以改为指定2名角色武将牌翻面。",
+	["@luakunshou"]="困兽额外效果：请指定至多两名角色",
+	["#spyuefei"]="金翅雏鹰",
+	["spyuefei"]="少年岳飞",
+	["luaguonan"]="国难",
+	["luaciyincard"]="刺印",
+	[":luaguonan"]="出牌阶段，你使用【杀】结算后，可弃掉所有手牌；其中每有一张锦囊牌，你+1【报国】；若被【闪】避，其中每有1张基本牌，你+1点【精忠】；若造成伤害，你再对目标角色造成x点伤害，并摸X张牌，x为你弃置的装备牌数",
+	["luaciyin"]="刺印",
+	[":luaciyin"]=" 回合结束阶段，你可以弃置任意点【报国】并指定等量角色进入【报国】状态，若如此做，你+1【精忠】 ，出牌阶段，可弃4点【精忠】，则你下一张【杀】不可【闪】避。",
+	["spDou"]="【斗】",
+	["@jingzhong"]="精忠",
+	["@bgMark"]="报国",
+	["@bgMarkEffect"]="报国状态",
+	["@luaciyin"]="你可以至多指定X名角色进入【报国】状态，X为你的报国点数",
+	["#g1"]="青眼虎",
+	["g1"]="李云",
+	["luaBlackParty"]="黑手",
+	[":luaBlackParty"]="<font color=blue><b>锁定技</b></font>,你造成伤害之前，须进行一次判定，若结果为红桃，伤害将改为目标角色流失1点最大体力值; \
+回合外，每当你失去牌时，若你的当前体力值与手牌数相等，视为你使用了一张猛虎下山。",
+	["#bp1"]="%from的锁定技【黑手】被触发",
+	["#bp2"]="%from 下了黑手，敌人不死也残废",
+	["#bp2failed"]="%from 手下留情，没有下死手",
+	["bpAOE"]="亡命徒之血战八方",
+
+	["luaFresh"]="生猛",
+	[":luaFresh"]="每当你受到一次伤害，你可以进行X次判定，X为你的已损体力值+1，若判定结果为黑色,视为你对伤害来源使用了一张杀",
+	["#luaFresh"]="%from 受够了%arg 的折磨",
+
 }
 
+
+
+luaBlackParty=sgs.CreateTriggerSkill{
+name="luaBlackParty",
+events={sgs.CardLost,sgs.Predamage},--sgs.CardFinished},
+frequency=sgs.Skill_Compulsory,
+priority=3,
+on_trigger=function(self,event,player,data)
+	local room=player:getRoom()
+	local trigger=false
+	local log=sgs.LogMessage()
+	log.from =player
+	if player:getHp()==player:getHandcardNum() then trigger=true end
+	if event==sgs.CardLost and player:getPhase()==sgs.Player_NotActive and trigger then
+			local aoe=sgs.Sanguosha:cloneCard("savage_assault",sgs.Card_NoSuit,0)
+            aoe:setSkillName("bpAOE")
+			local use=sgs.CardUseStruct()
+			use.card = aoe
+			use.from = player
+			room:useCard(use,false)
+			log.type="#bp1"
+			room:sendLog(log)
+	elseif event==sgs.Predamage then
+		local enemy=data:toDamage().to
+		local judge=sgs.JudgeStruct()
+        judge.pattern=sgs.QRegExp("(.*):(heart):(.*)")
+        judge.good=true
+        judge.reason=self:objectName()
+        judge.who=player
+        room:judge(judge)
+		if judge:isGood() then
+			log.type="#bp2"
+			room:sendLog(log)
+			room:loseMaxHp(enemy)
+			--room:setPlayerProperty(enemy,"maxhp",sgs.QVariant(player:getMaxHp()-1))
+			return true
+		end
+		local log=sgs.LogMessage()
+		log.from =player
+		log.type="#bp2failed"
+		room:sendLog(log)
+	--[[elseif event==sgs.CardFinished  then
+		local card=data:toCardUse().card
+		if card:inherits("Analeptic") then return end
+		if not card:inherits("Peach") then return end
+		local log=sgs.LogMessage()
+		log.from =player
+		log.type="#bp3"
+		room:sendLog(log)
+		player:drawCards(2)	]]
+	end
+end,
+}
+
+luaFresh=sgs.CreateTriggerSkill{
+name="luaFresh",
+frequency=sgs.Skill_NotFrequent,
+events={sgs.Damaged},
+on_trigger=function(self,event,player,data)
+    local room=player:getRoom()
+	local damage=data:toDamage()
+	if not damage.from then return end
+	if not damage.from:isAlive() then return end
+	if player:isProhibited(damage.from,sgs.Sanguosha:cloneCard("slash",sgs.Card_NoSuit,0)) then return end
+    if room:askForSkillInvoke(player,"luaFresh",data)~=true then return end
+	for i=1,(player:getLostHp()+1),1 do
+		local judge=sgs.JudgeStruct()
+        judge.pattern=sgs.QRegExp("(.*):(spade|club):(.*)")
+        judge.good=true
+        judge.reason=self:objectName()
+        judge.who=player
+        room:judge(judge)
+		if judge.card:isBlack() then
+			local log=sgs.LogMessage()
+			log.type ="#luaFresh"
+			log.from=player
+			log.arg=damage.from:getGeneralName()
+			room:sendLog(log)
+			local acard=sgs.Sanguosha:cloneCard("slash",sgs.Card_NoSuit,0)
+			acard:setSkillName("luaFresh")
+			local use=sgs.CardUseStruct()
+			use.card = acard
+			use.from = player
+			use.to:append(damage.from)
+			room:useCard(use,true)
+		end
+	end
+end
+}
+g1:addSkill(luaBlackParty)
+g1:addSkill(luaFresh)
 
 --[[GeneralNameTable]]--
 mygname={
@@ -1192,7 +1302,7 @@ mygname={
 "spzhulei",
 "spzhuwu",
 "sphuyanzhuo",
-"spbird",
+"spyangzhi",
 "spyuefei",
 "sphuangxin",
 }

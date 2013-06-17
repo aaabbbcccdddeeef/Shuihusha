@@ -279,7 +279,7 @@ end
 --[[=================================by roxiel==========================================]]
 sgs.ai_chaofeng.sphuangxin = 3
 sgs.ai_chaofeng.spyuefei = 2
-sgs.ai_chaofeng.spbird = 2
+sgs.ai_chaofeng.spyangzhi = 2
 sgs.ai_chaofeng.spzhulei = 2
 sgs.ai_skill_invoke.luasaodang  = function(self, data)
 return self.player:getHp()>1
@@ -414,4 +414,91 @@ sgs.ai_skill_choice.luayizong = function(self, choice)
 	else table.remove(yztarget)
 	return "draw"
 	end
+end
+
+sgs.ai_skill_use["@@luakunshoucard"] = function(self, prompt)
+	self.room:writeToConsole("Now we are in ai_skill_use[@@luakunshoucard]!")
+	self:sort(self.enemies, "hp")
+	local targets={}
+	local first,second,third
+	self:sort(self.enemies,"hp")
+	for _,enemy in ipairs(self.enemies) do
+		if  enemy:faceUp() then
+			table.insert(targets, enemy:objectName())
+			self.room:writeToConsole(enemy:objectName())
+		end
+		if #targets >= 2 then break end
+	end
+	return "#luakunshoucard:.:->".. table.concat(targets,"+")
+end
+
+sgs.ai_skill_invoke.luakunshou=function(self,data)
+	local x=0
+	for _,theplayer in sgs.qlist(self.room:getAlivePlayers()) do
+		if not theplayer:faceUp() then x=x+1 end
+	end
+	return x>=2 or self.player:getHp()>2 
+end
+sgs.ai_skill_invoke.luakunshou2=function(self,data)
+	return true
+end
+
+sgs.ai_skill_invoke.luaguonan=function(self,data)
+	local use=data:toCardUse()
+	local hasJink=false
+	local cards=sgs.QList2Table(use.to:first():getHandcards())
+	for _, acard in ipairs(cards) do
+		if acard:inherits("Jink") then
+			hasJink=true
+		end
+	end
+	local x=0
+	local y=0
+	cards=sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, false)
+	for _, acard in ipairs(cards) do
+		if acard:inherits("EquipCard") then
+			return true		
+		elseif acard:inherits("TrickCard") or acard:inherits("BasicCard") then
+			x=x+1
+		elseif acard:inherits("EventsCard") then	
+			y=y+1
+		end
+	end			
+	return (hasJink and x>0)  or (y>0 and not hasJink)
+end
+
+
+sgs.ai_skill_invoke.luaciyin=function(self,data)
+	local effect=data:toSlashEffect()
+	local hasJink=false
+	local cards=sgs.QList2Table(effect.to:getHandcards())
+	for _, acard in ipairs(cards) do
+		if acard:inherits("Jink") or acard:inherits("Eight_Diagram") then
+			hasJink=true
+		end
+	end	
+	return not (hasJink or effect.to:hasEquip("eight_diagram"))
+end
+
+sgs.ai_skill_use["@@luaciyincard"] = function(self, prompt)
+	self.room:writeToConsole("Now we are in ai_skill_use[@@luaciyincard]!")
+	self:sort(self.enemies, "hp")
+	local targets={}
+	self:sort(self.friends, "hp")
+	self:sort(self.enemies,"hp")
+	for _,f in ipairs(self.friends) do			
+		if #targets >= self.player:getMark("@bgMark") then break end
+		table.insert(targets, f:objectName())		
+	end
+	for _,e in ipairs(self.enemies) do
+		if #targets >= self.player:getMark("@bgMark") then break end
+		table.insert(targets, e:objectName())		
+	end
+	return "#luaciyincard:.:->".. table.concat(targets,"+")
+end
+
+sgs.ai_skill_invoke.luaFresh = function(self, data)
+	local damage=data:toDamage()
+	return not self:isFriend(damage.from) 
 end
