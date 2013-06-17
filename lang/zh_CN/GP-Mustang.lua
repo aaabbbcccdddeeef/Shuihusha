@@ -5,7 +5,7 @@ return {
 	["mustang"] = "午马",
 
 	["$qinming"] = "007",
-	["#qinming"] = "霹雳火", -- guan 4hp (fcdc)
+	["#qinming"] = "霹雳火", -- jiang 4hp (fcdc)
 	["qinming"] = "秦明",
 	["designer:qinming"] = "曉ャ絕對",
 	["hengsao"] = "横扫",
@@ -24,7 +24,7 @@ return {
 	["~pengqi"] = "夜幕降临，待天明再战！",
 
 	["$xueyong"] = "084",
-	["#xueyong"] = "病大虫", -- kou 3/4hp (ybyt)
+	["#xueyong"] = "病大虫", -- min 3/4hp (ybyt)
 	["xueyong"] = "薛永",
 	["cv:xueyong"] = "爪子",
 	["coder:xueyong"] = "战栗贵公子、宇文天启",
@@ -37,7 +37,7 @@ return {
 	["~xueyong"] = "遇到高手了！",
 
 	["$jiangjing"] = "053",
-	["#jiangjing"] = "神算子", -- min 3hp (fcdc)
+	["#jiangjing"] = "神算子", -- kou 3hp (fcdc)
 	["jiangjing"] = "蒋敬",
 	["tiansuan"] = "天算",
 	[":tiansuan"] = "每当两名角色进行拼点时（在双方的拼点牌亮出前），你可以观看一次双方拼点的牌，并可以将其中一张与牌堆顶第一张牌进行交换。",
@@ -89,7 +89,7 @@ return {
 	[":qiangzhan"] = "回合结束阶段开始时，你可以获得任一其他角色的至多三张手牌（至少一张）。若如此做，则其下一个回合开始时，你须将你的所有手牌交给该角色。",
 
 	["$yuehe"] = "077",
-	["#yuehe"] = "铁叫子", -- min 3hp (ttxd)
+	["#yuehe"] = "铁叫子", -- jiang 3hp (ttxd)
 	["yuehe"] = "乐和",
 	["cv:yuehe"] = "烨子【剪刀剧团】",
 	["coder:yuehe"] = "roxiel",
@@ -106,7 +106,7 @@ return {
 	["~yuehe"] = "叫子也难吹奏了。",
 
 	["$zhufu"] = "093",
-	["#zhufu"] = "笑面虎", -- kou 3hp (ybyt)
+	["#zhufu"] = "笑面虎", -- min 3hp (ybyt)
 	["zhufu"] = "朱富",
 	["cv:zhufu"] = "明哲【剪刀剧团】",
 	["coder:zhufu"] = "战栗贵公子、宇文天启",
@@ -123,7 +123,7 @@ return {
 	["~zhufu"] = "难道笑也有错？",
 
 	["$taozongwang"] = "075",
-	["#taozongwang"] = "九尾龟", -- min 3hp (bwqz)
+	["#taozongwang"] = "九尾龟", -- kou 3hp (bwqz)
 	["taozongwang"] = "陶宗旺",
 	["cv:taozongwang"] = "东方胤弘【夜澜锦音】",
 	["coder:taozongwang"] = "宇文天启",
