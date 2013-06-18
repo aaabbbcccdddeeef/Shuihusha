@@ -130,6 +130,7 @@ public:
         if(event == CardUsed){
             CardUseStruct use = data.value<CardUseStruct>();
             if(pilipili->getPhase() == Player::Play && use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
                 room->loseHp(pilipili);
                 pilipili->tag["BaonuCard"] = QVariant::fromValue((CardStar)use.card);
             }
@@ -185,6 +186,7 @@ public:
         if(event == CardUsed){
             CardUseStruct use = data.value<CardUseStruct>();
             if(use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 pilipili->tag["JizhanCard"] = QVariant::fromValue((CardStar)use.card);
             }
         }
@@ -217,6 +219,7 @@ public:
                 log.from = pilipili;
                 log.arg = objectName();
                 room->sendLog(log);
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 if(!room->askForDiscard(pilipili, objectName(), 2, true))
                     room->loseHp(pilipili);
             }
@@ -265,7 +268,7 @@ public:
                 room->broadcastInvoke("clearAG");
 
                 for(int i = cards.length() - 1; i >= 0; i--){
-                    room->throwCard(cards.at(i));
+                    //room->throwCard(cards.at(i));
                     const Card *tmp = Sanguosha->getCard(cards.at(i));
                     room->moveCardTo(tmp, NULL, Player::DrawPile);
                 }
@@ -648,7 +651,7 @@ public:
         return false;
     }
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
         return pattern == "@@zishi";
     }
 
@@ -791,18 +794,20 @@ public:
 };
 
 QiangzhanCard::QiangzhanCard(){
+    mute = true;
 }
 
 bool QiangzhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     return Self != to_select && !to_select->isKongcheng();
 }
 
-void QiangzhanCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+void QiangzhanCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     PlayerStar target = targets.first();
     int l = qMin(3, target->getHandcardNum());
     QList<int> cards = target->handCards();
     qShuffle(cards);
     cards = cards.mid(0, l);
+    room->playSkillEffect(skill_name, qrand() % 2 + 1);
     DummyCard *dummy = new DummyCard;
     foreach(int id, cards)
         dummy->addSubcard(id);
@@ -853,6 +858,7 @@ public:
                     log.from = yin;
                     log.to << player;
                     room->sendLog(log);
+                    room->playSkillEffect(objectName(), qrand() % 2 + 3);
 
                     room->obtainCard(player, card, false);
                     player->loseMark("@grabs");

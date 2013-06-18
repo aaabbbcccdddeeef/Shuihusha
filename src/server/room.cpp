@@ -447,16 +447,17 @@ void Room::gameOver(const QString &winner){
 void Room::slashEffect(const SlashEffectStruct &effect){
     effect.from->addMark("SlashCount");
 
-    QVariant data = QVariant::fromValue(effect);
-    playExtra(SlashEffect, data);
-
     SlashEffectStruct new_effect = effect;
-    if(effect.slash->objectName().startsWith("chaos")){
+    if(effect.slash->objectName() == "chaos_slash"){
         QList<DamageStruct::Nature> nats;
         nats << DamageStruct::Thunder << DamageStruct::Fire << DamageStruct::Normal;
         qShuffle(nats);
         new_effect.nature = nats.first();
     }
+
+    QVariant data = QVariant::fromValue(new_effect);
+    playExtra(SlashEffect, data);
+
     switch(new_effect.nature){
     case DamageStruct::Thunder:{
         setEmotion(new_effect.from, "thunder_slash");

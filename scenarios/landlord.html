@@ -2,9 +2,9 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>斗地主</title>
+<title>斗地主模式</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -24,7 +24,9 @@ thead, p.table.header,
 }
 
 body {
-  margin: 1em 5% 1em 5%;
+	margin: 1em 5% 1em 5%;
+	margin-top: 1em;
+	background-color: #FFFFFF;
 }
 
 a {
@@ -65,7 +67,7 @@ h3 + * {
   clear: left;
 }
 h5 {
-  font-size: 1.0em;
+  font-size: 1em;
 }
 
 div.sectionbody {
@@ -514,6 +516,30 @@ th.tableblock.valign-middle, td.tableblock.valign-middle {
 th.tableblock.valign-bottom, td.tableblock.valign-bottom {
   vertical-align: bottom;
 }
+body,td,th {
+	font-family: 微软雅黑;
+	font-size: 16px;
+}
+.STYLE90 {font-family: "宋体"}
+.STYLE98 {
+	font-size: 18px;
+	color: #CC0000;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE115 {font-family: "宋体"; font-size: 18px; }
+.STYLE116 {font-size: 18px}
+.STYLE118 {font-weight: bold; font-size: 14px; color: #000000; }
+.STYLE135 {
+	font-size: 24px;
+	color: #0066CC;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE137 {font-size: 18px; color: #0066FF; font-weight: bold; font-family: "微软雅黑"; }
+.STYLE139 {font-weight: bold; font-size: 14px; color: #000000; font-family: "微软雅黑"; }
+.STYLE141 {color: #FF0000}
+.STYLE142 {color: #0066FF}
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -712,93 +738,76 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>斗地主模式</h1>
+<h1><a name="header" id="header"></a></h1>
+<p class="sect1"><span class="STYLE115">----------------------------------------------------------------------</span></p>
 </div>
-<div id="content">
+<div class="STYLE90" id="content">
 <div class="sect1">
-<br>
-<h2 id="_说明">说明</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>模仿传统卡牌游戏“斗地主”和“挖坑”，以3人单将身份局为基本环境，衍生出的一个富有乐趣的竞技型模式。</p></div>
+  <p><span class="STYLE135">斗地主模式 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span><br>
+      <span class="STYLE137">基础配置</span>    </p>
+  <div class="sectionbody"> <span class="STYLE116">======================================================================</span>
+  <p><span class="STYLE139">由一名主公（地主）、两名反贼（佃农）构成无主公技3人局，身份均亮明。 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span></p>
+</div></div>
+<div class="sect1"><div class="sect1"><div class="sectionbody"><div class="paragraph">
+  <p><span class="STYLE137">模式设定</span> </p>
+  <p><span class="STYLE116">======================================================================</span>  </p>
+  <p class="STYLE139">★游戏开始时，先由主公选取一张武将牌作为主将，然后其余角色按相同规则选取主将。每名角色摸四张手牌，由主公开始“叫地主”。 </p>
+  <p class="STYLE139">★在叫地主环节中，若有角色选择“叫地主”，则该角色成为地主，其余角色成为佃农，然后该环节结束；若无人选择“叫地主”，则主公成为地主，两名反贼成为佃农。</p>
+  <p class="STYLE139">★叫地主环节结束后，地主选取一张武将牌作为副将，体力上限重置为最小值+1，并永久获得一个“地主技”（见详解）。 </p>
+  <p class="STYLE139">★胜利条件同身份局胜利条件。</p>
+  <p class="STYLE139">★当一名佃农阵亡后，地主须扣减1点体力上限。</p>
+  <p class="STYLE139">★在该模式中，禁用转世规则和暗战规则。</p>
+  <p class="STYLE115">----------------------------------------------------------------------</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_规则">规则</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph"><p>＊游戏采用3人局无主公技模式，1主2反，身份均亮明</p></div>
-<div class="paragraph"><p>＊游戏开始时，主公从随机5张武将牌中选择一名作为主将后，其余角色按相同规则选取主将。每人摸四张手牌，从主公开始叫地主</p></div>
-<div class="paragraph"><p>＊叫地主环节中，若有人选择叫地主，则叫地主环节结束，若无人叫，则原地主不变，否则叫地主者和原地主交换身份牌成为新的地主。游戏开始</p></div>
-<div class="paragraph"><p>＊叫地主、抢地主结束后，地主（主公）再进行一次选将，选得的将成为副将，上限重置为最小值+1，并获得一个额外技能（见详解）。</p></div>
-<div class="paragraph"><p>＊胜利条件同身份局胜利条件</p></div>
-<div class="paragraph"><p>＊当一名佃农（反贼）死亡后，地主失去1点体力上限</p></div>
-<div class="paragraph"><p>＊斗地主模式下，转世规则和暗战规则禁用。</p></div>
-</div>
-<div class="sect1">
-<h2 id="_补充">地主技</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph"><p>游戏开始时，地主会随机获得以下一项地主技：</p></div>
-<li>
-<p>
-吝啬：寅虎包李忠技能。<br>
-锁定技，你不能成为【顺手牵羊】和【过河拆桥】的目标；你的手牌上限始终等于你的体力上限。
-</p>
-</li>
-<li>
-<p>
-夺命：丑牛包李立技能。<br>
-其他角色的回合内，该角色每回复1点体力，你可以交给其两张黑色手牌，对其造成1点伤害。
-</p>
-</li>
-<li>
-<p>
-奢靡：卯兔包赵佶技能。<br>
-你可以弃置一张牌跳过你的弃牌阶段，将你的武将牌翻面；当你的武将牌被翻面时，你可以摸等同于你已损失的体力值的牌（至少为1且至多为2）。
-</p>
-</li>
-<li>
-<p>
-勒索：出牌阶段，你可以和一名其他角色拼点。若你赢，则你获得双方拼点的牌。每阶段限一次。
-</p>
-</li>
-<li>
-<p>
-逼债：出牌阶段，你使用【杀】时可以额外指定一名目标角色。
-</p>
-</li>
-<li>
-<p>
-剥削：回合开始/结束阶段开始时，你可以摸1张牌。
-</p>
-</li>
-<li>
-<p>
-放贷：出牌阶段，你可以弃置X张手牌，然后摸X+1张牌。每阶段限一次。
-</p>
-</li>
+<div class="paragraph"></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_鸣谢">鸣谢</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>本模式感谢百度[太阳神三国杀]吧 <font color=red>搞你妹的基啊</font>、<font color=red>豚紙</font> 提供创意</p></div>
+  <p><span class="STYLE137">地主技列表</span> </p>
+  <p><span class="STYLE115">======================================================================</span></p>
+  <table width="585" border="1">
+    <tr>
+      <td width="575" bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">吝啬：</span>锁定技，你不能成为【顺手牵羊】和【过河拆桥】的目标；你的手牌上限始终等于你的体力上限。 </span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">夺命：</span>其他角色的回合内，该角色每回复1点体力，你可以交给其两张黑色手牌，对其造成1点伤害。</span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">奢靡：</span> 你可以弃置X张手牌令你的手牌数不大于10（X至少为1），然后跳过你的弃牌阶段，将你的武将牌翻面；当你的武将牌被翻面时，你可以摸等同于你已损失的体力值的牌（至少为1且至多为2）。 </span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">勒索：</span>出牌阶段，你可以和一名其他角色拼点。若你赢，则你获得双方拼点的牌。每阶段限一次。</span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">逼债：</span>出牌阶段，你使用【杀】时可以额外指定一名目标角色。 </span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">剥削：</span>回合开始/结束阶段开始时，你可以摸一张牌。</span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">放贷：</span>出牌阶段，你可以弃置X张手牌，然后摸X+1张牌。每阶段限一次。 </span></td>
+    </tr>
+  </table>
+  </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_design_and_code_by_hypercross">Code by Ubun Tenkei</h3>
+<div class="sect1 STYLE90"><div class="sectionbody"><div class="paragraph"><div class="sect1">
+  <p class="STYLE118"><span class="STYLE115">---------------------------------------------------------------</span></p>
+          <div class="sectionbody"></div>
+      </div>
+        <div class="sect1">
+          <p><span class="STYLE98">鸣谢</span></p>
+          <p><span class="STYLE116">======================================================================</span>          </p>
+          <p class="STYLE139">感谢百度“太阳神三国杀”贴吧成员<span class="STYLE142">搞你妹的基啊</span>、<span class="STYLE142">豚纸</span>提供创意。</p>
+          <p class="STYLE116">----------------------------------------------------------------------</p>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    <div class="paragraph"></div>
+  </div>
 </div>
-</div>
-</div>
-<div id="footnotes"><hr /></div>
-<div id="footer">
-<div id="footer-text">
-Last updated 2012-10-14 13:37:11 北京时间（中华人民共和国国家授时中心）
-</div>
-</div>
+<p class="STYLE90">&nbsp;</p>
 </body>
 </html>

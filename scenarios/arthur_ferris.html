@@ -2,9 +2,9 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>三角含树</title>
+<title>杀上保下模式</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -24,7 +24,9 @@ thead, p.table.header,
 }
 
 body {
-  margin: 1em 5% 1em 5%;
+	margin: 1em 5% 1em 5%;
+	margin-top: 1em;
+	background-color: #FFFFFF;
 }
 
 a {
@@ -65,7 +67,7 @@ h3 + * {
   clear: left;
 }
 h5 {
-  font-size: 1.0em;
+  font-size: 1em;
 }
 
 div.sectionbody {
@@ -514,6 +516,30 @@ th.tableblock.valign-middle, td.tableblock.valign-middle {
 th.tableblock.valign-bottom, td.tableblock.valign-bottom {
   vertical-align: bottom;
 }
+body,td,th {
+	font-family: 微软雅黑;
+	font-size: 16px;
+}
+.STYLE90 {font-family: "宋体"}
+.STYLE98 {
+	font-size: 18px;
+	color: #CC0000;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE115 {font-family: "宋体"; font-size: 18px; }
+.STYLE116 {font-size: 18px}
+.STYLE118 {font-weight: bold; font-size: 14px; color: #000000; }
+.STYLE135 {
+	font-size: 24px;
+	color: #0066CC;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE137 {font-size: 18px; color: #0066FF; font-weight: bold; font-family: "微软雅黑"; }
+.STYLE139 {font-weight: bold; font-size: 14px; color: #000000; font-family: "微软雅黑"; }
+.STYLE142 {color: #0066FF}
+.STYLE143 {color: #000000; font-family: "微软雅黑"; font-size: 14px;}
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -712,59 +738,51 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>杀上保下模式</h1>
+<h1><a name="header" id="header"></a></h1>
+<p class="sect1"><span class="STYLE115">----------------------------------------------------------------------</span></p>
 </div>
-<div id="content">
+<div class="STYLE90" id="content">
 <div class="sect1">
-<br>
-<h2 id="_说明">说明</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>三人游戏时，很多人会采用“主公、反贼、内奸”三个角色进行游戏。在这样的规则下，玩家稍微有所动作，身份就一览无余，所以才有了在此基础上，修订得更刺激、更快速的游戏规则——杀上保下。玩家的游戏目标，就是“在被你的下家消灭之前，消灭你的上家”。由于该规则忽略人物身份，所以游戏中不使用身份牌。</p></div>
+  <p><span class="STYLE135">杀上保下模式 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span><br>
+      <span class="STYLE137">基础配置</span>    </p>
+  <div class="sectionbody"> <span class="STYLE116">======================================================================</span>
+  <p><span class="STYLE139">由一名主公、一名反贼和一名内奸构成无主公技3人局，身份均亮明。</span></p>
+  <p><span class="STYLE139">移除所有攻击范围大于3的武器牌。</span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span></p>
+</div></div>
+<div class="sect1"><div class="sect1"><div class="sectionbody"><div class="paragraph">
+  <p><span class="STYLE137">模式设定</span> </p>
+  <p><span class="STYLE116">======================================================================</span>  </p>
+  <p class="STYLE139">★当一名角色死亡时，其下家取得胜利。</p>
+  <p class="STYLE115">----------------------------------------------------------------------</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_规则">规则</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph"><p>1. 胜利目标：在被你的下家消灭之前，消灭你的上家。</p></div>
-<div class="paragraph"><p>2. 按普通三人身份局规则开局，之后按照杀上保下规则游戏。</p></div>
-<div class="paragraph"><p>3. 从游戏牌里挑出攻击范围4和5的武器牌，暂不使用。</p></div>
-<div class="paragraph"><p>4. 拥有主公技的角色，在此规则里无法使用主公技。</p></div>
-<div class="paragraph"><p>5. 当一名玩家被消灭时，游戏结束，其下家获胜。</p></div>
-<div class="paragraph"><p>6. 其余游戏牌的规则与正常规则相同。</p></div>
-</div>
-<div class="sect1">
-<h2 id="_鸣谢">经验心得</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>三人游戏的要点在于，杀上家的时候绝对不要忘记保护下家。因为在日常游戏中，杀下家很容易而杀上家很难。当你发动【猛虎下山】和【万箭齐发】时，首先可能受伤害的是你的下家而非上家，根据游戏规则，只要一名玩家被消灭，游戏即宣告结束，这一规则令你不得不在行动之前考虑到很多策略问题。</p></div>
-<div class="paragraph">
-  <p>比如，当你行动时，你的下家和上家都没有手牌了，此时你放【猛虎下山】或【万箭齐发】的话，按照规则是你的下家先结算，如果这时你没有办法救他，那么他就会被宣告阵亡，同时游戏结束，他的下家，也就是你的上家--你要消灭的人获胜。所以，三人游戏必须考虑实力的制衡。</p></div>
+<div class="paragraph"></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_扩展">扩展说明</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>本模式默认为3人局，你可以在服务器选项中，剧情模式下方的"高级选项"中改为4人局或5人局，规则和3人局相同。</p></div>
-<div class="paragraph">
-  <p>4人局的时候，只须从游戏牌里挑出攻击范围5的武器即可</p></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_design_and_code_by_ubuntenkei">Code by Ubun Tenkei</h3>
+  <p><span class="STYLE137">其他设定</span> </p>
+  <p><span class="STYLE115">======================================================================</span></p>
+  <p class="STYLE143">★玩家可以在服务器选项下的&quot;高级选项&quot;中设置该模式的游戏人数（最大为5），规则同上。</p>
+  <p class="STYLE143">★4人局时，移除所有攻击范围大于4的武器牌，以此类推。</p>
 </div>
 </div>
 </div>
-<div id="footnotes"><hr /></div>
-<div id="footer">
-<div id="footer-text">
-Last updated 2012-12-15 16:49:09 北京时间（中华人民共和国国家授时中心）
+<div class="sect1 STYLE90"><div class="sectionbody"><div class="paragraph"><div class="sect1">
+  <p class="STYLE118"><span class="STYLE115">---------------------------------------------------------------</span></p>
+          <div class="sectionbody"></div>
+      </div>
+        <div class="sect1">
+          <p><span class="STYLE98">备注</span></p>
+          <p><span class="STYLE116">======================================================================</span>          </p>
+          <p class="STYLE139">“你保护的人，正是预谋杀害你的凶手”，在这样一个残酷的模式中，每名玩家需综合考虑场上角色的实力，进行制衡，方能以智取胜。</p>
+          <p class="STYLE116">----------------------------------------------------------------------</p>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    <div class="paragraph"></div>
+  </div>
 </div>
-</div>
+<p class="STYLE90">&nbsp;</p>
 </body>
 </html>

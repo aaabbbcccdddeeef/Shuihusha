@@ -752,6 +752,8 @@ QList<int> Engine::getRandomCards() const{
                 list.removeOne(98);
             }
         }
+        if(Config.GameMode != "02_1v1" && card->objectName() == "yuukirito")
+            continue;
         else if(!ban_package.contains(card->getPackage()))
             list << card->getId();
     }

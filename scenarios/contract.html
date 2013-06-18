@@ -2,9 +2,9 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>兄弟联</title>
+<title>兄弟联模式</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -24,7 +24,9 @@ thead, p.table.header,
 }
 
 body {
-  margin: 1em 5% 1em 5%;
+	margin: 1em 5% 1em 5%;
+	margin-top: 1em;
+	background-color: #FFFFFF;
 }
 
 a {
@@ -65,7 +67,7 @@ h3 + * {
   clear: left;
 }
 h5 {
-  font-size: 1.0em;
+  font-size: 1em;
 }
 
 div.sectionbody {
@@ -514,6 +516,31 @@ th.tableblock.valign-middle, td.tableblock.valign-middle {
 th.tableblock.valign-bottom, td.tableblock.valign-bottom {
   vertical-align: bottom;
 }
+body,td,th {
+	font-family: 微软雅黑;
+	font-size: 16px;
+}
+.STYLE90 {font-family: "宋体"}
+.STYLE98 {
+	font-size: 18px;
+	color: #CC0000;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE115 {font-family: "宋体"; font-size: 18px; }
+.STYLE116 {font-size: 18px}
+.STYLE118 {font-weight: bold; font-size: 14px; color: #000000; }
+.STYLE135 {
+	font-size: 24px;
+	color: #0066CC;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE137 {font-size: 18px; color: #0066FF; font-weight: bold; font-family: "微软雅黑"; }
+.STYLE139 {font-weight: bold; font-size: 14px; color: #000000; font-family: "微软雅黑"; }
+.STYLE141 {color: #FF0000}
+.STYLE142 {color: #0066FF}
+.STYLE143 {font-weight: bold; font-size: 14px; color: #FF0000; font-family: "微软雅黑"; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -712,48 +739,61 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>兄弟联模式</h1>
+<h1><a name="header" id="header"></a></h1>
+<p class="sect1"><span class="STYLE115">----------------------------------------------------------------------</span></p>
 </div>
-<div id="content">
+<div class="STYLE90" id="content">
 <div class="sect1">
-<br>
-<h2 id="_说明">说明</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>原名魔法少女模式，取材于《樱战杀》的两个游戏机制。在游戏中充分体现了水浒传中义释良将，义结金兰的经典场景。玩家在游戏中体会到的不仅是杀戮和掠夺，更多的是宽恕、理解、帮助和团队精神。</p></div>
+  <p><span class="STYLE135">兄弟联模式 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span><br>
+      <span class="STYLE137">基础配置</span>    </p>
+  <div class="sectionbody"> <span class="STYLE116">======================================================================</span>
+  <p><span class="STYLE139">由八名反贼构成8人局，身份均亮明。 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span></p>
+</div></div>
+<div class="sect1"><div class="sect1"><div class="sectionbody"><div class="paragraph">
+  <p><span class="STYLE137">模式设定</span> </p>
+  <p><span class="STYLE116">======================================================================</span>  </p>
+  <p class="STYLE139">★在你杀死一名其他角色前，若你无战友，则你可以交给该角色一张牌，令该角色解除死亡状态、当前体力值调整为1并摸两张牌。然后该角色成为你的战友，你与其组成兄弟联。</p>
+  <p class="STYLE139">★若一名角色杀死其战友，则该角色须扣减1点体力上限。</p>
+  <p class="STYLE139">★在你的战友阵亡后，你与其组成的兄弟联宣告解散，然后你可以通过第一条设定里的规则义释新的战友。</p>
+  <p class="STYLE139">★组成兄弟联后，你与战友均获得模式特有技能“援助合击”和“队友保护”（见详解）。</p>
+  <p class="STYLE139">★当除你（和你的战友）外的角色均阵亡时，你（和你的战友）取得胜利。</p>
+  <p class="STYLE115">----------------------------------------------------------------------</p>
+</div>
+<div class="paragraph"></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_规则">规则</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph"><p>＊游戏采用8人局模式，初始身份均为反贼。</p></div>
-<div class="paragraph"><p>＊当你杀死一名其他角色前（时机为濒死、求肉之后），若你无战友，可以交给其一张牌，和其签订战友契约。同时该角色解除死亡状态、重置为1点体力并摸两张牌。</p></div>
-<div class="paragraph"><p>＊杀死战友是为人所不齿的行径，凶手将会受到体力上限-1的惩罚。</p></div>
-<div class="paragraph"><p>＊当你的战友阵亡后，契约解除。你可以重新义释新的战友。</p></div>
-<div class="paragraph"><p>＊【援助合击】当你对一名角色使用【杀】时，若该角色也在你的战友的攻击范围内，你的战友可以出一张【杀】，令你的【杀】不可被闪避。</p></div>
-<div class="paragraph"><p>＊【队友保护】当你的战友受到伤害时，若其在你的攻击范围内，你可以出一张【闪】，令此伤害-1</p></div>
-<div class="paragraph"><p>＊当你或你和你的队友消灭了所有的敌人时，游戏结束，你方取得胜利。</p></div>
-</div>
-<div class="sect1">
-<h2 id="_补充">补充</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>【援助合击】和【队友保护】属于模式规则，不是武将技，不会受到奇门等技能的影响。</p></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_design_and_code_by_hypercross">Design and code by Ubun Tenkei</h3>
+  <p><span class="STYLE137">模式特有技能</span> </p>
+  <p><span class="STYLE115">======================================================================</span></p>
+  <table width="590" border="1">
+    <tr>
+      <td width="594" bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">援助合击：</span>当你的战友使用【杀】指定任一其他角色为目标时，若该角色在你的攻击范围内，则你可以打出一张【杀】，令你的战友使用的【杀】不能被【闪】响应。</span></td>
+    </tr>
+    <tr>
+      <td bordercolor="#000000" bgcolor="#DBD1A4"><span class="STYLE139"><span class="STYLE141">队友保护：</span>当你的战友受到伤害时，若其在你的攻击范围内，你可以打出一张【闪】，令该伤害-1。 </span></td>
+    </tr>
+  </table>
+  <p><span class="STYLE143">★“援助合击”和“队友保护”属于模式特有技能，不会受到如“奇门”等技能或其他因素影响。</span></p>
 </div>
 </div>
 </div>
-<div id="footnotes"><hr /></div>
-<div id="footer">
-<div id="footer-text">
-Last updated 2012-10-14 13:37:11 北京时间（中华人民共和国国家授时中心）
+<div class="sect1 STYLE90"><div class="sectionbody"><div class="paragraph"><div class="sect1">
+  <p class="STYLE118"><span class="STYLE115">---------------------------------------------------------------</span></p>
+          <div class="sectionbody"></div>
+      </div>
+        <div class="sect1">
+          <p><span class="STYLE98">鸣谢</span></p>
+          <p><span class="STYLE116">======================================================================</span>          </p>
+          <p class="STYLE139">该模式原名为<span class="STYLE142">“魔法少女模式”</span>，取材于<span class="STYLE142">《樱战杀》</span>的两个游戏机制。</p>
+          <p class="STYLE116">----------------------------------------------------------------------</p>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    <div class="paragraph"></div>
+  </div>
 </div>
-</div>
+<p class="STYLE90">&nbsp;</p>
 </body>
 </html>

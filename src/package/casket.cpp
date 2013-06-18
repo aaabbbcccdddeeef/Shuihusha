@@ -242,8 +242,9 @@ public:
         QList<ServerPlayer *> huhuhu = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *huhu, huhuhu){
             if(player->hasMark("lucky_jur"))
-                continue;
+                break;
             if(room->askForCard(huhu, "..", "@suqing:" + player->objectName(), true, QVariant::fromValue(damage), CardDiscarded)){
+                room->playSkillEffect(objectName());
                 LogMessage g;
                 g.type = "#InvokeSkill";
                 g.from = huhu;
@@ -258,6 +259,7 @@ public:
 XiepoCard::XiepoCard(){
     target_fixed = true;
     will_throw = false;
+    mute = true;
 }
 
 void XiepoCard::onUse(Room *, const CardUseStruct &card_use) const{
@@ -323,6 +325,7 @@ public:
             int hpum = player->getHp() + jiashi->getHp();
             if(handum >= hpum && jiashi->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 player->tag["XiepoSource"] = QVariant::fromValue(jiashi);
+                room->playSkillEffect(objectName());
                 if(!room->askForUseCard(player, "@@xiepo", "@xiepo:" + jiashi->objectName()))
                     player->turnOver();
                 player->tag.remove("XiepoSource");
@@ -335,7 +338,7 @@ public:
 class Dingxin: public TriggerSkill{
 public:
     Dingxin():TriggerSkill("dingxin"){
-        events << PreConjuring << Death;
+        events << PreConjuring << Conjured << Death;
         frequency = Compulsory;
     }
 
@@ -361,11 +364,14 @@ public:
                     if(!jurs.isEmpty())
                         tmp->removeJur(jurs.first());
                 }
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
             }
         }
         else{
             if(room->findPlayerBySkillName(objectName())){
                 QStringList dataa = data.toString().split("*");
+                if(dataa.at(1) != "100")
+                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 dataa.replace(1, "100");
                 data = dataa.join("*");
             }
@@ -392,8 +398,10 @@ public:
                     continue;
                 if(player->hasMark("chaos_jur"))
                     break;
-                if(ligu->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player)))
+                if(ligu->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
+                    room->playSkillEffect(objectName());
                     player->gainJur("chaos_jur", 3);
+                }
             }
         }
         return false;
@@ -424,6 +432,7 @@ public:
         log.from = player;
         log.arg = objectName();
         room->sendLog(log);
+        room->playSkillEffect(objectName());
 
         QList<ServerPlayer *> targets;
         foreach(ServerPlayer *tmp, room->getOtherPlayers(player))
@@ -489,7 +498,7 @@ public:
             log.from = player;
             log.arg = objectName();
             room->sendLog(log);
-            player->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), player->getGender() == General::Male ? qrand() % 2 + 1: qrand() % 2 + 3);
             room->loseMaxHp(player, damage.damage);
             return true;
         }

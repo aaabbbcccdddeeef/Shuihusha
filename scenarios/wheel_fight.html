@@ -2,9 +2,9 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>车轮战</title>
+<title>车轮战模式</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -24,7 +24,9 @@ thead, p.table.header,
 }
 
 body {
-  margin: 1em 5% 1em 5%;
+	margin: 1em 5% 1em 5%;
+	margin-top: 1em;
+	background-color: #FFFFFF;
 }
 
 a {
@@ -65,7 +67,7 @@ h3 + * {
   clear: left;
 }
 h5 {
-  font-size: 1.0em;
+  font-size: 1em;
 }
 
 div.sectionbody {
@@ -514,6 +516,30 @@ th.tableblock.valign-middle, td.tableblock.valign-middle {
 th.tableblock.valign-bottom, td.tableblock.valign-bottom {
   vertical-align: bottom;
 }
+body,td,th {
+	font-family: 微软雅黑;
+	font-size: 16px;
+}
+.STYLE90 {font-family: "宋体"}
+.STYLE98 {
+	font-size: 18px;
+	color: #CC0000;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE115 {font-family: "宋体"; font-size: 18px; }
+.STYLE116 {font-size: 18px}
+.STYLE118 {font-weight: bold; font-size: 14px; color: #000000; }
+.STYLE135 {
+	font-size: 24px;
+	color: #0066CC;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE137 {font-size: 18px; color: #0066FF; font-weight: bold; font-family: "微软雅黑"; }
+.STYLE139 {font-weight: bold; font-size: 14px; color: #000000; font-family: "微软雅黑"; }
+.STYLE142 {color: #0066FF}
+.STYLE143 {font-weight: bold; font-size: 14px; color: #FF0000; font-family: "微软雅黑"; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -712,49 +738,48 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>车轮战模式</h1>
+<h1><a name="header" id="header"></a></h1>
+<p class="sect1"><span class="STYLE115">----------------------------------------------------------------------</span></p>
 </div>
-<div id="content">
+<div class="STYLE90" id="content">
 <div class="sect1">
-<br>
-<h2 id="_说明">说明</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>本模式形式接近于2人局的无尽模式，某角色阵亡后，更换武将上场再战，直到满足游戏结束条件为止，阵亡次数最少的角色获胜。</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_规则">规则</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph"><p>＊游戏采用2人局模式，1主1内，身份亮明。基本规则同2人身份局</p></div>
-<div class="paragraph"><p>＊当一名角色阵亡时，从未上场的武将中随机选出5名，将武将牌更换为其中之一，摸四张手牌，解除阵亡状态。阵亡次数+1</p></div>
-<div class="paragraph"><p>＊当一方连续杀死三次对方时，将强制更换武将牌，不计入死亡次数。</p></div>
-<div class="paragraph"><p>＊当达到游戏结束的条件时（须在服务器选项中，剧情模式下方的"高级选项"中提前设置好最大阵亡次数），游戏结束，阵亡次数最少的角色获胜。</p></div>
-<div class="paragraph"><p>＊任何一方杀死另一方，摸三张牌；更换武将牌时（包括阵亡和一穿三）弃置所有装备和手牌，然后摸3~4张牌</p></div>
-<div class="paragraph"><p>＊所有体力流失均视为另一方对你造成的伤害</p></div>
-<div class="paragraph"><p>＊车轮战模式下，你不能获得或失去任何非固有技能（固有技能指武将本身拥有的技能），比如觉醒技觉醒后不会获得技能</p></div>
-<div class="paragraph"><p>＊车轮战模式下，不要同时开启暗战规则、双将模式、同将模式和无尽模式。否则可能无法正常游戏。</p></div>
-</div>
-<div class="sect1">
-<h2 id="_鸣谢">鸣谢</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>本模式感谢百度[太阳神三国杀]吧 <font color=red>liutreetree</font> 提供创意</p></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_design_and_code_by_ubuntenkei">Code by Ubun Tenkei</h3>
+  <p><span class="STYLE135">车轮战模式 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span><br>
+      <span class="STYLE137">基础配置</span>    </p>
+  <div class="sectionbody"> <span class="STYLE116">======================================================================</span>
+  <p><span class="STYLE139">由一名主公、一名内奸构成2人局，身份均亮明。</span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span></p>
+</div></div>
+<div class="sect1"><div class="sect1"><div class="sectionbody"><div class="paragraph">
+  <p><span class="STYLE137">模式设定</span> </p>
+  <p><span class="STYLE116">======================================================================</span>  </p>
+  <p class="STYLE139">★当一名角色阵亡后，须从未上场的武将中选取一名更换当前武将，然后摸四张手牌，角色阵亡次数+1。 </p>
+  <p class="STYLE139">★当一方连续杀死三次对方时，须更换武将牌，不计入角色阵亡次数。</p>
+  <p class="STYLE139">★当满足游戏结束条件时（在服务器选项下的&quot;高级选项&quot;中设置的最大阵亡次数），角色阵亡累计次数较少的角色获胜。  </p>
+  <p class="STYLE139">★任何一方杀死对方后，摸三张牌；更换武将牌时，须弃置所有牌，然后摸三至四张牌。 </p>
+  <p class="STYLE139">★在该模式中，所有失去体力均视为对方造成的伤害。 </p>
+  <p class="STYLE139">★在该模式中，任何角色不能获得或失去任何非武将本身拥有的技能。例如：琼英觉醒后不能获得技能“饮羽”等。</p>
+  <p class="STYLE143">★在该模式中，应避免同时开启暗战规则、双将模式、同将模式和无尽模式。否则游戏可能将无法正常运行。</p>
+  </div>
 </div>
 </div>
 </div>
-<div id="footnotes"><hr /></div>
-<div id="footer">
-<div id="footer-text">
-Last updated 2012-10-14 13:37:11 北京时间（中华人民共和国国家授时中心）
 </div>
+<div class="sect1 STYLE90"><div class="sectionbody"><div class="paragraph"><div class="sect1">
+  <p class="STYLE118"><span class="STYLE115">---------------------------------------------------------------</span></p>
+          <div class="sectionbody"></div>
+      </div>
+        <div class="sect1">
+          <p><span class="STYLE98">鸣谢</span></p>
+          <p><span class="STYLE116">======================================================================</span>          </p>
+          <p class="STYLE139">感谢百度“太阳神三国杀”贴吧成员<span class="STYLE142">liutreetree</span>提供创意。</p>
+          <p class="STYLE116">----------------------------------------------------------------------</p>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    <div class="paragraph"></div>
+  </div>
 </div>
+<p class="STYLE90">&nbsp;</p>
 </body>
 </html>

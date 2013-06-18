@@ -201,9 +201,9 @@ public:
     }
 };
 
-class Aozhan: public TriggerSkill{
+class Yangzhan: public TriggerSkill{
 public:
-    Aozhan():TriggerSkill("aozhan"){
+    Yangzhan():TriggerSkill("yangzhan"){
         events << Damage << CardLost;
         frequency = Compulsory;
     }
@@ -462,7 +462,7 @@ public:
                     room->acquireSkill(player, "wuzu");
                     room->acquireSkill(player, "guzhan");
                     room->acquireSkill(player, "duduan");
-                    room->acquireSkill(player, "Aozhan");
+                    room->acquireSkill(player, "yangzhan");
 
                     QList<const Card *> judges = player->getCards("j");
                     foreach(const Card *card, judges)
@@ -518,7 +518,7 @@ ImpasseScenario::ImpasseScenario()
 
     skills << new Silue << new Kedi
             << new Tiemu << new Yuanyin << new YuanyinEx
-            << new Guzhan << new Aozhan << new Duduan;
+            << new Guzhan << new Yangzhan << new Duduan;
 
 }
 

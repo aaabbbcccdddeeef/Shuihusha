@@ -121,7 +121,7 @@ CoupleScenario::CoupleScenario()
     map["wangying"] = "husanniang";
     map["qingzhang"] = "sunerniang";
     //map["sunxin"] = "gudasao";
-    //map["wangqing"] = "duansanniang";
+    map["wangqing"] = "duansanniang";
     map["yanqing"] = "lishishi";
     //map["yangxiong"] = "panqiaoyun";
     map["shijin"] = "liruilan";
@@ -130,6 +130,7 @@ CoupleScenario::CoupleScenario()
     //map["keyin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
     map["sun_peiruhai"] = "moon_panqiaoyun";
+    map["sun_ligu"] = "moon_jiashi";
 
     full_map = map;
     full_map["wuda"] = "panjinlian";

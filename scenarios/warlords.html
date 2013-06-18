@@ -2,9 +2,9 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>投名状</title>
+<title>投名状模式</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -24,7 +24,9 @@ thead, p.table.header,
 }
 
 body {
-  margin: 1em 5% 1em 5%;
+	margin: 1em 5% 1em 5%;
+	margin-top: 1em;
+	background-color: #FFFFFF;
 }
 
 a {
@@ -65,7 +67,7 @@ h3 + * {
   clear: left;
 }
 h5 {
-  font-size: 1.0em;
+  font-size: 1em;
 }
 
 div.sectionbody {
@@ -514,6 +516,29 @@ th.tableblock.valign-middle, td.tableblock.valign-middle {
 th.tableblock.valign-bottom, td.tableblock.valign-bottom {
   vertical-align: bottom;
 }
+body,td,th {
+	font-family: 微软雅黑;
+	font-size: 16px;
+}
+.STYLE90 {font-family: "宋体"}
+.STYLE98 {
+	font-size: 18px;
+	color: #CC0000;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE115 {font-family: "宋体"; font-size: 18px; }
+.STYLE116 {font-size: 18px}
+.STYLE118 {font-weight: bold; font-size: 14px; color: #000000; }
+.STYLE135 {
+	font-size: 24px;
+	color: #0066CC;
+	font-weight: bold;
+	font-family: "微软雅黑";
+}
+.STYLE137 {font-size: 18px; color: #0066FF; font-weight: bold; font-family: "微软雅黑"; }
+.STYLE139 {font-weight: bold; font-size: 14px; color: #000000; font-family: "微软雅黑"; }
+.STYLE142 {color: #0066FF}
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -712,44 +737,48 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>投名状模式</h1>
+<h1><a name="header" id="header"></a></h1>
+<p class="sect1"><span class="STYLE115">----------------------------------------------------------------------</span></p>
 </div>
-<div id="content">
+<div class="STYLE90" id="content">
 <div class="sect1">
-<br>
-<h2 id="_说明">说明</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>本模式为水浒杀专属特色模式。</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_规则">规则</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph"><p>＊8人局，所有角色都为平民（反贼），随机选择一名角色开始行动。</p></div>
-<div class="paragraph"><p>＊若无寨主，当场上有角色死亡时，系统随机选出一名存活角色作为寨主（主公）。</p></div>
-<div class="paragraph"><p>＊若无军师，当场上有除寨主外的角色死亡时，寨主选出一名其他角色作为军师（忠臣）。</p></div>
-<div class="paragraph"><p>＊若场上有军师，则每名角色每造成1点伤害，获得一个“血”标记。</p></div>
-<div class="paragraph"><p>＊杀死军师的平民，变为“军师”；杀死寨主的平民，变为“寨主”，并可以选择一名拥有“血”标记最多的其他角色作为新的“军师”（原军师变平民）。</p></div>
-<div class="paragraph"><p>＊若军师杀死寨主，或寨主杀死军师，则弃置自己的所有牌，并恢复平民。</p></div>
-<div class="paragraph"><p>＊胜利条件：所有平民死亡，寨主（和军师）获胜。</p></div>
-</div>
-<div class="sect1">
-<h2 id="_鸣谢">鸣谢</h2>
-<div class="sectionbody">
-<br>
-<div class="paragraph">
-  <p>设计：烨子风暴<br>程序：Slob</p></div>
+  <p><span class="STYLE135">投名状模式 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span><br>
+      <span class="STYLE137">基础配置</span>    </p>
+  <div class="sectionbody"> <span class="STYLE116">======================================================================</span>
+  <p><span class="STYLE139">由八名反贼（贼寇）构成8人局，身份均亮明。 </span></p>
+  <p><span class="STYLE115">----------------------------------------------------------------------</span></p>
+</div></div>
+<div class="sect1"><div class="sect1"><div class="sectionbody"><div class="paragraph">
+  <p><span class="STYLE137">模式设定</span> </p>
+  <p><span class="STYLE116">======================================================================</span>  </p>
+  <p class="STYLE139">★游戏开始时，系统随机选择一名角色，由该角色首先开始行动。 </p>
+  <p class="STYLE139">★当任一角色死亡时，若场上无“寨主”，则系统随机选择一名存活角色，该角色身份转变为“寨主”。</p>
+  <p class="STYLE139">★当任一除寨主外的角色死亡时，寨主须选择任一其他存活角色，该角色身份转变为“军师”。</p>
+  <p class="STYLE139">★任意角色每造成1点伤害，若场上有军师，则该角色获得一枚“血”标记。</p>
+  <p class="STYLE139">★贼寇杀死军师后，其身份转变为军师（阵亡的军师身份转变为贼寇）；贼寇杀死寨主后，其身份转变为寨主（阵亡的寨主身份转变为贼寇），并可以选择一名拥有“血”标记最多的角色，该角色身份转变为“军师”（原军师的身份转变为贼寇）。</p>
+  <p class="STYLE139">★若寨主杀死军师（或军师杀死寨主），则须弃置其所有牌，然后身份转变为贼寇。</p>
+  <p class="STYLE139">★当贼寇均阵亡时，寨主（和军师）取得胜利。</p>
+  </div>
 </div>
 </div>
 </div>
 </div>
-<div id="footnotes"><hr /></div>
-<div id="footer">
-<div id="footer-text">
+<div class="sect1 STYLE90"><div class="sectionbody"><div class="paragraph"><div class="sect1">
+  <p class="STYLE118"><span class="STYLE115">---------------------------------------------------------------</span></p>
+          <div class="sectionbody"></div>
+      </div>
+        <div class="sect1">
+          <p><span class="STYLE98">鸣谢</span></p>
+          <p><span class="STYLE116">======================================================================</span>          </p>
+          <p class="STYLE139">感谢<span class="STYLE142">烨子风暴</span>提供创意、<span class="STYLE142">Slob</span>程序设计。</p>
+          <p class="STYLE116">----------------------------------------------------------------------</p>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    <div class="paragraph"></div>
+  </div>
 </div>
-</div>
+<p class="STYLE90">&nbsp;</p>
 </body>
 </html>
