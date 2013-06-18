@@ -850,17 +850,29 @@ public:
         view_as_skill = new QiangzhanViewAsSkill;
     }
 
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
-        if(player->getPhase() == Player::Finish)
+        if(player->getPhase() == Player::Finish && player->hasSkill(objectName()))
             room->askForUseCard(player, "@@qiangzhan", "@qiangzhan", true);
-        else if(player->getPhase() == Player::RoundStart){
-            ServerPlayer *target = room->findPlayersByProperty("mark", "@grabs").value(0, NULL);
-            DummyCard *card = player->wholeHandCards();
-            if(card && target){
-                room->obtainCard(target, card, false);
-                target->loseMark("@grabs");
-                delete card;
+        else if(player->getPhase() == Player::RoundStart && player->hasMark("@grabs")){
+            ServerPlayer *yin = room->findPlayerBySkillName(objectName());
+            if(yin){
+                DummyCard *card = yin->wholeHandCards();
+                if(card){
+                    LogMessage log;
+                    log.type = "#Qiangzhan";
+                    log.from = yin;
+                    log.to << player;
+                    room->sendLog(log);
+
+                    room->obtainCard(player, card, false);
+                    player->loseMark("@grabs");
+                    delete card;
+                }
             }
         }
         return false;
