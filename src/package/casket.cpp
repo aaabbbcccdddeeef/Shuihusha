@@ -321,7 +321,7 @@ public:
         foreach(PlayerStar jiashi, jiashis){
             int handum = player->getHandcardNum();
             int hpum = player->getHp() + jiashi->getHp();
-            if(handum >= hpum && jiashi->askForSkillInvoke(objectName())){
+            if(handum >= hpum && jiashi->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 player->tag["XiepoSource"] = QVariant::fromValue(jiashi);
                 if(!room->askForUseCard(player, "@@xiepo", "@xiepo:" + jiashi->objectName()))
                     player->turnOver();
@@ -392,7 +392,7 @@ public:
                     continue;
                 if(player->hasMark("chaos_jur"))
                     break;
-                if(ligu->askForSkillInvoke(objectName()))
+                if(ligu->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player)))
                     player->gainJur("chaos_jur", 3);
             }
         }

@@ -110,3 +110,19 @@ suyuanjing 1
 
 sun_peiruhai 3 *
 moon_panqiaoyun 9 *
+
+qinming 4
+pengqi 7
+xueyong 2
+jiangjing 6
+guosheng 2
+duansanniang 6
+duqian 1
+hancunbao 4
+yintianxi 3
+yuehe 6
+zhufu 7
+taozongwang 4
+
+sun_ligu 3 *
+moon_jiashi 5 *

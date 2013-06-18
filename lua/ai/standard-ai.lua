@@ -162,7 +162,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 		end
 	end
 
---[[
+
 	local shit
 	shit = self:getCard("Shit")
 	if shit then
@@ -170,7 +170,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 		self:sort(self.enemies,"hp")
 		if use.to then use.to:append(self.enemies[1]) end
 		return
-	end]]
+	end
 
 	if #self.friends == 1 then return end
 

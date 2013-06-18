@@ -81,31 +81,6 @@ sgs.ai_filterskill_filter["zhuying"] = function(card, card_place)
 	if card:inherits("Analeptic") then return ("peach:zhuying[%s:%s]=%d"):format(suit, number, card_id) end
 end
 
--- zishi
-sgs.ai_skill_use["@@zishi"] = function(self, prompt)
-	if self.player:isKongcheng() then return "." end
-	local target = self.player:getTag("ZishiSource"):toPlayer()
-	local cards = self.player:getHandcards()
-	cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
-	for _,card in ipairs(cards) do
-		if card:isBlack() and self:getUseValue(card) < 6 then
-			if (self:isFriend(target) and target:getHandcardNum() < 3) or self:isEnemy(target) then
-				return "@ZishiCard=" .. card:getEffectiveId() .. "->."
-			end
-		end
-	end
-	return "."
-end
-sgs.ai_skill_choice["zishi"] = function(self, choice)
-	local source = self.player:getTag("ZishiSource"):toPlayer()
-	if self:isFriend(source) then
-		return "duo"
-	else
-		return "shao"
-	end
-end
-
 -- zhangshi
 local zhangshi_skill={}
 zhangshi_skill.name="zhangshi"

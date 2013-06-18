@@ -88,5 +88,58 @@ sgs.ai_skill_playerchosen["lichen"] = function(self, targets)
 		return targets:first()
 	end
 end
-
 -- lunhui
+
+-- sun_ligu
+sgs.ai_chaofeng.sun_ligu = -1
+-- tiaonong
+sgs.ai_skill_invoke["tiaonong"] = sgs.ai_skill_invoke["lihun"]
+-- caimi
+sgs.ai_skill_playerchosen["caimi"] = function(self, targets)
+	local enemies = sgs.QList2Table(targets)
+	self:sort(enemies)
+	for _, e in ipairs(enemies) do
+		if self:isEnemy(e) then
+			return e
+		end
+	end
+	return enemies[1]
+end
+-- gouxian
+
+-- moon_jiashi
+sgs.ai_chaofeng.moon_jiashi = 4
+-- suqing
+sgs.ai_skill_cardask["@suqing"] = function(self, data)
+	local damage = data:toDamage()
+	if not self:isFriend(damage.to) or damage.damage < 1 then return "." end
+	local cards = sgs.QList2Table(self.player:getCards("he"))
+	self:sortByUseValue(cards, false)
+	return cards[1]:getEffectiveId()
+end
+-- xiepo
+sgs.ai_skill_invoke["xiepo"] = sgs.ai_skill_invoke["lihun"]
+sgs.ai_skill_use["@@xiepo"] = function(self, prompt)
+--	local jiashi = self.player:getTag("XiepoSource"):toPlayer()
+	local cards = sgs.QList2Table(self.player:getCards("h"))
+	local card_ids = {}
+	for _, car in ipairs(cards) do
+		if #card_ids == 0 then
+			if car:isKindOf("Slash") or car:isKindOf("Jink") then
+				table.insert(card_ids, car:getEffectiveId())
+			end
+		elseif #card_ids == 1 then
+			local card1 = sgs.Sanguosha:getCard(card_ids[1])
+			if card1:isKindOf("Slash") and car:isKindOf("Jink") then
+				table.insert(card_ids, car:getEffectiveId())
+			elseif car:isKindOf("Slash") and card1:isKindOf("Jink") then
+				table.insert(card_ids, car:getEffectiveId())
+			end
+		end
+		if #card_ids == 2 then
+			return "@XiepoCard=" .. table.concat(card_ids, "+") .. "->."
+		end
+	end
+	return "."
+end
+-- dingxin

@@ -129,7 +129,7 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *pilipili, QVariant &data) const{
         if(event == CardUsed){
             CardUseStruct use = data.value<CardUseStruct>();
-            if(pilipili->getPhase() == Player::Play && use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName())){
+            if(pilipili->getPhase() == Player::Play && use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName(), data)){
                 room->loseHp(pilipili);
                 pilipili->tag["BaonuCard"] = QVariant::fromValue((CardStar)use.card);
             }
@@ -184,7 +184,7 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *pilipili, QVariant &data) const{
         if(event == CardUsed){
             CardUseStruct use = data.value<CardUseStruct>();
-            if(use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName())){
+            if(use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName(), data)){
                 pilipili->tag["JizhanCard"] = QVariant::fromValue((CardStar)use.card);
             }
         }
@@ -711,11 +711,11 @@ NaxianCard::NaxianCard(){
     mute = true;
 }
 
-bool NaxianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool NaxianCard::targetFilter(const QList<const Player *> &, const Player *to_select, const Player *Self) const{
     if(Self->getPhase() == Player::Draw)
         return to_select != Self;
     else
-        return !to_select->isKongcheng();
+        return to_select != Self && !to_select->isKongcheng();
 }
 
 void NaxianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -1119,7 +1119,7 @@ MustangPackage::MustangPackage()
     xueyong->addSkill(new Maiyi);
     addMetaObject<MaiyiCard>();
 
-    General *jiangjing = new General(this, "jiangjing", "kou");
+    General *jiangjing = new General(this, "jiangjing", "kou", 3);
     jiangjing->addSkill(new Huazhu);
     jiangjing->addSkill(new Jingsuan);
     addMetaObject<JingsuanCard>();

@@ -1,3 +1,8 @@
+-- AI for sheep package
+
+-- tuzai&longjiao
+sgs.ai_skill_invoke["tuzai"] = true
+sgs.ai_skill_invoke["longjiao"] = true
 
 -- zaochuan
 local zaochuan_skill = {}
@@ -119,54 +124,6 @@ sgs.ai_skill_playerchosen["citan"] = function(self, targets)
 		end
 	end
 	return targets[1]
-end
-
--- bingji
-local bingji_skill={}
-bingji_skill.name = "bingji"
-table.insert(sgs.ai_skills, bingji_skill)
-bingji_skill.getTurnUseCard = function(self)
-	if not self:slashIsAvailable() or not self.player:isWounded() then return end
-	local first_found = false
-	local second_found = false
-	local first_card, second_card
-	if self.player:getHandcardNum() >= 2 then
-		local cards = self.player:getHandcards()
-		cards = sgs.QList2Table(cards)
-		for _, fcard in ipairs(cards) do
-			if not (fcard:inherits("Peach") or fcard:inherits("ExNihilo") or fcard:inherits("AOE")) then
-				first_card = fcard
-				first_found = true
-				for _, scard in ipairs(cards) do
-					if first_card ~= scard and scard:getType() == first_card:getType() and 
-						not (scard:inherits("Peach") or scard:inherits("ExNihilo") or scard:inherits("AOE")) then
-						second_card = scard
-						second_found = true
-						break
-					end
-				end
-				if second_card then break end
-			end
-		end
-	end
-	if first_found and second_found then
-		return sgs.Card_Parse("@BingjiCard=" .. first_card:getId() + second_card:getId())
-	end
-end
-sgs.ai_skill_use_func["BingjiCard"] = function(card, use, self)
-	local targetnum = self.player:getLostHp()
-	self:sort(self.enemies, "defense")
-	local a = 0
-	for _, enemy in ipairs(self.enemies) do
-		if use.to then
-			use.to:append(target)
-			a = a + 1
-		end
-		if a == 2 then
-			use.card = card
-			return
-		end
-	end
 end
 
 -- lingdi
