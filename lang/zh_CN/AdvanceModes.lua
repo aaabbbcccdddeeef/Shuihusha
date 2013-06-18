@@ -1,6 +1,7 @@
 -- translations for Advance modes
 
 return{
+	["other_rules"] = "特殊规则",
 -- 3v3
 	["new_3v3_card"] = "新3v3卡牌包",
 	["Marshal"] = "主帅",

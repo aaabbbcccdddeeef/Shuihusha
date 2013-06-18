@@ -3,6 +3,7 @@
 return {
 	["imiong"] = "阴阳",
 	["conjuring"] = "咒术",
+	["conjur_sys"] = "咒术系统",
 	
 	["moon"] = "阴",
 	["sun"] = "阳",

@@ -13,11 +13,12 @@ public:
     ScenarioOverview(QWidget *parent);
 
 private:
-    QListWidget *list;
+    QListWidget *list, *list2;
     QTextBrowser *content_box;
 
 private slots:
     void loadContent(int row);
+    void loadContent2(int row);
 };
 
 #endif // SCENARIOOVERVIEW_H
