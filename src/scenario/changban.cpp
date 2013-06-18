@@ -624,8 +624,7 @@ public:
                         if(player->getRole() == "rebel" && killer != player){
                             killer->drawCards(2);
                         }else if(player->getRole() == "loyalist" && killer->getRole() == "lord"){
-                            killer->throwAllEquips();
-                            killer->throwAllHandCards();
+                            killer->throwAllCards(true);
                         }
                     }
                 }

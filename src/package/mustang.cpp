@@ -119,76 +119,107 @@ public:
 class Baonu:public TriggerSkill{
 public:
     Baonu():TriggerSkill("baonu"){
-        events << CardUsed;
+        events << CardUsed << CardFinished << Predamage << Damage;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(!use.card->inherits("Slash"))
-            return false;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == CardUsed || event == Predamage ? 1 : -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *pilipili, QVariant &data) const{
+        if(event == CardUsed){
+            CardUseStruct use = data.value<CardUseStruct>();
+            if(pilipili->getPhase() == Player::Play && use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName())){
+                room->loseHp(pilipili);
+                pilipili->tag["BaonuCard"] = QVariant::fromValue((CardStar)use.card);
+            }
+        }
+        else if(event == Predamage){
+            DamageStruct damage = data.value<DamageStruct>();
+            CardStar slash = pilipili->tag["BaonuCard"].value<CardStar>();
+            int x = qMin(3, pilipili->getLostHp());
+            if(damage.card && damage.card == slash && damage.to->isAlive()){
+                LogMessage log;
+                log.type = "#BaonuBuff";
+                log.from = pilipili;
+                log.to << damage.to;
+                log.arg = QString::number(damage.damage);
+                log.arg2 = QString::number(damage.damage + x);
+                room->sendLog(log);
+
+                damage.damage += x;
+                data = QVariant::fromValue(damage);
+                return false;
+            }
+        }
+        else if(event == CardFinished){
+            pilipili->tag.remove("BaonuCard");
+        }
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            int x = qMin(3, pilipili->getLostHp());
+            CardStar slash = pilipili->tag["BaonuCard"].value<CardStar>();
+            if(damage.card == slash){
+                int all = pilipili->getCardCount(true);
+                if(all < x)
+                    pilipili->throwAllCards(true);
+                else
+                    room->askForDiscard(pilipili, objectName(), x, false, true);
+            }
+        }
         return false;
-    }
-};
-
-JizhanCard::JizhanCard(){
-    will_throw = false;
-}
-
-bool JizhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return to_select != Self;
-}
-
-void JizhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    Slash *slash = (Slash*)Sanguosha->getCard(getSubcards().first());
-    slash->setSkillName(skill_name);
-    CardUseStruct use;
-    use.card = slash;
-    use.from = card_use.from;
-    use.to = card_use.to;
-    room->useCard(use);
-}
-
-class JizhanViewAsSkill: public OneCardViewAsSkill{
-public:
-    JizhanViewAsSkill():OneCardViewAsSkill("jizhan"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return Slash::IsAvailable(player);
-    }
-
-    virtual bool viewFilter(const CardItem *i) const{
-        return i->getCard()->inherits("Slash");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        JizhanCard *card = new JizhanCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
     }
 };
 
 class Jizhan: public TriggerSkill{
 public:
     Jizhan():TriggerSkill("jizhan"){
-        events << SlashMissed;
-        view_as_skill = new JizhanViewAsSkill;
+        events << SlashMissed << CardUsed << CardFinished << Predamage;
     }
 
-    virtual int getPriority(TriggerEvent) const{
-        return 2;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == CardUsed || event == Predamage ? 1 : -1;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *pilipili, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(effect.slash->getSkillName() == objectName()){
-            LogMessage log;
-            log.type = "#Jizhan";
-            log.from = pilipili;
-            log.arg = objectName();
-            room->sendLog(log);
-            if(!room->askForDiscard(pilipili, objectName(), 2, true, true))
-                room->loseHp(pilipili);
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *pilipili, QVariant &data) const{
+        if(event == CardUsed){
+            CardUseStruct use = data.value<CardUseStruct>();
+            if(use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName())){
+                pilipili->tag["JizhanCard"] = QVariant::fromValue((CardStar)use.card);
+            }
+        }
+        else if(event == Predamage){
+            DamageStruct damage = data.value<DamageStruct>();
+            CardStar slash = pilipili->tag["JizhanCard"].value<CardStar>();
+            if(damage.card && damage.card == slash && damage.to->isAlive()){
+                LogMessage log;
+                log.type = "#JizhanBuff";
+                log.from = pilipili;
+                log.to << damage.to;
+                log.arg = QString::number(damage.damage);
+                log.arg2 = QString::number(damage.damage + 1);
+                room->sendLog(log);
+
+                damage.damage ++;
+                data = QVariant::fromValue(damage);
+                return false;
+            }
+        }
+        else if(event == CardFinished){
+            pilipili->tag.remove("JizhanCard");
+        }
+        else{
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            CardStar slash = pilipili->tag["JizhanCard"].value<CardStar>();
+            if(effect.slash == slash){
+                LogMessage log;
+                log.type = "#Jizhan";
+                log.from = pilipili;
+                log.arg = objectName();
+                room->sendLog(log);
+                if(!room->askForDiscard(pilipili, objectName(), 2, true))
+                    room->loseHp(pilipili);
+            }
         }
         return false;
     }
@@ -910,7 +941,6 @@ MustangPackage::MustangPackage()
 
     General *hancunbao = new General(this, "hancunbao", "guan");
     hancunbao->addSkill(new Jizhan);
-    addMetaObject<JizhanCard>();
 
     General *yintianxi = new General(this, "yintianxi", "guan", 3);
     yintianxi->addSkill(new Yiguan);

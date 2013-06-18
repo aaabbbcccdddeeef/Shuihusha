@@ -397,8 +397,7 @@ void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }else{
         room->playSkillEffect(skill_name, qrand() % 2 + 3);
         if(target->getCardCount(true) <= x){
-            target->throwAllHandCards();
-            target->throwAllEquips();
+            target->throwAllCards(true);
         }else{
             int card_id = -1;
             for(int i=1; i<=x; i++){

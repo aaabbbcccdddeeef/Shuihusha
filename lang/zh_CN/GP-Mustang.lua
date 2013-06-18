@@ -99,6 +99,7 @@ return {
 	["#hancunbao"] = "银钩铁戟", -- guan 4hp
 	["hancunbao"] = "韩存保",
 	["cv:hancunbao"] = "阿瑞",
+	["designer:hancunbao"] = "曉ャ絕對",
 	["jizhan"] = "激战",
 	[":jizhan"] = "当你使用一张【杀】时，（在结算前）你可以令该【杀】即将造成的伤害+1。若如此做，则当该【杀】被【闪】抵消时，你须选择一项：弃置两张手牌，或失去1点体力。",
 	["#Jizhan"] = "%from 出师不利，【%arg】的负面效果被触发",

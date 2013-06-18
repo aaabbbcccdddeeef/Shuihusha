@@ -116,7 +116,7 @@ public:
             log.arg = objectName();
             room->sendLog(log);
             room->playSkillEffect(objectName(), 1);
-            killer->throwAllCards();
+            killer->throwAllCards(true);
             killer->loseAllMarks("poison_jur");
         }
         else
