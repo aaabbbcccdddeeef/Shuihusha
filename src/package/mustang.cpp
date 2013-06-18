@@ -857,6 +857,7 @@ public:
                     log.type = "#Qiangzhan";
                     log.from = yin;
                     log.to << player;
+                    log.arg = objectName();
                     room->sendLog(log);
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
 

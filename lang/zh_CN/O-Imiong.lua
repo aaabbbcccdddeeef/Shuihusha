@@ -31,7 +31,7 @@ return {
 	[":lucky_jur"] = "目标角色摸牌阶段，该角色有75%的几率额外摸一张牌。共持续2个回合。",
 	["invalid_jur"] = "无效",
 
-	["#ForbidJur"] = "咒术附加失败！%from 未进入 %arg 状态",
+	["#ForbidJur"] = "咒术附加失败！%from 未被附加 %arg 状态",
 	["#UntriggerJur"] = "咒术失效！%from 的 %arg 状态 未产生任何影响",
 	["#GainJur"] = "%from 进入了 %arg 状态",
 	["#RemoveJur"] = "%from 解除了 %arg 状态",
