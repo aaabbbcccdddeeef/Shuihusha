@@ -404,8 +404,7 @@ public:
             }
             if(n < 5){
                 zhuwu->loseMark("@embattle");
-                zhuwu->throwAllEquips();
-                zhuwu->throwAllHandCards();
+                zhuwu->throwAllCards(true);
                 room->playLightbox(zhuwu, "buzhen", "5500", 5000);
             }
         }

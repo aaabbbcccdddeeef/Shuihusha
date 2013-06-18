@@ -153,13 +153,15 @@ void ServerPlayer::bury(){
     room->setEmotion(this, "death");
 }
 
-void ServerPlayer::throwAllCards(){
+void ServerPlayer::throwAllCards(bool onlyhe){
     throwAllEquips();
     throwAllHandCards();
 
-    QList<const Card *> tricks = getJudgingArea();
-    foreach(const Card *trick, tricks)
-        room->throwCard(trick);
+    if(!onlyhe){
+        QList<const Card *> tricks = getJudgingArea();
+        foreach(const Card *trick, tricks)
+            room->throwCard(trick);
+    }
 }
 
 void ServerPlayer::drawCards(int n, bool set_emotion, const QString &reason){

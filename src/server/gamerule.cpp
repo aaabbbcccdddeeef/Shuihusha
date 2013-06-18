@@ -659,8 +659,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(victim->getRole() == "rebel" && killer != victim){
                     killer->drawCards(3);
                 }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
-                    killer->throwAllEquips();
-                    killer->throwAllHandCards();
+                    killer->throwAllCards(true);
                 }
             }
         }
@@ -1037,8 +1036,7 @@ bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
             if(killer && killer->getKingdom() == damage->to->getKingdom()){
-                killer->throwAllEquips();
-                killer->throwAllHandCards();
+                killer->throwAllCards(true);
             }
             else if(killer && killer->isAlive()){
                 killer->drawCards(3);

@@ -116,7 +116,7 @@ public:
             log.arg = objectName();
             room->sendLog(log);
             room->playSkillEffect(objectName(), 1);
-            killer->throwAllCards();
+            killer->throwAllCards(true);
             killer->loseAllMarks("poison_jur");
         }
         else
@@ -393,7 +393,7 @@ public:
                 if(player->hasMark("chaos_jur"))
                     break;
                 if(ligu->askForSkillInvoke(objectName()))
-                    player->gainJur("chaos_jur");
+                    player->gainJur("chaos_jur", 3);
             }
         }
         return false;

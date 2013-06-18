@@ -119,76 +119,107 @@ public:
 class Baonu:public TriggerSkill{
 public:
     Baonu():TriggerSkill("baonu"){
-        events << CardUsed;
+        events << CardUsed << CardFinished << Predamage << Damage;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(!use.card->inherits("Slash"))
-            return false;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == CardUsed || event == Predamage ? 1 : -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *pilipili, QVariant &data) const{
+        if(event == CardUsed){
+            CardUseStruct use = data.value<CardUseStruct>();
+            if(pilipili->getPhase() == Player::Play && use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName())){
+                room->loseHp(pilipili);
+                pilipili->tag["BaonuCard"] = QVariant::fromValue((CardStar)use.card);
+            }
+        }
+        else if(event == Predamage){
+            DamageStruct damage = data.value<DamageStruct>();
+            CardStar slash = pilipili->tag["BaonuCard"].value<CardStar>();
+            int x = qMin(3, pilipili->getLostHp());
+            if(damage.card && damage.card == slash && damage.to->isAlive()){
+                LogMessage log;
+                log.type = "#BaonuBuff";
+                log.from = pilipili;
+                log.to << damage.to;
+                log.arg = QString::number(damage.damage);
+                log.arg2 = QString::number(damage.damage + x);
+                room->sendLog(log);
+
+                damage.damage += x;
+                data = QVariant::fromValue(damage);
+                return false;
+            }
+        }
+        else if(event == CardFinished){
+            pilipili->tag.remove("BaonuCard");
+        }
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            int x = qMin(3, pilipili->getLostHp());
+            CardStar slash = pilipili->tag["BaonuCard"].value<CardStar>();
+            if(damage.card == slash){
+                int all = pilipili->getCardCount(true);
+                if(all < x)
+                    pilipili->throwAllCards(true);
+                else
+                    room->askForDiscard(pilipili, objectName(), x, false, true);
+            }
+        }
         return false;
-    }
-};
-
-JizhanCard::JizhanCard(){
-    will_throw = false;
-}
-
-bool JizhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return to_select != Self;
-}
-
-void JizhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    Slash *slash = (Slash*)Sanguosha->getCard(getSubcards().first());
-    slash->setSkillName(skill_name);
-    CardUseStruct use;
-    use.card = slash;
-    use.from = card_use.from;
-    use.to = card_use.to;
-    room->useCard(use);
-}
-
-class JizhanViewAsSkill: public OneCardViewAsSkill{
-public:
-    JizhanViewAsSkill():OneCardViewAsSkill("jizhan"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return Slash::IsAvailable(player);
-    }
-
-    virtual bool viewFilter(const CardItem *i) const{
-        return i->getCard()->inherits("Slash");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        JizhanCard *card = new JizhanCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
     }
 };
 
 class Jizhan: public TriggerSkill{
 public:
     Jizhan():TriggerSkill("jizhan"){
-        events << SlashMissed;
-        view_as_skill = new JizhanViewAsSkill;
+        events << SlashMissed << CardUsed << CardFinished << Predamage;
     }
 
-    virtual int getPriority(TriggerEvent) const{
-        return 2;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == CardUsed || event == Predamage ? 1 : -1;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *pilipili, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(effect.slash->getSkillName() == objectName()){
-            LogMessage log;
-            log.type = "#Jizhan";
-            log.from = pilipili;
-            log.arg = objectName();
-            room->sendLog(log);
-            if(!room->askForDiscard(pilipili, objectName(), 2, true, true))
-                room->loseHp(pilipili);
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *pilipili, QVariant &data) const{
+        if(event == CardUsed){
+            CardUseStruct use = data.value<CardUseStruct>();
+            if(use.card->isKindOf("Slash") && pilipili->askForSkillInvoke(objectName())){
+                pilipili->tag["JizhanCard"] = QVariant::fromValue((CardStar)use.card);
+            }
+        }
+        else if(event == Predamage){
+            DamageStruct damage = data.value<DamageStruct>();
+            CardStar slash = pilipili->tag["JizhanCard"].value<CardStar>();
+            if(damage.card && damage.card == slash && damage.to->isAlive()){
+                LogMessage log;
+                log.type = "#JizhanBuff";
+                log.from = pilipili;
+                log.to << damage.to;
+                log.arg = QString::number(damage.damage);
+                log.arg2 = QString::number(damage.damage + 1);
+                room->sendLog(log);
+
+                damage.damage ++;
+                data = QVariant::fromValue(damage);
+                return false;
+            }
+        }
+        else if(event == CardFinished){
+            pilipili->tag.remove("JizhanCard");
+        }
+        else{
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            CardStar slash = pilipili->tag["JizhanCard"].value<CardStar>();
+            if(effect.slash == slash){
+                LogMessage log;
+                log.type = "#Jizhan";
+                log.from = pilipili;
+                log.arg = objectName();
+                room->sendLog(log);
+                if(!room->askForDiscard(pilipili, objectName(), 2, true))
+                    room->loseHp(pilipili);
+            }
         }
         return false;
     }
@@ -242,193 +273,6 @@ public:
         }
 
         return false;
-    }
-};
-
-JingsuanCard::JingsuanCard(){
-}
-
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QCommandLinkButton>
-
-JingsuanDialog *JingsuanDialog::GetInstance(){
-    static JingsuanDialog *instance;
-    if(instance == NULL)
-        instance = new JingsuanDialog;
-
-    return instance;
-}
-
-JingsuanDialog::JingsuanDialog()
-{
-    setWindowTitle(Sanguosha->translate("Jingsuan"));
-
-    group = new QButtonGroup(this);
-    QHBoxLayout *mainlayout = new QHBoxLayout;
-
-    QGroupBox *box1 = new QGroupBox(Sanguosha->translate("stt"));
-    QVBoxLayout *layout1 = new QVBoxLayout;
-
-    QGroupBox *box2 = new QGroupBox(Sanguosha->translate("mtt"));
-    QVBoxLayout *layout2 = new QVBoxLayout;
-
-    QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
-    foreach(const Card *card, cards){
-        if(card->isNDTrick() && !map.contains(card->objectName())){
-            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
-            c->setSkillName("Jingsuan");
-            c->setParent(this);
-
-            QVBoxLayout *layout = c->isKindOf("SingleTargetTrick") ? layout1 : layout2;
-            layout->addWidget(createButton(c));
-        }
-    }
-
-    box1->setLayout(layout1);
-    box2->setLayout(layout2);
-
-    layout1->addStretch();
-    layout2->addStretch();
-
-    mainlayout->addWidget(box1);
-    mainlayout->addWidget(box2);
-
-    setLayout(mainlayout);
-
-    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(selectCard(QAbstractButton*)));
-}
-
-void JingsuanDialog::popup(){
-    if(ClientInstance->getStatus() != Client::Playing)
-        return;
-
-    foreach(QAbstractButton *button, group->buttons()){
-        const Card *card = map[button->objectName()];
-        button->setEnabled(card->isAvailable(Self));
-    }
-
-    Self->tag.remove("Jingsuan");
-    exec();
-}
-
-void JingsuanDialog::selectCard(QAbstractButton *button){
-    CardStar card = map.value(button->objectName());
-    Self->tag["Jingsuan"] = QVariant::fromValue(card);
-    accept();
-}
-
-QAbstractButton *JingsuanDialog::createButton(const Card *card){
-    QCommandLinkButton *button = new QCommandLinkButton(Sanguosha->translate(card->objectName()));
-    button->setObjectName(card->objectName());
-    button->setToolTip(card->getDescription());
-
-    map.insert(card->objectName(), card);
-    group->addButton(button);
-
-    return button;
-}
-
-bool JingsuanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
-    return card && card->targetFilter(targets, to_select, Self) && !Self->isProhibited(to_select, card);
-}
-
-bool JingsuanCard::targetFixed() const{
-    if(ClientInstance->getStatus() == Client::Responsing)
-        return true;
-
-    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
-    return card && card->targetFixed();
-}
-
-bool JingsuanCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
-    return card && card->targetsFeasible(targets, Self);
-}
-
-const Card *JingsuanCard::validate(const CardUseStruct *card_use) const{
-    Room *room = card_use->from->getRoom();
-    //room->playSkillEffect("Jingsuan");
-    const Card *card = Sanguosha->getCard(subcards.first());
-    Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
-    use_card->setSkillName("Jingsuan");
-    use_card->addSubcard(card);
-    room->throwCard(this);
-
-    return use_card;
-}
-
-const Card *JingsuanCard::validateInResposing(ServerPlayer *player, bool *continuable) const{
-    *continuable = true;
-    Room *room = player->getRoom();
-    QString string;
-    if(user_string == "nulliplot")
-        string = room->askForChoice(player, "Jingsuan-nullchoice", "nullification+counterplot");
-    else
-        string = "nullification";
-    const Card *card = Sanguosha->getCard(subcards.first());
-    Card *use_card = Sanguosha->cloneCard(string, card->getSuit(), card->getNumber());
-    use_card->setSkillName("Jingsuan");
-    use_card->addSubcard(card);
-    room->throwCard(this);
-
-    player->addHistory("JingsuanCard");
-    player->invoke("addHistory", "JingsuanCard");
-    return use_card;
-}
-
-class Jingsuan:public OneCardViewAsSkill{
-public:
-    Jingsuan():OneCardViewAsSkill("Jingsuan"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("JingsuanCard");
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return (pattern == "nullification" || pattern == "nulliplot") &&
-                !player->hasUsed("JingsuanCard") &&
-                !player->isKongcheng() &&
-                player->getPhase() == Player::Play;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        const Card *card = to_select->getCard();
-        return card->isKindOf("TrickCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        if(ClientInstance->getStatus() == Client::Responsing){
-            JingsuanCard *card = new JingsuanCard;
-            card->setUserString(ClientInstance->getPattern());
-            card->addSubcard(card_item->getFilteredCard());
-            return card;
-        }
-
-        CardStar c = Self->tag["Jingsuan"].value<CardStar>();
-        if(c){
-            JingsuanCard *card = new JingsuanCard;
-            card->setUserString(c->objectName());
-            card->addSubcard(card_item->getFilteredCard());
-            return card;
-        }else
-            return NULL;
-    }
-
-    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool) const{
-        if(player->getPhase() == Player::Play && !player->hasUsed("JingsuanCard")){
-            foreach(const Card *card, player->getHandcards()){
-                if(card->inherits("TrickCard"))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    virtual QDialog *getDialog() const{
-        return JingsuanDialog::GetInstance();
     }
 };
 
@@ -991,20 +835,255 @@ public:
         view_as_skill = new QiangzhanViewAsSkill;
     }
 
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
-        if(player->getPhase() == Player::Finish)
+        if(player->getPhase() == Player::Finish && player->hasSkill(objectName()))
             room->askForUseCard(player, "@@qiangzhan", "@qiangzhan", true);
-        else if(player->getPhase() == Player::RoundStart){
-            ServerPlayer *target = room->findPlayersByProperty("mark", "@grabs").value(0, NULL);
-            DummyCard *card = player->wholeHandCards();
-            if(card && target){
-                room->obtainCard(target, card, false);
-                target->loseMark("@grabs");
-                delete card;
+        else if(player->getPhase() == Player::RoundStart && player->hasMark("@grabs")){
+            ServerPlayer *yin = room->findPlayerBySkillName(objectName());
+            if(yin){
+                DummyCard *card = yin->wholeHandCards();
+                if(card){
+                    LogMessage log;
+                    log.type = "#Qiangzhan";
+                    log.from = yin;
+                    log.to << player;
+                    room->sendLog(log);
+
+                    room->obtainCard(player, card, false);
+                    player->loseMark("@grabs");
+                    delete card;
+                }
             }
         }
         return false;
+    }
+};
+
+JingsuanCard::JingsuanCard(){
+}
+
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QCommandLinkButton>
+
+JingsuanDialog *JingsuanDialog::GetInstance(){
+    static JingsuanDialog *instance;
+    if(instance == NULL)
+        instance = new JingsuanDialog;
+
+    return instance;
+}
+
+JingsuanDialog::JingsuanDialog()
+{
+    setWindowTitle(Sanguosha->translate("jingsuan"));
+    group = new QButtonGroup(this);
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(createLeft());
+    layout->addWidget(createRight());
+
+    setLayout(layout);
+
+    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(selectCard(QAbstractButton*)));
+}
+
+QGroupBox *JingsuanDialog::createLeft(){
+    QGroupBox *box = new QGroupBox;
+    box->setTitle(Sanguosha->translate("basic"));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+
+    QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
+    foreach(const Card *card, cards){
+        if(card->getTypeId() == Card::Basic && !map.contains(card->objectName())){
+            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
+            c->setSkillName("jingsuan");
+            c->setParent(this);
+
+            layout->addWidget(createButton(c));
+        }
+    }
+
+    layout->addStretch();
+
+    box->setLayout(layout);
+    return box;
+}
+
+QGroupBox *JingsuanDialog::createRight(){
+    QGroupBox *box = new QGroupBox(Sanguosha->translate("ndtrick"));
+    QHBoxLayout *layout = new QHBoxLayout;
+
+    QGroupBox *box1 = new QGroupBox(Sanguosha->translate("stt"));
+    QVBoxLayout *layout1 = new QVBoxLayout;
+
+    QGroupBox *box2 = new QGroupBox(Sanguosha->translate("mtt"));
+    QVBoxLayout *layout2 = new QVBoxLayout;
+
+    QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
+    foreach(const Card *card, cards){
+        if(card->isNDTrick() && !map.contains(card->objectName())){
+            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
+            c->setSkillName("jingsuan");
+            c->setParent(this);
+
+            QVBoxLayout *layout = c->isKindOf("SingleTargetTrick") ? layout1 : layout2;
+            layout->addWidget(createButton(c));
+        }
+    }
+
+    box->setLayout(layout);
+    box1->setLayout(layout1);
+    box2->setLayout(layout2);
+
+    layout1->addStretch();
+    layout2->addStretch();
+
+    layout->addWidget(box1);
+    layout->addWidget(box2);
+    return box;
+}
+
+void JingsuanDialog::popup(){
+    if(ClientInstance->getStatus() != Client::Playing)
+        return;
+
+    foreach(QAbstractButton *button, group->buttons()){
+        const Card *card = map[button->objectName()];
+        button->setEnabled(card->isAvailable(Self));
+    }
+
+    Self->tag.remove("Jingsuan");
+    exec();
+}
+
+void JingsuanDialog::selectCard(QAbstractButton *button){
+    CardStar card = map.value(button->objectName());
+    Self->tag["Jingsuan"] = QVariant::fromValue(card);
+    accept();
+}
+
+QAbstractButton *JingsuanDialog::createButton(const Card *card){
+    QCommandLinkButton *button = new QCommandLinkButton(Sanguosha->translate(card->objectName()));
+    button->setObjectName(card->objectName());
+    button->setToolTip(card->getDescription());
+
+    map.insert(card->objectName(), card);
+    group->addButton(button);
+
+    return button;
+}
+
+bool JingsuanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
+    return card && card->targetFilter(targets, to_select, Self) && !Self->isProhibited(to_select, card);
+}
+
+bool JingsuanCard::targetFixed() const{
+    if(ClientInstance->getStatus() == Client::Responsing)
+        return true;
+
+    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
+    return card && card->targetFixed();
+}
+
+bool JingsuanCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
+    return card && card->targetsFeasible(targets, Self);
+}
+
+const Card *JingsuanCard::validate(const CardUseStruct *card_use) const{
+    Room *room = card_use->from->getRoom();
+    //room->playSkillEffect("jingsuan");
+    const Card *card = Sanguosha->getCard(subcards.first());
+    Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
+    use_card->setSkillName("jingsuan");
+    use_card->addSubcard(card);
+    room->throwCard(this);
+
+    return use_card;
+}
+
+const Card *JingsuanCard::validateInResposing(ServerPlayer *player, bool *continuable) const{
+    *continuable = true;
+    Room *room = player->getRoom();
+    QString string;
+    if(user_string == "nulliplot")
+        string = room->askForChoice(player, "jingsuan-nullchoice", "nullification+counterplot");
+    else
+        string = "nullification";
+    const Card *card = Sanguosha->getCard(subcards.first());
+    Card *use_card = Sanguosha->cloneCard(string, card->getSuit(), card->getNumber());
+    use_card->setSkillName("jingsuan");
+    use_card->addSubcard(card);
+    room->throwCard(this);
+
+    return use_card;
+}
+
+class Jingsuan:public ViewAsSkill{
+public:
+    Jingsuan():ViewAsSkill("jingsuan"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return true;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return (pattern == "nullification" || pattern == "nulliplot") &&
+                !player->isKongcheng() &&
+                player->getPhase() == Player::Play;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        int x = Self->getLostHp();
+        if(selected.length() > 1)
+            return false;
+        if(selected.length() == 1){
+            const Card *first = selected.first()->getCard();
+            const Card *second = to_select->getCard();
+            if(qAbs(first->getNumber() - second->getNumber()) <= x)
+                return !to_select->isEquipped();
+        }
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+
+        if(ClientInstance->getStatus() == Client::Responsing){
+            JingsuanCard *card = new JingsuanCard;
+            card->setUserString(ClientInstance->getPattern());
+            card->addSubcards(cards);
+            return card;
+        }
+
+        CardStar c = Self->tag["Jingsuan"].value<CardStar>();
+        if(c){
+            JingsuanCard *card = new JingsuanCard;
+            card->setUserString(c->objectName());
+            card->addSubcards(cards);
+            return card;
+        }else
+            return NULL;
+    }
+
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool) const{
+        if(player->getPhase() == Player::Play)
+            return player->getHandcardNum() > 1;
+        return false;
+    }
+
+    virtual QDialog *getDialog() const{
+        return JingsuanDialog::GetInstance();
     }
 };
 
@@ -1040,7 +1119,6 @@ MustangPackage::MustangPackage()
 
     General *hancunbao = new General(this, "hancunbao", "guan");
     hancunbao->addSkill(new Jizhan);
-    addMetaObject<JizhanCard>();
 
     General *yintianxi = new General(this, "yintianxi", "guan", 3);
     yintianxi->addSkill(new Yiguan);

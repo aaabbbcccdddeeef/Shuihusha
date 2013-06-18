@@ -75,8 +75,7 @@ public:
                 log.type = "#SixiangWorst";
                 log.arg = QString::number(total);
                 room->sendLog(log);
-                jingmuan->throwAllHandCards();
-                jingmuan->throwAllEquips();
+                jingmuan->throwAllCards(true);;
             }else{
                 log.type = "#SixiangBad";
                 log.arg = QString::number(x);

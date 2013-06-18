@@ -86,8 +86,7 @@ public:
                     log.arg2 = player->getScreenRole();
                     room->sendLog(log);
 
-                    damage->from->throwAllEquips();
-                    damage->from->throwAllHandCards();
+                    damage->from->throwAllCards(true);
                     room->setPlayerProperty(damage->from, "role", "rebel");
                 }
                 else{

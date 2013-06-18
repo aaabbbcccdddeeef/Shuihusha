@@ -10,15 +10,6 @@ public:
     MustangPackage();
 };
 
-class JizhanCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE JizhanCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
-};
-
 class BingjiCard: public SkillCard{
     Q_OBJECT
 
@@ -110,6 +101,8 @@ public slots:
 private:
     JingsuanDialog();
 
+    QGroupBox *createLeft();
+    QGroupBox *createRight();
     QAbstractButton *createButton(const Card *card);
     QButtonGroup *group;
     QHash<QString, const Card *> map;
