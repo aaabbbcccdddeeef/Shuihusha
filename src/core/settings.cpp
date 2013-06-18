@@ -63,10 +63,13 @@ void Settings::init(){
 
     if(!contains("BanPackages")){
         QStringList banlist;
-        banlist << "test" << "god" << "sp" << "gift"
-                << "customcards" << "sanguosha"
-                //<< "joy" << "kuso" << "joyer"
+        banlist << "test" << "god" << "sp" << "gift" << "new_3v3_card"
+                << "customcards"
                 ;
+        foreach(const Package *package, Sanguosha->findChildren<const Package *>()){
+            if(package->getGenre() == Package::LUA)
+                banlist << package->objectName();
+        }
 
         setValue("BanPackages", banlist);
     }

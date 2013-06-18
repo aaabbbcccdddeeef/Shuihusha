@@ -9,6 +9,7 @@ return {
 	["qinming"] = "秦明",
 	["cv:qinming"] = "八目筝吹【天子会工作室】",
 	["designer:qinming"] = "曉ャ絕對",
+	["coder:qinming"] = "Phylanges",
 --	["hengsao"] = "横扫",
 --	[":hengsao"] = "你使用的【杀】可额外指定任意个目标，其中每有一个目标使用手牌【闪】抵消【杀】时，你须弃置两张牌或失去一点体力",
 --	["#Hengsao"] = "%from 出师不利，【%arg】的负面效果被触发",
@@ -101,6 +102,7 @@ return {
 	["hancunbao"] = "韩存保",
 	["cv:hancunbao"] = "阿瑞",
 	["designer:hancunbao"] = "曉ャ絕對",
+	["coder:hancunbao"] = "Phylanges",
 	["jizhan"] = "激战",
 	[":jizhan"] = "当你使用一张【杀】时，（在结算前）你可以令该【杀】即将造成的伤害+1。若如此做，则当该【杀】被【闪】抵消时，你须选择一项：弃置两张手牌，或失去1点体力。",
 	["#Jizhan"] = "%from 出师不利，【%arg】的负面效果被触发",
@@ -115,6 +117,7 @@ return {
 	["#yintianxi"] = "殷直阁", -- guan 3hp
 	["yintianxi"] = "殷天锡",
 	["cv:yintianxi"] = "烨子风暴【天子会工作室】",
+	["coder:yintianxi"] = "Phylanges",
 	["yiguan"] = "倚官",
 	[":yiguan"] = "当你使用一张♠或♣【杀】时，（在结算前）你可以摸X张牌（X为场上存活的官势力角色数且至多为2）。",
 	["qiangzhan"] = "强占",
