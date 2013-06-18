@@ -103,12 +103,19 @@ public:
 
     bool useNew3v3();
     bool is3v3Friend(const ServerPlayer *a, const ServerPlayer *b);
+
+    QStringList getConjurs() const;
+    int getConjurDelay(const QString &conjur) const;
+    int getConjurPAdditional(const QString &conjur) const;
+    int getConjurPEffective(const QString &conjur) const;
+
 private:
     QHash<QString, QString> translations;
     QHash<QString, const General *> generals, hidden_generals;
     QHash<QString, const QMetaObject *> metaobjects;
     QHash<QString, const Skill *> skills;
     QMap<QString, QString> modes;
+    QMap<QString, QString> conjurs;
     QMap<QString, const CardPattern *> patterns;
     QMultiMap<QString, QString> related_skills;
 

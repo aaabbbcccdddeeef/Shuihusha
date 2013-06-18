@@ -484,9 +484,6 @@ public:
 SheepPackage::SheepPackage()
     :GeneralPackage("sheep")
 {
-    //General *qinming = new General(this, "qinming", "guan");
-    //qinming->addSkill(new Hengsao);
-
     General *yanglin = new General(this, "yanglin", "kou");
     yanglin->addSkill(new Citan);
 

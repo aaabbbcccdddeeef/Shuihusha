@@ -289,7 +289,7 @@ public:
             player->getRoom()->sendLog(log);
 
             foreach(ServerPlayer *tmp, getNextandPrevious(damage.to))
-                tmp->gainJur("dizzy_jur", 2);
+                tmp->gainJur("dizzy_jur");
         }
         return false;
     }

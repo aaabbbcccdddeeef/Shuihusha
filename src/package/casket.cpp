@@ -32,7 +32,7 @@ public:
             yunr->getRoom()->sendLog(log);
             yunr->playSkillEffect(objectName());
 
-            damage.to->gainJur("poison_jur", 5);
+            damage.to->gainJur("poison_jur");
         }
         return false;
     }
@@ -133,7 +133,7 @@ bool FanyinCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void FanyinCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->gainJur("sleep_jur", 2);
+    effect.to->gainJur("sleep_jur");
 }
 
 class Fanyin: public ViewAsSkill{
@@ -249,7 +249,7 @@ public:
                 g.from = huhu;
                 g.arg = objectName();
                 room->sendLog(g);
-                player->gainJur("lucky_jur", 2);
+                player->gainJur("lucky_jur");
             }
         }
     }
@@ -260,8 +260,8 @@ XiepoCard::XiepoCard(){
     will_throw = false;
 }
 
-void XiepoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    PlayerStar jiashi = source->tag["XiepoSource"].value<PlayerStar>();
+void XiepoCard::onUse(Room *, const CardUseStruct &card_use) const{
+    PlayerStar jiashi = card_use.from->tag["XiepoSource"].value<PlayerStar>();
     jiashi->obtainCard(this);
 }
 
@@ -393,7 +393,7 @@ public:
                 if(player->hasMark("chaos_jur"))
                     break;
                 if(ligu->askForSkillInvoke(objectName()))
-                    player->gainJur("chaos_jur", 2);
+                    player->gainJur("chaos_jur");
             }
         }
         return false;

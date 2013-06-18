@@ -305,6 +305,7 @@ public:
 	void gainMark(const char *mark, int n = 1);
 	void loseMark(const char *mark, int n = 1);
 	void loseAllMarks(const char *mark_name);
+	void gainJur(const char *jur);
 	void gainJur(const char *jur, int n, bool overlying = false);
 	void removeJur(const char *jur);
 	bool hasJur(const char *jur);

@@ -82,6 +82,16 @@ Engine::Engine()
         Skill *mutable_skill = const_cast<Skill *>(skill);
         mutable_skill->initMediaSource();
     }
+
+    // times / preconjur / conjured
+    conjurs["poison_jur"] = "5";
+    conjurs["sleep_jur"] = "2/75";
+    conjurs["dizzy_jur"] = "2/75";
+    conjurs["chaos_jur"] = "2//75";
+    conjurs["reflex_jur"] = "3//25";
+
+    conjurs["stealth_jur"] = "2";
+    conjurs["lucky_jur"] = "2//75";
 }
 
 lua_State *Engine::getLuaState() const{
@@ -1008,4 +1018,32 @@ bool Engine::useNew3v3(){
 bool Engine::is3v3Friend(const ServerPlayer *a, const ServerPlayer *b){
     QChar c = a->getRole().at(0);
     return b->getRole().startsWith(c);
+}
+
+QStringList Engine::getConjurs() const{
+    return conjurs.keys();
+}
+
+int Engine::getConjurDelay(const QString &conjur) const{
+    QString value = conjurs.value(conjur, QString());
+    QStringList v = value.split("/");
+    return v.at(0).toInt();
+}
+
+int Engine::getConjurPAdditional(const QString &conjur) const{
+    QString value = conjurs.value(conjur, QString());
+    QStringList v = value.split("/");
+    if(v.length() > 1 && v.at(1) != QString())
+        return v.at(1).toInt();
+    else
+        return 100;
+}
+
+int Engine::getConjurPEffective(const QString &conjur) const{
+    QString value = conjurs.value(conjur, QString());
+    QStringList v = value.split("/");
+    if(v.length() > 2 && v.at(2) != QString())
+        return v.at(2).toInt();
+    else
+        return 100;
 }

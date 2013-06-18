@@ -116,6 +116,20 @@ public:
     }
 };
 
+class Baonu:public TriggerSkill{
+public:
+    Baonu():TriggerSkill("baonu"){
+        events << CardUsed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(!use.card->inherits("Slash"))
+            return false;
+        return false;
+    }
+};
+
 JizhanCard::JizhanCard(){
     will_throw = false;
 }
@@ -793,6 +807,9 @@ public:
 MustangPackage::MustangPackage()
     :GeneralPackage("mustang")
 {
+    General *qinming = new General(this, "qinming", "guan");
+    qinming->addSkill(new Baonu);
+
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
@@ -818,6 +835,7 @@ MustangPackage::MustangPackage()
 
     General *hancunbao = new General(this, "hancunbao", "guan");
     hancunbao->addSkill(new Jizhan);
+    addMetaObject<JizhanCard>();
 
     General *yintianxi = new General(this, "yintianxi", "guan", 3);
     yintianxi->addSkill(new Yiguan);
@@ -835,8 +853,6 @@ MustangPackage::MustangPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-
-    addMetaObject<JizhanCard>();
 }
 
 ADD_PACKAGE(Mustang)

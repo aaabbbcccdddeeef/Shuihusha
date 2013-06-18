@@ -656,6 +656,11 @@ void ServerPlayer::loseAllMarks(const QString &mark_name){
         removeJur(mark_name);
 }
 
+void ServerPlayer::gainJur(const QString &jur){
+    int n = Sanguosha->getConjurDelay(jur);
+    gainJur(jur, n);
+}
+
 void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
     int value = getMark(jur) + n;
     if(n < 1 || !jur.endsWith("_jur"))

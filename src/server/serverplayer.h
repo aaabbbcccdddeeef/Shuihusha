@@ -65,6 +65,7 @@ public:
     void loseMark(const QString &mark, int n = 1);
     void loseAllMarks(const QString &mark_name);
 
+    void gainJur(const QString &jur);
     void gainJur(const QString &jur, int n, bool overlying = false);
     void removeJur(const QString &jur);
     bool hasJur(const QString &jur);

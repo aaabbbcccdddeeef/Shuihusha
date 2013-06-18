@@ -1486,12 +1486,9 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         //chaos_slash
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.to->isAlive() && damage.card->objectName() == "chaos_slash"){
-            QStringList conjurs;
-            conjurs
-                    << "poison_jur" << "sleep_jur" << "dizzy_jur" << "stealth_jur"
-                    << "lucky_jur" << "chaos_jur" << "reflex_jur";
+            QStringList conjurs = Sanguosha->getConjurs();
             qShuffle(conjurs);
-            damage.to->gainJur(conjurs.first(), 4);
+            damage.to->gainJur(conjurs.first(), Sanguosha->getConjurDelay(conjurs.first()));
         }
         break;
     }

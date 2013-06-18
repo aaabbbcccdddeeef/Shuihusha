@@ -520,10 +520,10 @@ QWidget *CheatDialog::createSetStateTab(){
     QWidget *conjur = new QWidget;
     QFormLayout *conjur_layout = new QFormLayout;
 
-    QStringList conjurs;
-    conjurs
+    QStringList conjurs = Sanguosha->getConjurs();
+    /*conjurs
             << "poison_jur" << "sleep_jur" << "dizzy_jur" << "stealth_jur"
-            << "lucky_jur" << "chaos_jur" << "reflex_jur";
+            << "lucky_jur" << "chaos_jur" << "reflex_jur";*/
     conjur_group = new QButtonGroup();
     QAbstractButton *conjur_tmp_button = NULL;
     foreach(QString conjur, conjurs){

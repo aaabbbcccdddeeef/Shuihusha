@@ -29,7 +29,7 @@ class XiepoCard: public SkillCard{
 public:
     Q_INVOKABLE XiepoCard();
 
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
 class CasketPackage : public GeneralPackage
