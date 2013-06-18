@@ -78,4 +78,41 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+#include <QGroupBox>
+#include <QAbstractButton>
+#include <QButtonGroup>
+#include <QDialog>
+
+class JingsuanCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE JingsuanCard();
+
+    virtual bool targetFixed() const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+
+    virtual const Card *validate(const CardUseStruct *card_use) const;
+    virtual const Card *validateInResposing(ServerPlayer *player, bool *continuable) const;
+};
+
+class JingsuanDialog: public QDialog{
+    Q_OBJECT
+
+public:
+    static JingsuanDialog *GetInstance();
+
+public slots:
+    void popup();
+    void selectCard(QAbstractButton *button);
+
+private:
+    JingsuanDialog();
+
+    QAbstractButton *createButton(const Card *card);
+    QButtonGroup *group;
+    QHash<QString, const Card *> map;
+};
+
 #endif // MUSTANGPACKAGE_H

@@ -245,49 +245,190 @@ public:
     }
 };
 
-class Jingsuan: public TriggerSkill{
-public:
-    Jingsuan():TriggerSkill("Jingsuan"){
-        events << Pindian;
+JingsuanCard::JingsuanCard(){
+}
+
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QCommandLinkButton>
+
+JingsuanDialog *JingsuanDialog::GetInstance(){
+    static JingsuanDialog *instance;
+    if(instance == NULL)
+        instance = new JingsuanDialog;
+
+    return instance;
+}
+
+JingsuanDialog::JingsuanDialog()
+{
+    setWindowTitle(Sanguosha->translate("Jingsuan"));
+
+    group = new QButtonGroup(this);
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+
+    QGroupBox *box1 = new QGroupBox(Sanguosha->translate("stt"));
+    QVBoxLayout *layout1 = new QVBoxLayout;
+
+    QGroupBox *box2 = new QGroupBox(Sanguosha->translate("mtt"));
+    QVBoxLayout *layout2 = new QVBoxLayout;
+
+    QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
+    foreach(const Card *card, cards){
+        if(card->isNDTrick() && !map.contains(card->objectName())){
+            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
+            c->setSkillName("Jingsuan");
+            c->setParent(this);
+
+            QVBoxLayout *layout = c->isKindOf("SingleTargetTrick") ? layout1 : layout2;
+            layout->addWidget(createButton(c));
+        }
     }
 
-    virtual bool triggerable(const ServerPlayer *) const{
+    box1->setLayout(layout1);
+    box2->setLayout(layout2);
+
+    layout1->addStretch();
+    layout2->addStretch();
+
+    mainlayout->addWidget(box1);
+    mainlayout->addWidget(box2);
+
+    setLayout(mainlayout);
+
+    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(selectCard(QAbstractButton*)));
+}
+
+void JingsuanDialog::popup(){
+    if(ClientInstance->getStatus() != Client::Playing)
+        return;
+
+    foreach(QAbstractButton *button, group->buttons()){
+        const Card *card = map[button->objectName()];
+        button->setEnabled(card->isAvailable(Self));
+    }
+
+    Self->tag.remove("Jingsuan");
+    exec();
+}
+
+void JingsuanDialog::selectCard(QAbstractButton *button){
+    CardStar card = map.value(button->objectName());
+    Self->tag["Jingsuan"] = QVariant::fromValue(card);
+    accept();
+}
+
+QAbstractButton *JingsuanDialog::createButton(const Card *card){
+    QCommandLinkButton *button = new QCommandLinkButton(Sanguosha->translate(card->objectName()));
+    button->setObjectName(card->objectName());
+    button->setToolTip(card->getDescription());
+
+    map.insert(card->objectName(), card);
+    group->addButton(button);
+
+    return button;
+}
+
+bool JingsuanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
+    return card && card->targetFilter(targets, to_select, Self) && !Self->isProhibited(to_select, card);
+}
+
+bool JingsuanCard::targetFixed() const{
+    if(ClientInstance->getStatus() == Client::Responsing)
         return true;
+
+    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
+    return card && card->targetFixed();
+}
+
+bool JingsuanCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    CardStar card = Self->tag["Jingsuan"].value<CardStar>();
+    return card && card->targetsFeasible(targets, Self);
+}
+
+const Card *JingsuanCard::validate(const CardUseStruct *card_use) const{
+    Room *room = card_use->from->getRoom();
+    //room->playSkillEffect("Jingsuan");
+    const Card *card = Sanguosha->getCard(subcards.first());
+    Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
+    use_card->setSkillName("Jingsuan");
+    use_card->addSubcard(card);
+    room->throwCard(this);
+
+    return use_card;
+}
+
+const Card *JingsuanCard::validateInResposing(ServerPlayer *player, bool *continuable) const{
+    *continuable = true;
+    Room *room = player->getRoom();
+    QString string;
+    if(user_string == "nulliplot")
+        string = room->askForChoice(player, "Jingsuan-nullchoice", "nullification+counterplot");
+    else
+        string = "nullification";
+    const Card *card = Sanguosha->getCard(subcards.first());
+    Card *use_card = Sanguosha->cloneCard(string, card->getSuit(), card->getNumber());
+    use_card->setSkillName("Jingsuan");
+    use_card->addSubcard(card);
+    room->throwCard(this);
+
+    player->addHistory("JingsuanCard");
+    player->invoke("addHistory", "JingsuanCard");
+    return use_card;
+}
+
+class Jingsuan:public OneCardViewAsSkill{
+public:
+    Jingsuan():OneCardViewAsSkill("Jingsuan"){
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        ServerPlayer *pianzi = room->findPlayerBySkillName(objectName());
-        if(!pianzi || !pianzi->askForSkillInvoke(objectName()))
-            return false;
-        PindianStar pindian = data.value<PindianStar>();
-        QStringList choices;
-        QString from_card = Sanguosha->translate(QString("@Jingsuan:%1:%2:%3:%4").
-                            arg(pindian->from->getGeneralName()).
-                            arg(pindian->from_card->getSuitString()).
-                            arg(pindian->from_card->getNumberString()).
-                            arg(pindian->from_card->objectName()));
-        QString to_card = Sanguosha->translate(QString("@Jingsuan:%1:%2:%3:%4").
-                          arg(pindian->to->getGeneralName()).
-                          arg(pindian->to_card->getSuitString()).
-                          arg(pindian->to_card->getNumberString()).
-                          arg(pindian->to_card->objectName()));
-        choices << from_card
-                << to_card;
-        QString choice = room->askForChoice(pianzi, objectName(), choices.join("+"));
-        if(choice == from_card){
-            int omiga = room->drawCard();
-            //room->moveCardTo(Sanguosha->getCard(omiga), pindian->from, Player::Hand, false);
-            room->moveCardTo(pindian->from_card, NULL, Player::DrawPile, true);
-            pindian->from_card = Sanguosha->getCard(omiga);
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("JingsuanCard");
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return (pattern == "nullification" || pattern == "nulliplot") &&
+                !player->hasUsed("JingsuanCard") &&
+                !player->isKongcheng() &&
+                player->getPhase() == Player::Play;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        const Card *card = to_select->getCard();
+        return card->isKindOf("TrickCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        if(ClientInstance->getStatus() == Client::Responsing){
+            JingsuanCard *card = new JingsuanCard;
+            card->setUserString(ClientInstance->getPattern());
+            card->addSubcard(card_item->getFilteredCard());
+            return card;
         }
-        else{
-            int omiga = room->drawCard();
-            //room->moveCardTo(Sanguosha->getCard(omiga), pindian->to, Player::Hand, false);
-            room->moveCardTo(pindian->to_card, NULL, Player::DrawPile, true);
-            pindian->to_card = Sanguosha->getCard(omiga);
+
+        CardStar c = Self->tag["Jingsuan"].value<CardStar>();
+        if(c){
+            JingsuanCard *card = new JingsuanCard;
+            card->setUserString(c->objectName());
+            card->addSubcard(card_item->getFilteredCard());
+            return card;
+        }else
+            return NULL;
+    }
+
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool) const{
+        if(player->getPhase() == Player::Play && !player->hasUsed("JingsuanCard")){
+            foreach(const Card *card, player->getHandcards()){
+                if(card->inherits("TrickCard"))
+                    return true;
+            }
         }
-        data = QVariant::fromValue(pindian);
         return false;
+    }
+
+    virtual QDialog *getDialog() const{
+        return JingsuanDialog::GetInstance();
     }
 };
 
@@ -883,6 +1024,7 @@ MustangPackage::MustangPackage()
     General *jiangjing = new General(this, "jiangjing", "jiang");
     jiangjing->addSkill(new Huazhu);
     jiangjing->addSkill(new Jingsuan);
+    addMetaObject<JingsuanCard>();
 
     General *guosheng = new General(this, "guosheng", "jiang");
     guosheng->addSkill(new Bingji);
