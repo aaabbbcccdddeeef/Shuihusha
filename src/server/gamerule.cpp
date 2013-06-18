@@ -1375,24 +1375,16 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     case PreConjuring:{
         QStringList dataa = data.toString().split("*");
         QString conjur = dataa.first();
-        int percent = QString(dataa.last()).toInt();
-        if(conjur.startsWith("sleep"))
-            percent = 75;
-        else if(conjur.startsWith("dizzy"))
-            percent = 75;
+        //int percent = QString(dataa.last()).toInt();
+        int percent = Sanguosha->getConjurPAdditional(conjur);
         data = QString("%1*%2").arg(conjur).arg(percent); //sleep_jur*75
         break;
     }
     case Conjured:{
         QStringList dataa = data.toString().split("*");
         QString conjur = dataa.first();
-        int percent = QString(dataa.last()).toInt();
-        if(conjur.startsWith("lucky"))
-            percent = 75;
-        else if(conjur.startsWith("chaos"))
-            percent = 75;
-        else if(conjur.startsWith("reflex"))
-            percent = 25;
+        //int percent = QString(dataa.last()).toInt();
+        int percent = Sanguosha->getConjurPEffective(conjur);
         data = QString("%1*%2").arg(conjur).arg(percent); //reflex_jur*25
         break;
     }
@@ -1485,10 +1477,10 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     case Damage:{
         //chaos_slash
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->isAlive() && damage.card->objectName() == "chaos_slash"){
+        if(damage.to->isAlive() && damage.card && damage.card->objectName() == "chaos_slash"){
             QStringList conjurs = Sanguosha->getConjurs();
             qShuffle(conjurs);
-            damage.to->gainJur(conjurs.first(), Sanguosha->getConjurDelay(conjurs.first()));
+            damage.to->gainJur(conjurs.first());
         }
         break;
     }
