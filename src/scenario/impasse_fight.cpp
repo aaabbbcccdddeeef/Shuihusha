@@ -47,12 +47,15 @@ public:
         if(!room->askForSkillInvoke(player, objectName()))
             return;
 
-        room->playSkillEffect(objectName(), player->getGender() == General::Male ? 1: 2);
         int n = 0;
-        if(has_frantic)
+        if(has_frantic){
+            room->playSkillEffect(objectName(), player->getGender() == General::Male ? 2: 4);
             n = players.length();
-        else
+        }
+        else{
+            room->playSkillEffect(objectName(), player->getGender() == General::Male ? 1: 3);
             n = (player->getHp());
+        }
         player->drawCards(n);
     }
 };
@@ -95,12 +98,16 @@ public:
         if(target->getPhase() == Player::Start){
             bool invoke_skill = false;
             if(has_frantic){
-                if(target->getHandcardNum()<=(target->getMaxHP()+players.length()))
+                if(target->getHandcardNum()<=(target->getMaxHP()+players.length())){
+                    room->playSkillEffect(objectName(), target->getGender() == General::Male ? qrand() % 2 + 3: qrand() % 2 + 7);
                     invoke_skill = true;
+                }
             }
             else{
-                if(target->getHandcardNum()<=target->getHp())
+                if(target->getHandcardNum()<=target->getHp()){
+                    room->playSkillEffect(objectName(), target->getGender() == General::Male ? qrand() % 2 + 1: qrand() % 2 + 5);
                     invoke_skill = true;
+                }
             }
             if(!invoke_skill)
                 return false;
@@ -110,7 +117,6 @@ public:
             log.from = target;
             log.arg = objectName();
             room->sendLog(log);
-            room->playSkillEffect(objectName(), target->getGender() == General::Male ? 1: 2);
 
             foreach(ServerPlayer *player, others){
                 if(player->getHandcardNum() == 0){
@@ -142,11 +148,11 @@ public:
 
         if(event == PhaseChange && player->getPhase() == Player::Finish){
             if(has_frantic){
-                room->playSkillEffect(objectName(), player->getGender() == General::Male ? 2: 4);
+                room->playSkillEffect(player->getGender() == General::Male ? objectName() : objectName() + "f", qrand() % 2 + 3);
                 player->drawCards(players.length());
             }
             else{
-                room->playSkillEffect(objectName(), player->getGender() == General::Male ? 1: 3);
+                room->playSkillEffect(player->getGender() == General::Male ? objectName() : objectName() + "f", qrand() % 2 + 1);
                 player->drawCards(player->getMaxHP());
             }
         }
@@ -161,7 +167,7 @@ public:
                     log.to << player;
                     log.arg = effect.card->objectName();
                     log.arg2 = objectName();
-
+                    room->playSkillEffect(player->getGender() == General::Male ? objectName() : objectName() + "f", 5);
                     room->sendLog(log);
 
                     return true;
@@ -180,6 +186,7 @@ public:
                 log.from = player;
                 log.arg = objectName();
                 room->sendLog(log);
+                room->playSkillEffect(player->getGender() == General::Male ? objectName() : objectName() + "f", 6);
                 return false;
             }
         }
@@ -519,7 +526,7 @@ ImpasseScenario::ImpasseScenario()
     skills << new Silue << new Kedi
             << new Tiemu << new Yuanyin << new YuanyinEx
             << new Guzhan << new Yangzhan << new Duduan;
-
+    skills << new Skill("tiemuf", Skill::NotSkill);
 }
 
 ADD_SCENARIO(Impasse)
