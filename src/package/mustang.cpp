@@ -901,6 +901,13 @@ QGroupBox *JingsuanDialog::createLeft(){
 
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
+        if(card->getPackage() == "gift")
+            continue;
+        if(card->getPackage() == "purgatory")
+            continue;
+        //const Package *package = Sanguosha->findChild<const Package *>(card->getPackage());
+        //if(package->getGenre() == Package::LUA)
+        //    continue;
         if(card->getTypeId() == Card::Basic && !map.contains(card->objectName())){
             Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
             c->setSkillName("jingsuan");
@@ -928,6 +935,12 @@ QGroupBox *JingsuanDialog::createRight(){
 
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
+        if(card->getPackage() == "gift")
+            continue;
+        if(card->getPackage() == "purgatory")
+            continue;
+        if(card->getPackage() == "ex_cards")
+            continue;
         if(card->isNDTrick() && !map.contains(card->objectName())){
             Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
             c->setSkillName("jingsuan");
@@ -956,7 +969,18 @@ void JingsuanDialog::popup(){
 
     foreach(QAbstractButton *button, group->buttons()){
         const Card *card = map[button->objectName()];
-        button->setEnabled(card->isAvailable(Self));
+        bool enable = false;
+        if(card->isKindOf("Slash"))
+            enable = Slash::IsAvailable(Self);
+        else if(card->isKindOf("Peach"))
+            enable = Peach::IsAvailable(Self);
+        else if(card->isKindOf("Analeptic"))
+            enable = Analeptic::IsAvailable(Self);
+        else if(card->isKindOf("Ecstasy"))
+            enable = Ecstasy::IsAvailable(Self);
+        else
+            enable = card->isAvailable(Self);
+        button->setEnabled(enable);
     }
 
     Self->tag.remove("Jingsuan");
@@ -1004,7 +1028,8 @@ const Card *JingsuanCard::validate(const CardUseStruct *card_use) const{
     const Card *card = Sanguosha->getCard(subcards.first());
     Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
     use_card->setSkillName("jingsuan");
-    use_card->addSubcard(card);
+    use_card->addSubcard(subcards.first());
+    use_card->addSubcard(subcards.last());
     room->throwCard(this);
 
     return use_card;
@@ -1032,10 +1057,6 @@ public:
     Jingsuan():ViewAsSkill("jingsuan"){
     }
 
-    virtual bool isEnabledAtPlay(const Player *) const{
-        return true;
-    }
-
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
         return (pattern == "nullification" || pattern == "nulliplot") &&
                 !player->isKongcheng() &&
@@ -1044,15 +1065,15 @@ public:
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
         int x = Self->getLostHp();
-        if(selected.length() > 1)
-            return false;
-        if(selected.length() == 1){
+        if(selected.isEmpty())
+            return true;
+        else if(selected.length() == 1){
             const Card *first = selected.first()->getCard();
             const Card *second = to_select->getCard();
             if(qAbs(first->getNumber() - second->getNumber()) <= x)
                 return !to_select->isEquipped();
         }
-        return !to_select->isEquipped();
+        return false;
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
@@ -1077,9 +1098,7 @@ public:
     }
 
     virtual bool isEnabledAtNullification(const ServerPlayer *player, bool) const{
-        if(player->getPhase() == Player::Play)
-            return player->getHandcardNum() > 1;
-        return false;
+        return player->getPhase() == Player::Play && player->getHandcardNum() > 1;
     }
 
     virtual QDialog *getDialog() const{
@@ -1090,7 +1109,7 @@ public:
 MustangPackage::MustangPackage()
     :GeneralPackage("mustang")
 {
-    General *qinming = new General(this, "qinming", "guan");
+    General *qinming = new General(this, "qinming", "jiang");
     qinming->addSkill(new Baonu);
 
     General *pengqi = new General(this, "pengqi", "guan");
@@ -1100,7 +1119,7 @@ MustangPackage::MustangPackage()
     xueyong->addSkill(new Maiyi);
     addMetaObject<MaiyiCard>();
 
-    General *jiangjing = new General(this, "jiangjing", "jiang");
+    General *jiangjing = new General(this, "jiangjing", "kou");
     jiangjing->addSkill(new Huazhu);
     jiangjing->addSkill(new Jingsuan);
     addMetaObject<JingsuanCard>();
@@ -1125,7 +1144,7 @@ MustangPackage::MustangPackage()
     yintianxi->addSkill(new Qiangzhan);
     addMetaObject<QiangzhanCard>();
 
-    General *yuehe = new General(this, "yuehe", "min", 3);
+    General *yuehe = new General(this, "yuehe", "jiang", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
 
@@ -1134,7 +1153,7 @@ MustangPackage::MustangPackage()
     zhufu->addSkill(new Guitai);
     addMetaObject<HunjiuCard>();
 
-    General *taozongwang = new General(this, "taozongwang", "min", 3);
+    General *taozongwang = new General(this, "taozongwang", "kou", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
 }

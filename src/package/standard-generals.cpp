@@ -188,6 +188,12 @@ HuaceDialog::HuaceDialog()
 
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
+        if(card->getPackage() == "gift")
+            continue;
+        if(card->getPackage() == "purgatory")
+            continue;
+        if(card->getPackage() == "ex_cards")
+            continue;
         if(card->isNDTrick() && !map.contains(card->objectName())){
             Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
             c->setSkillName("huace");

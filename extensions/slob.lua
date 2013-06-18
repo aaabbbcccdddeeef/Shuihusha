@@ -11,22 +11,22 @@ chongmei = sgs.General(extension, 'chongmei', 'god', '7/10', sgs.General_Neuter,
 			使用距离	额外目标	额外次数
 杀			√			√			√
 肉			×			×			×
-过河拆桥	×			√			×
-顺手牵羊	√			√			×
-决斗		×			√			×
+过河拆桥	√限定		√			×
+顺手牵羊	√扩展		√			×
+决斗		√限定		√			×
 无中生有	×			×			×
 借刀杀人	×			×			×
-乐不思蜀	×			×			×
+乐不思蜀	√限定		×			×
 无懈可击	×			×			×
 酒			×			×			√
-铁索连环	×			√			×
-火攻		×			√			×
-粮尽援绝	√			×			×
+铁索连环	√限定		√			×
+火攻		√限定		√			×
+粮尽援绝	√扩展		×			×
 迷			×			√			√
-行刺		×			√			×
+行刺		√限定		√			×
 探听		×			×			×
-逼上梁山	×			√			×
-积草屯粮	×			×			×
+逼上梁山	√限定		√			×
+积草屯粮	√限定		×			×
 
 天灾锦囊	×			×			×
 AOE锦囊		×			×			×
@@ -78,13 +78,20 @@ snatch_ex1 = sgs.CreateTargetModSkill{
 	end,
 }
 
--- 黑色拆可同时拆2个玩家
 dismantlement_ex1 = sgs.CreateTargetModSkill{
 	name = "dismantlement_ex1",
-	pattern = "Dismantlement|.|.|.|black",
-	extra_target_func = function(self, player)
-		if player:hasSkill(self:objectName()) then
+	-- pattern = "Dismantlement|.|.|.|black",
+	pattern = "Dismantlement",
+	-- 黑色拆可同时拆2个玩家
+	extra_target_func = function(self, player, card)
+		if player:hasSkill(self:objectName()) and card:isBlack() then
 			return 1
+		end
+	end,
+	-- 红色拆只能拆距离为2以内的玩家
+	distance_limit_func = function(self, player, card)
+		if player:hasSkill(self:objectName()) and card:isRed() then
+			return 2
 		end
 	end,
 }
@@ -154,7 +161,7 @@ chongmei:addSkill(fireattack_ex1)
 chongmei:addSkill(ironchain_ex1)
 chongmei:addSkill(driver_ex1)
 chongmei:addSkill(analeptic_ex1)
-
+--[[  这部分是自定义卡牌的参考代码
 for var=1, 13, 1 do
 	local x = var % 4
 	if x == 0 then
@@ -167,7 +174,7 @@ for var=1, 13, 1 do
 		sgs.Sanguosha:cloneCard("shit", sgs.Card_Diamond, var):setParent(extension)
 	end
 end
-
+]]
 sgs.LoadTranslationTable {
 	["slob"] = "虫妹示例",
 	['#chongmei'] ='女王受·',
@@ -180,7 +187,7 @@ sgs.LoadTranslationTable {
 	[':snatch_ex1'] ='你的顺可额外指定一个目标；你可顺与你距离为2的玩家',
 
 	['dismantlement_ex1'] ='拆迁',
-	[':dismantlement_ex1'] ='你的黑色拆可额外指定一个目标',
+	[':dismantlement_ex1'] ='你的黑色拆可额外指定一个目标；你的红色拆只能拆距离为2以内的玩家',
 
 	['duel_ex1'] ='斗殴',
 	[':duel_ex1'] ='你的决斗和行刺均可额外指定一个目标',
