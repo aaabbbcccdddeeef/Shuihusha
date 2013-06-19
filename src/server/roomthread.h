@@ -11,6 +11,8 @@
 
 struct LogMessage{
     LogMessage();
+    LogMessage(QString type, ServerPlayer *from, QString arg);
+
     QString toString() const;
 
     QString type;

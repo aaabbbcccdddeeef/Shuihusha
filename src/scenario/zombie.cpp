@@ -20,8 +20,8 @@ public:
         room->setPlayerProperty(player, "maxhp", maxhp);
         room->setPlayerProperty(player, "hp", player->getMaxHP());
         room->setPlayerProperty(player, "role", "renegade");
-        room->detachSkillFromPlayer(player, "peaching", false);
-        room->detachSkillFromPlayer(player, "harbourage", false);
+        room->detachSkillFromPlayer(player, "Yuanzhu", false);
+        room->detachSkillFromPlayer(player, "Bihu", false);
 
         LogMessage log;
         log.type = "#Zombify";
@@ -50,8 +50,8 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         switch(event){
         case GameStart:{
-                room->acquireSkill(player, "peaching");
-                room->acquireSkill(player, "harbourage");
+                room->acquireSkill(player, "Yuanzhu");
+                room->acquireSkill(player, "Bihu");
                 break;
             }
 
@@ -149,8 +149,8 @@ public:
                 }
 
                 if(round == 1){
-                    room->acquireSkill(player, "peaching");
-                    room->acquireSkill(player, "harbourage");
+                    room->acquireSkill(player, "Yuanzhu");
+                    room->acquireSkill(player, "Bihu");
                 }
                 gameOverJudge(room);
             }
@@ -290,42 +290,46 @@ public:
     }
 };
 
-PeachingCard::PeachingCard()
-    :QingnangCard()
-{
+YuanzhuCard::YuanzhuCard(){
+    target_fixed = true;
 }
 
-bool PeachingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.length() > 0)return false;
-    return to_select->isWounded() && (Self->distanceTo(to_select) <= 1);
+void YuanzhuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    foreach(ServerPlayer *tmp, room->getOtherPlayers(source)){
+        if(tmp->isWounded() && source->distanceTo(tmp) == 1){
+            RecoverStruct recover;
+            recover.card = this;
+            recover.who = source;
+            //room->recover(tmp, recover);
+            room->recover(tmp, RecoverStruct(this, source));
+        }
+    }
 }
 
-class Peaching: public OneCardViewAsSkill{
+class Yuanzhu: public OneCardViewAsSkill{
 public:
-    Peaching():OneCardViewAsSkill("peaching"){
-
+    Yuanzhu():OneCardViewAsSkill("yuanzhu"){
     }
 
-    virtual bool isEnabledAtPlay(const Player *) const{
-        return true;
+    virtual bool isEnabledAtPlay(const Player *z) const{
+        return !z->hasUsed("YuanzhuCard");
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getCard();
-        return card->isKindOf("Peach") || card->isKindOf("Analeptic") /*|| card->isKindOf("Shit")*/;
+        return card->isKindOf("Peach") || card->isKindOf("Analeptic") || card->isKindOf("Shit");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        PeachingCard *qingnang_card = new PeachingCard;
-        qingnang_card->addSubcard(card_item->getFilteredCard());
-
-        return qingnang_card;
+        YuanzhuCard *card = new YuanzhuCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
-class Harbourage: public TriggerSkill{
+class Bihu: public TriggerSkill{
 public:
-    Harbourage():TriggerSkill("harbourage$"){
+    Bihu():TriggerSkill("bihu$"){
         events << PhaseEnd << PhaseChange;
     }
 
@@ -353,7 +357,7 @@ public:
         if(!humens.isEmpty() && player->askForSkillInvoke(objectName())){
             ServerPlayer *target = room->askForPlayerChosen(player, humens, objectName());
             LogMessage log;
-            log.type = "#Harbourage";
+            log.type = "#Bihu";
             log.from = player;
             log.to << target;
             room->sendLog(log);
@@ -395,7 +399,7 @@ ZombieScenario::ZombieScenario()
 {
     rule = new ZombieRule(this);
 
-    skills << new Peaching << new Harbourage;
+    skills << new Yuanzhu << new Bihu;
 
     General *zombie = new General(this, "zombie", "die", 3, true, true, true);
     zombie->addSkill(new Xunmeng);
@@ -405,7 +409,7 @@ ZombieScenario::ZombieScenario()
     zombie->addSkill(new Paoxiao);
     zombie->addSkill(new Skill("wansha", Skill::Compulsory));
 
-    addMetaObject<PeachingCard>();
+    addMetaObject<YuanzhuCard>();
     addMetaObject<GanranEquip>();
 }
 

@@ -17,6 +17,12 @@ LogMessage::LogMessage()
 {
 }
 
+LogMessage::LogMessage(QString type, ServerPlayer *from, QString arg){
+    this->type = type;
+    this->from = from;
+    this->arg = arg;
+}
+
 QString LogMessage::toString() const{
     QStringList tos;
     foreach(ServerPlayer *player, to)
@@ -32,6 +38,24 @@ QString LogMessage::toString() const{
 DamageStruct::DamageStruct()
     :from(NULL), to(NULL), card(NULL), damage(1), nature(Normal), chain(false)
 {
+}
+
+DamageStruct::DamageStruct(const Card *card, ServerPlayer *from, ServerPlayer *to, int damage, DamageStruct::Nature nature)
+    :chain(false)
+{
+    this->card = card;
+    this->from = from;
+    this->to = to;
+    this->damage = damage;
+    this->nature = nature;
+}
+
+QString DamageStruct::getReason() const{
+    if (reason != QString())
+        return reason;
+    else if (card)
+        return card->objectName();
+    return QString();
 }
 
 CardEffectStruct::CardEffectStruct()
@@ -52,13 +76,17 @@ DyingStruct::DyingStruct()
 RecoverStruct::RecoverStruct()
     :recover(1), who(NULL), card(NULL)
 {
+}
 
+RecoverStruct::RecoverStruct(const Card *card, ServerPlayer *who, int recover){
+    this->who = who;
+    this->card = card;
+    this->recover = recover;
 }
 
 PindianStruct::PindianStruct()
     :from(NULL), to(NULL), from_card(NULL), to_card(NULL)
 {
-
 }
 
 bool PindianStruct::isSuccess() const{

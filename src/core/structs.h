@@ -22,6 +22,8 @@ struct DamageStruct{
         Thunder // lightning, thunder slash, and few damage skill (Leiji, etc)
     };
 
+    DamageStruct(const Card *card, ServerPlayer *from, ServerPlayer *to, int damage = 1, Nature nature = Normal);
+
     ServerPlayer *from;
     ServerPlayer *to;
     const Card *card;
@@ -86,6 +88,7 @@ struct DyingStruct{
 
 struct RecoverStruct{
     RecoverStruct();
+    RecoverStruct(const Card *card, ServerPlayer *who = NULL, int recover = 1);
 
     int recover;
     ServerPlayer *who;

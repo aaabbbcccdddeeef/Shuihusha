@@ -27,14 +27,14 @@ if sgs.GetConfig("GameMode", ""):match("zombie") then
 		useTrickCard(self, card, use)
 	end
 
-	local peaching_skill = {name = "peaching"}
-	table.insert(sgs.ai_skills, peaching_skill)
-	function peaching_skill.getTurnUseCard(self)
+	local yuanzhu_skill = {name = "yuanzhu"}
+	table.insert(sgs.ai_skills, yuanzhu_skill)
+	function yuanzhu_skill.getTurnUseCard(self)
 		local peach = self:getCardId("Analeptic") or self:getCardId("Peach") or self:getCardId("Shit")
-		if peach and type(peach) == "number" then return sgs.Card_Parse("@PeachingCard=" .. peach) end
+		if peach and type(peach) == "number" then return sgs.Card_Parse("@YuanzhuCard=" .. peach) end
 	end
 
-	function sgs.ai_skill_use_func.PeachingCard(card, use, self)
+	function sgs.ai_skill_use_func.YuanzhuCard(card, use, self)
 		self:sort(self.friends, "hp")
 		for _, friend in ipairs(self.friends) do
 			if friend:isWounded() and self.player:distanceTo(friend) <= 1 then
@@ -45,8 +45,8 @@ if sgs.GetConfig("GameMode", ""):match("zombie") then
 		end
 	end
 
-	sgs.ai_skill_invoke.harbourage = true
-	sgs.ai_skill_playerchosen.harbourage = function(self, targets)
+	sgs.ai_skill_invoke.bihu = true
+	sgs.ai_skill_playerchosen.bihu = function(self, targets)
 		self:sort(self.friends_noself, "defense")
 		local target = self.friends_noself[1] or self.player
 		for _, friend in ipairs(self.friends) do
