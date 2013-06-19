@@ -774,6 +774,11 @@ QStringList Player::getAllMarkName(int flag, const QString &part) const{
     return marknames;
 }
 
+QString Player::getConjur() const{
+    QStringList conjurs = getAllMarkName(3, "_jur");
+    return conjurs.value(0, QString());
+}
+
 bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{
     if(slash == NULL)
         slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);

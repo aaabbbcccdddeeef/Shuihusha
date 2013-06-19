@@ -83,15 +83,16 @@ Engine::Engine()
         mutable_skill->initMediaSource();
     }
 
-    // times / preconjur / conjured
-    conjurs["poison_jur"] = "5";
-    conjurs["sleep_jur"] = "2/75";
-    conjurs["dizzy_jur"] = "2/75";
-    conjurs["chaos_jur"] = "2//75";
-    conjurs["reflex_jur"] = "3//25";
+    // format: times / value / preconjur / conjured
+    // value > 0 means benifit else harm
+    conjurs["poison_jur"] = "5/-4";
+    conjurs["sleep_jur"] = "2/-1/75";
+    conjurs["dizzy_jur"] = "2/-2/75";
+    conjurs["chaos_jur"] = "2/-3//75";
 
-    conjurs["stealth_jur"] = "2";
-    conjurs["lucky_jur"] = "2//75";
+    conjurs["stealth_jur"] = "2/5";
+    conjurs["lucky_jur"] = "2/4//75";
+    conjurs["reflex_jur"] = "3/3//25";
 }
 
 lua_State *Engine::getLuaState() const{
@@ -1032,11 +1033,20 @@ int Engine::getConjurDelay(const QString &conjur) const{
     return v.at(0).toInt();
 }
 
-int Engine::getConjurPAdditional(const QString &conjur) const{
+int Engine::getConjurValue(const QString &conjur) const{
     QString value = conjurs.value(conjur, QString());
     QStringList v = value.split("/");
     if(v.length() > 1 && v.at(1) != QString())
         return v.at(1).toInt();
+    else
+        return 0;
+}
+
+int Engine::getConjurPAdditional(const QString &conjur) const{
+    QString value = conjurs.value(conjur, QString());
+    QStringList v = value.split("/");
+    if(v.length() > 2 && v.at(2) != QString())
+        return v.at(2).toInt();
     else
         return 100;
 }
@@ -1044,8 +1054,8 @@ int Engine::getConjurPAdditional(const QString &conjur) const{
 int Engine::getConjurPEffective(const QString &conjur) const{
     QString value = conjurs.value(conjur, QString());
     QStringList v = value.split("/");
-    if(v.length() > 2 && v.at(2) != QString())
-        return v.at(2).toInt();
+    if(v.length() > 3 && v.at(3) != QString())
+        return v.at(3).toInt();
     else
         return 100;
 }

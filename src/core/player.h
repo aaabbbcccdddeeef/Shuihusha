@@ -179,6 +179,7 @@ public:
     int getMark(const QString &mark) const;
     bool hasMark(const QString &mark) const;
     QStringList getAllMarkName(int flag = 1, const QString &part = "@") const;
+    QString getConjur() const;
 
     void setChained(bool chained);
     bool isChained() const;

@@ -106,6 +106,8 @@ public:
 
     QStringList getConjurs() const;
     int getConjurDelay(const QString &conjur) const;
+    int getConjurValue(const QString &conjur) const;
+    bool isBenifitConjur(const QString &conjur) const {return getConjurValue(conjur) >= 0;}
     int getConjurPAdditional(const QString &conjur) const;
     int getConjurPEffective(const QString &conjur) const;
 

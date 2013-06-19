@@ -348,12 +348,22 @@ public:
             }
         }
         else{
-            if(room->findPlayerBySkillName(objectName())){
+            ServerPlayer *kojia = room->findPlayerBySkillName(objectName());
+            if(kojia){
                 QStringList dataa = data.toString().split("*");
-                if(dataa.at(1) != "100")
+                if(dataa.at(1) != "100"){
+                    LogMessage log;
+                    log.type = event == PreConjuring ? "#FullJur1" : "#FullJur2";
+                    log.from = kojia;
+                    log.to << player;
+                    log.arg = objectName();
+                    log.arg2 = dataa.at(0);
+                    room->sendLog(log);
                     room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                dataa.replace(1, "100");
-                data = dataa.join("*");
+
+                    dataa.replace(1, "100");
+                    data = dataa.join("*");
+                }
             }
         }
         return false;
