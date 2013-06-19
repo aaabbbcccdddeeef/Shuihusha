@@ -170,6 +170,7 @@ enum TriggerEvent{
     AskForRetrial,
     FinishJudge,
 
+    Interrupt,
     Pindian,
     TurnedOver,
     ChainStateChange,

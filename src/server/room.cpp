@@ -252,8 +252,8 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
 
     LogMessage log;
     log.to << victim;
-	QString rol = Config.EnableHegemony ? victim->getKingdom() :
-                victim->property("panxin").toBool() ? "unknown" : victim->getScreenRole();
+    QString rol = Config.EnableHegemony ? victim->getKingdom() :
+                  victim->property("panxin").toBool() ? "unknown" : victim->getScreenRole();
     log.arg = rol;
     log.from = killer;
 
@@ -527,13 +527,8 @@ void Room::detachSkillFromPlayer(ServerPlayer *player, const QString &skill_name
         foreach(const Skill *skill, Sanguosha->getRelatedSkills(skill_name))
             detachSkillFromPlayer(player, skill->objectName());
 
-        if(showlog){
-            LogMessage log;
-            log.type = "#LoseSkill";
-            log.from = player;
-            log.arg = skill_name;
-            sendLog(log);
-        }
+        if(showlog)
+            sendLog(LogMessage("#LoseSkill", player, skill_name));
     }
 }
 
@@ -1595,11 +1590,7 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
         return;
     }
 
-    LogMessage log;
-    log.type = "#Transfigure";
-    log.from = player;
-    log.arg = general;
-    sendLog(log);
+    sendLog(LogMessage("#Transfigure", player, general));
 
     QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(general);
     player->invoke("transfigure", transfigure_str);

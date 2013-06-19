@@ -21,7 +21,7 @@ GameRule::GameRule(QObject *)
             << AskForPeaches << Death << Dying << GameOverJudge
             << PreDeath << RewardAndPunish << TurnedOver << ChainStateChange
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
-            << DamageDone << DamageComplete
+            << Interrupt << DamageDone << DamageComplete
             << StartJudge << FinishJudge << Pindian;
 }
 
@@ -120,11 +120,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
     case Player::NotActive:{
             if(player->hasFlag("drank")){
-                LogMessage log;
-                log.type = "#UnsetDrankEndOfTurn";
-                log.from = player;
-                room->sendLog(log);
-
+                room->sendLog(LogMessage("#UnsetDrankEndOfTurn", player));
                 room->setPlayerFlag(player, "-drank");
             }
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
@@ -184,19 +180,14 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if((player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang") || sun_moon){
             QString new_kingdom = room->askForKingdom(player, !sun_moon);
             room->setPlayerProperty(player, "kingdom", new_kingdom);
-
-            LogMessage log;
-            log.type = "#ChooseKingdom";
-            log.from = player;
-            log.arg = new_kingdom;
-            room->sendLog(log);
+            room->sendLog(LogMessage("#ChooseKingdom", player, new_kingdom));
         }
 
         if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
             LogMessage log;
-            log.type = "#AnzhanShuffle";
             log.from = player;
             log.arg = "anzhan";
+            log.type = "#AnzhanShuffle";
             room->sendLog(log);
 
             QStringList roles;
@@ -236,19 +227,15 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 player->drawCards(4, false);
             }
         }
-
+        if(setjmp(intt_env))
+            player = room->getCurrent()->getNextAlive();
         break;
     }
 
     case TurnStart:{
         player = room->getCurrent();
-        if(Config.value("Cheat/FreeShowRole", false).toBool()){
-            LogMessage log;
-            log.type = "#ShowRole";
-            log.from = player;
-            log.arg = player->getRole();
-            room->sendLog(log);
-        }
+        if(Config.value("Cheat/FreeShowRole", false).toBool())
+            room->sendLog(LogMessage("#ShowRole", player, player->getRole()));
         if(!player->faceUp())
             player->turnOver();
         else if(player->isAlive())
@@ -274,11 +261,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
     case CardAsk :
     case CardUseAsk: {
         if(player->hasFlag("ecst") && (data.toString() == "slash" || data.toString() == "jink")){
-            LogMessage log;
-            log.type = "#EcstasyEffect";
-            log.from = player;
-            log.arg = data.toString();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#EcstasyEffect", player, data.toString()));
             return true;
         }
         break;
@@ -306,12 +289,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
     case HpLost:{
         int lose = data.toInt();
 
-        LogMessage log;
-        log.type = "#LoseHp";
-        log.from = player;
-        log.arg = QString::number(lose);
-        room->sendLog(log);
-
+        room->sendLog(LogMessage("#LoseHp", player, QString::number(lose)));
         room->setPlayerProperty(player, "hp", player->getHp() - lose);
         QString str = QString("%1:%2L").arg(player->objectName()).arg(-lose);
         room->broadcastInvoke("hpChange", str);
@@ -401,16 +379,19 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         break;
     }
 
+    case Interrupt:{
+            //player->setFlags("ShutUp");
+            //player->skip();
+            //beforeNext(player);
+            longjmp(intt_env, 1);
+            break;
+        }
     case DamageDone:{
         DamageStruct damage = data.value<DamageStruct>();
         room->sendDamageLog(damage);
 
         if(damage.to->hasFlag("ecst")){
-            LogMessage log;
-            log.type = "#UnsetEcst";
-            log.from = damage.to;
-            room->sendLog(log);
-
+            room->sendLog(LogMessage("#UnsetEcst", damage.to));
             room->setPlayerFlag(damage.to, "-ecst");
         }
         if(damage.from)
@@ -451,11 +432,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(chained_player->isChained()){
                     room->getThread()->delay();
                     room->setPlayerProperty(chained_player, "chained", false);
-
-                    LogMessage log;
-                    log.type = "#IronChainDamage";
-                    log.from = chained_player;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#IronChainDamage", chained_player));
 
                     DamageStruct chain_damage = damage;
                     chain_damage.to = chained_player;
@@ -588,10 +565,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                 if(player->getHp() <= 0)
                     room->setPlayerProperty(player, "hp", 1);
-                LogMessage log;
-                log.type = "#Undead";
-                log.from = player;
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Undead", player));
                 return true;
             }
             if(Config.value("Cheat/HandsUp", false).toBool() && room->getMode() != "02_1v1"){
@@ -670,11 +644,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         player->setFaceUp(!player->faceUp());
         room->broadcastProperty(player, "faceup");
 
-        LogMessage log;
-        log.type = "#TurnOver";
-        log.from = player;
-        log.arg = player->faceUp() ? "face_up" : "face_down";
-        room->sendLog(log);
+        room->sendLog(LogMessage("#TurnOver", player, player->faceUp() ? "face_up" : "face_down"));
         break;
     }
 
@@ -1079,11 +1049,7 @@ bool EventsRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
                 bool girl = room->askForUseCard(damage.to, "NinedayGirl", prompt);
                 room->setPlayerFlag(damage.to, "-NineGirl");
                 if(girl){
-                    LogMessage log;
-                    log.from = damage.to;
-                    log.type = "#NineGirl";
-                    log.arg = QString::number(damage.damage);
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#NineGirl", damage.to, QString::number(damage.damage)));
                     return true;
                 }
             }
@@ -1300,10 +1266,7 @@ bool ReincarnationRule::trigger(TriggerEvent event, Room* room, ServerPlayer *pl
             ServerPlayer *next = player->getNext();
             while(next->isDead()){
                 if(next->getHandcardNum() >= max){
-                    LogMessage log;
-                    log.type = "#ReincarnRevive";
-                    log.from = next;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#ReincarnRevive", next));
 
                     room->broadcastInvoke("playAudio", "mode/reincarnation");
                     room->revivePlayer(next);
@@ -1388,10 +1351,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     }
     case DrawNCards:{
         if(player->hasJur("lucky_jur")){
-            LogMessage log;
-            log.from = player;
-            log.type = "#Lucky";
-            room->sendLog(log);
+            room->sendLog(LogMessage("#Lucky", player));
             data = data.toInt() + 1;
         }
         break;
@@ -1399,10 +1359,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     case PhaseChange:{
         if(player->getPhase() == Player::RoundStart){
             if(player->hasJur("poison_jur")){
-                LogMessage log;
-                log.from = player;
-                log.type = "#Poison";
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Poison", player));
                 if(player->getMark("poison_jur") <= 2){
                     if(player->getCards("hej").length() > 1 && room->askForChoice(player, "poison_jur", "hp+cd") == "cd"){
                         int index = -1;
@@ -1486,11 +1443,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         //shengsizhizhan
         foreach(ServerPlayer *t, room->getAlivePlayers()){
             if(t->hasMark("@life") && t->hasMark("mind")){
-                LogMessage log;
-                log.type = "#Mind";
-                log.from = t;
-                log.arg = "mastermind";
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Mind", t, "mastermind"));
 
                 int n = qMin(t->getMark("mind"), t->getLostHp());
                 room->recover(t, RecoverStruct(player, NULL, n));
@@ -1505,10 +1458,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     case AskForPeaches:{
         if(player->hasJur("sleep_jur")){
             if(player->getPhase() == Player::NotActive){
-                LogMessage log;
-                log.from = player;
-                log.type = "#Sleep";
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Sleep", player));
                 return true;
             }
         }
@@ -1544,10 +1494,7 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             break;
         if(player->hasJur("sleep_jur")){
             if(player->getPhase() == Player::NotActive){
-                LogMessage log;
-                log.from = player;
-                log.type = "#Sleep";
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Sleep", player));
                 return true;
             }
         }

@@ -597,20 +597,12 @@ void ServerPlayer::skip(Player::Phase phase){
 
     int index = static_cast<int>(phase);
 
-    LogMessage log;
-    log.type = "#SkipPhase";
-    log.from = this;
-    log.arg = phase_strings.at(index);
-    room->sendLog(log);
+    room->sendLog(LogMessage("#SkipPhase", this, phase_strings.at(index)));
 }
 
 void ServerPlayer::skip(){
     phases.clear();
-
-    LogMessage log;
-    log.type = "#SkipAllPhase";
-    log.from = this;
-    room->sendLog(log);
+    room->sendLog(LogMessage("#SkipAllPhase", this));
 }
 
 void ServerPlayer::gainMark(const QString &mark, int n){
@@ -707,11 +699,7 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
 void ServerPlayer::removeJur(const QString &jur){
     if(getMark(jur) > 0)
         room->setPlayerMark(this, jur, 0);
-    LogMessage log;
-    log.type = "#RemoveJur";
-    log.from = this;
-    log.arg = jur;
-    room->sendLog(log);
+    room->sendLog(LogMessage("#RemoveJur", this, jur));
 
     removeMark(jur);
     if(jur.startsWith("dizzy"))
@@ -729,11 +717,7 @@ bool ServerPlayer::hasJur(const QString &jur){
            qPrintable(objectName()), qPrintable(data.toString()), qPrintable(QString::number(probability)));
     int percent = QString(data.toString().split("*").last()).toInt();
     if(probability > percent){
-        LogMessage log;
-        log.type = "#UntriggerJur";
-        log.from = this;
-        log.arg = jur;
-        room->sendLog(log);
+        room->sendLog(LogMessage("#UntriggerJur", this, jur));
         return false;
     }
     else

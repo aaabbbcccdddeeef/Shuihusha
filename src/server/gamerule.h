@@ -18,6 +18,7 @@ private:
     void onPhaseChange(ServerPlayer *player) const;
     void changeGeneral1v1(ServerPlayer *player) const;
     QString getWinner(ServerPlayer *victim) const;
+    mutable jmp_buf intt_env;
 };
 
 class BasaraMode: public GameRule{

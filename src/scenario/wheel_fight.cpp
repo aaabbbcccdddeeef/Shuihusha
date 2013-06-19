@@ -78,9 +78,14 @@ public:
 
             int wheel = player->getMark("@skull");
 
-            room->sendLog(LogMessage("#VictimB", player, QString::number(wheel)));
+            LogMessage log;
+            log.type = "#VictimB";
+            log.from = player;
+            log.arg = QString::number(wheel);
+            room->sendLog(log);
             int maxwheel = Config.value("Scenario/WheelCount", 10).toInt();
             if((float)wheel / (float)maxwheel > 0.7){
+                LogMessage log;
                 log.type = "#VictimC";
                 log.from = player;
                 log.arg = QString::number(maxwheel);
@@ -88,11 +93,12 @@ public:
                 room->sendLog(log);
             }
 
-            data = QVariant();
             Oyasumi(room, player);
 
             room->setPlayerMark(player, "@skull", wheel);
             player->drawCards(4, false);
+
+            room->getThread()->trigger(Interrupt, room, room->getCurrent());
             return true;
         }
         case GameOverJudge:{
