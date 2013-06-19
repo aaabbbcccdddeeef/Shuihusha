@@ -110,11 +110,7 @@ public:
             room->loseMaxHp(opt);
 
             if(opt->isAlive()){
-                LogMessage log;
-                log.type = "#Tengfei";
-                log.from = opt;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Tengfei", opt, objectName()));
 
                 opt->gainAnExtraTurn(opt);
             }
@@ -326,11 +322,7 @@ public:
         room->awake(fanrui, objectName(), "2500", 2500);
 
         room->setPlayerProperty(fanrui, "maxhp", 2);
-        LogMessage log;
-        log.type = "#WudaoWake";
-        log.from = fanrui;
-        log.arg = QString::number(2);
-        room->sendLog(log);
+        room->sendLog(LogMessage("#WudaoWake", fanrui, QString::number(2)));
 
         room->drawCards(fanrui, 2);
         room->acquireSkill(fanrui, "qimen");
@@ -1025,11 +1017,7 @@ void ZhaoanCard::onEffect(const CardEffectStruct &effect) const{
         effect.to->drawCards(2);
     }
     else{
-        LogMessage log;
-        log.type = "#Zhaoan";
-        log.from = effect.to;
-        log.arg = skill_name;
-        room->sendLog(log);
+        room->sendLog(LogMessage("#Zhaoan", effect.to, skill_name));
         room->playSkillEffect(skill_name, 3);
         room->setPlayerFlag(effect.to, "%zhaoan");
     }

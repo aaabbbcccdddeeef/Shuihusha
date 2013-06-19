@@ -3765,11 +3765,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     if(skillname.at(0).isUpper())
         skillname[0] = skillname.at(0).toLower();
 
-    LogMessage log;
-    log.type = "#WakeUp";
-    log.from = player;
-    log.arg = skillname;
-    sendLog(log);
+    sendLog(LogMessage("#WakeUp", player, skillname));
     playSkillEffect(skillname);
 
     if(!Config.DisableLightbox){

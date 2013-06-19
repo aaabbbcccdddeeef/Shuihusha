@@ -356,13 +356,9 @@ public:
         }else if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.card && damage.card->inherits("Slash")){
-                LogMessage log;
-                log.type = "#ThrowWeapon";
-                log.from = player;
-                log.arg = objectName();
                 if(damage.from->getWeapon()){
                     player->playCardEffect("Egold_armor2", "armor");
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#ThrowWeapon", player, objectName()));
                     room->throwCard(damage.from->getWeapon(), damage.from);
                 }
             }

@@ -91,10 +91,7 @@ public:
                 default:{
                         room->askForUseCard(lusashi, "@@baoquan", "@baoquan", true);
                         if(fist >= 5){
-                            LogMessage log;
-                            log.type = "#RemoveHidden";
-                            log.from = lusashi;
-                            room->sendLog(log);
+                            room->sendLog(LogMessage("#RemoveHidden", lusashi));
                             room->acquireSkill(lusashi, "zuohua");
                         }
                     }
@@ -154,15 +151,10 @@ public:
         view_as_skill = new StrikeViewAsSkill;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Slash") && use.card->isVirtualCard() && use.card->getSkillName() == objectName()){
-            LogMessage log;
-            log.type = "#Strike";
-            log.from = use.from;
-            log.arg = objectName();
-            room->sendLog(log);
-        }
+        if(use.card->inherits("Slash") && use.card->isVirtualCard() && use.card->getSkillName() == objectName())
+            room->sendLog(LogMessage("#Strike", use.from, objectName()));
         return false;
     }
 };

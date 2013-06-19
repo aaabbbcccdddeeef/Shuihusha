@@ -657,10 +657,7 @@ public:
                 if(target != erge && erge->getState() == "online")
                     erge->addMark("guansheng");
                 if(erge->getMark("guansheng") > 4){
-                    LogMessage log;
-                    log.type = "#RemoveHidden";
-                    log.from = erge;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#RemoveHidden", erge));
                     room->acquireSkill(erge, "wusheng");
                 }
             }
@@ -1405,13 +1402,9 @@ public:
         }else if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.card && damage.card->inherits("Slash")){
-                LogMessage log;
-                log.type = "#ThrowJinjiaWeapon";
-                log.from = player;
-                log.arg = objectName();
                 if(damage.from->getWeapon()){
                     room->playSkillEffect(objectName(), 2);
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#ThrowJinjiaWeapon", player, objectName()));
                     room->setEmotion(player, "armor");
                     room->throwCard(damage.from->getWeapon(), damage.from);
                 }
@@ -1463,11 +1456,7 @@ public:
                !player->isKongcheng() &&
                room->askForCard(player, ".", "@jibao", true, QVariant(), CardDiscarded)){
                 room->playSkillEffect(objectName());
-                LogMessage log;
-                log.type = "#Jibao";
-                log.from = player;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Jibao", player, objectName()));
                 room->getThread()->delay();
                 player->gainAnExtraTurn(player);
             }
@@ -2147,13 +2136,8 @@ void JiashuCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->obtainCard(this, false);
     Room *room = effect.from->getRoom();
 
-    Card::Suit suit = room->askForSuit(effect.from, "jiashu");
-    LogMessage log;
-    log.type = "#DeclareSuit";
-    log.from = effect.from;
-    QString suit_str = Suit2String(suit);
-    log.arg = suit_str;
-    room->sendLog(log);
+    QString suit_str = Suit2String(room->askForSuit(effect.from, "jiashu"));
+    room->sendLog(LogMessage("#DeclareSuit", effect.from, suit_str));
     QString pattern = QString(".|%1|.|hand$").arg(suit_str);
     QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
     const Card *card = room->askForCard(effect.to, pattern, prompt, QVariant(), NonTrigger);
@@ -2480,11 +2464,7 @@ public:
         if(player->getPhase() != Player::RoundStart || !player->askForSkillInvoke(objectName()))
             return false;
         Card::Suit suit = room->askForSuit(player, objectName());
-        LogMessage log;
-        log.type = "#DeclareSuit";
-        log.from = player;
-        log.arg = Card::Suit2String(suit);
-        room->sendLog(log);
+        room->sendLog(LogMessage("#DeclareSuit", player, Card::Suit2String(suit)));
 
         JudgeStruct judge;
         judge.pattern = QRegExp("(.*):(" + Card::Suit2String(suit) + "):(.*)");

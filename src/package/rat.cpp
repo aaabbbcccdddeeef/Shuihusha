@@ -40,11 +40,7 @@ public:
                 // throw the rest cards that matches the same suit
                 const Card *card = Sanguosha->getCard(card_id);
                 Card::Suit suit = card->getSuit();
-                /*LogMessage ogg;
-                ogg.type = "#Kongrice";
-                ogg.from = liying;
-                ogg.arg = card->getSuitString();
-                room->sendLog(ogg);*/
+                //room->sendLog(LogMessage("#Kongrice", liying, card->getSuitString()));
 
                 DummyCard *dummy_card = new DummyCard;
                 for(int i = card_ids.length() - 1; i > -1; i --){
@@ -577,11 +573,7 @@ public:
         if(event == Damaged){
             room->setPlayerFlag(player, "%Shudan");
             room->playSkillEffect(objectName(), 1);
-
-            LogMessage log;
-            log.type = "#ShudanDamaged";
-            log.from = player;
-            room->sendLog(log);
+            room->sendLog(LogMessage("#ShudanDamaged", player));
 
         }else if(event == CardEffected){
             if(!player->hasFlag("%Shudan"))
@@ -589,11 +581,7 @@ public:
             CardEffectStruct effect = data.value<CardEffectStruct>();
             if(effect.card->isKindOf("Slash") || effect.card->isNDTrick()){
                 room->playSkillEffect(objectName(), 2);
-                LogMessage log;
-                log.type = "#ShudanAvoid";
-                log.arg = objectName();
-                log.from = player;
-                room->sendLog(log);
+                room->sendLog(LogMessage("#ShudanAvoid", player, objectName()));
                 return true;
             }
         }
@@ -762,11 +750,7 @@ public:
             Room *room = p->getRoom();
             if(!p->isChained()){
                 room->playSkillEffect(objectName());
-                LogMessage log;
-                log.type = "#Mozhang";
-                log.from = p;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Mozhang", p, objectName()));
 
                 room->setPlayerChained(p);
             }

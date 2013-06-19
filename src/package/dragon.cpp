@@ -164,10 +164,7 @@ public:
                 room->getThread()->delay();
                 room->judge(judge);
                 if(judge.isGood()){
-                    LogMessage log;
-                    log.type = "#Jiaozhen";
-                    log.from = player;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#Jiaozhen", player));
                     room->setPlayerFlag(player, "Bark");
                 }
                 else
@@ -299,13 +296,8 @@ public:
                 invoke = true;
             }
 
-            if(invoke){
-                LogMessage log;
-                log.type = "#Changsheng";
-                log.from = aoko;
-                log.arg = objectName();
-                room->sendLog(log);
-            }
+            if(invoke)
+                room->sendLog(LogMessage("#Changsheng", aoko, objectName()));
 
             data = QVariant::fromValue(pindian);
         }

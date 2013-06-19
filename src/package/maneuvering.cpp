@@ -80,10 +80,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
         // recover hp
         room->recover(effect.to, RecoverStruct(effect.from, this), false);
     }else{
-        LogMessage log;
-        log.type = "#Drank";
-        log.from = effect.to;
-        room->sendLog(log);
+        room->sendLog(LogMessage("#Drank", effect.to));
 
         room->setPlayerFlag(effect.to, "drank");
 

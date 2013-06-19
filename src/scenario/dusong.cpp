@@ -202,10 +202,7 @@ public:
                     if(room->aliveRoles(player).length() == 1)
                         room->gameOver("lord");
 
-                    LogMessage log;
-                    log.type = "#Reforming";
-                    log.from = player;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#Reforming", player));
 
                     player->bury();
                     room->setPlayerProperty(player, "hp", 0);
@@ -228,26 +225,17 @@ public:
                 }else{
                     if(player->isDead()){
                         if(player->getHp() + player->getHandcardNum() == 6){
-                            LogMessage log;
-                            log.type = "#ReformingRevive";
-                            log.from = player;
-                            room->sendLog(log);
+                            room->sendLog(LogMessage("#ReformingRevive", player));
 
                             room->revivePlayer(player);
                         }else if(player->isWounded()){
                             if(player->getHp() > 0 && (room->askForChoice(player, "dusong", "recover1hp+draw1card") == "draw1card")){
-                                LogMessage log;
-                                log.type = "#ReformingDraw";
-                                log.from = player;
-                                room->sendLog(log);
+                                room->sendLog(LogMessage("#ReformingDraw", player));
                                 player->drawCards(1, false);
                                 return false;
                             }
 
-                            LogMessage log;
-                            log.type = "#ReformingRecover";
-                            log.from = player;
-                            room->sendLog(log);
+                            room->sendLog(LogMessage("#ReformingRecover", player));
 
                             room->setPlayerProperty(player, "hp", player->getHp() + 1);
                         }else

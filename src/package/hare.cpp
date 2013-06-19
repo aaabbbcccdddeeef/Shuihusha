@@ -527,11 +527,7 @@ public:
                 damage.from = player;
                 damage.to = target;
 
-                LogMessage log;
-                log.type = "#Hengchong";
-                log.from = player;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Hengchong", player, objectName()));
                 room->damage(damage);
             }
             room->setPlayerFlag(player, "-Hengchong");

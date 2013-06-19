@@ -220,8 +220,7 @@ public:
             LogMessage log;
             log.type = "#Attack";
             log.from = effect.to;
-            log.to << player;
-            log.to << jiyou;
+            log.to << player << jiyou;
             room->sendLog(log);
             //room->playSkillEffect(objectName());
 

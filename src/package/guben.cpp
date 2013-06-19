@@ -731,11 +731,7 @@ void FanjianPassCard::onEffect(const CardEffectStruct &effect) const{
     const Card *card = Sanguosha->getCard(card_id);
     Card::Suit suit = room->askForSuit(target, "fanjian");
 
-    LogMessage log;
-    log.type = "#ChooseSuit";
-    log.from = target;
-    log.arg = Card::Suit2String(suit);
-    room->sendLog(log);
+    room->sendLog(LogMessage("#ChooseSuit", target, Card::Suit2String(suit)));
 
     room->showCard(zhouyu, card_id);
     room->getThread()->delay();
@@ -832,10 +828,7 @@ public:
         const Card *card = room->askForCard(player, "@@quwu_p", "@quwu_p");
         if(card){
             room->throwCard(card->getEffectiveId());
-            LogMessage log;
-            log.type = "#QuwuPass";
-            log.from = player;
-            room->sendLog(log);
+            room->sendLog(LogMessage("#QuwuPass", player));
 
             damage.damage--;
             data = QVariant::fromValue(damage);

@@ -54,12 +54,8 @@ void CBLongNuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
             room->throwCard(anger2);
             source->addMark("CBLongNu");
         }
-    }else{
-        LogMessage log;
-        log.type = "#CBLongNuLog";
-        log.from = source;
-        room->sendLog(log);
-    }
+    }else
+        room->sendLog(LogMessage("#CBLongNuLog", source));
 }
 
 class CBLongNuViewAsSkill: public ZeroCardViewAsSkill{
@@ -148,12 +144,8 @@ void CBYuXueCard::onUse(Room *room, const CardUseStruct &card_use) const{
         usepeach.from = card_use.from;
         usepeach.to << target;
         room->useCard(usepeach);
-    }else{
-        LogMessage log;
-        log.type = "#CBYuXueLog";
-        log.from = card_use.from;
-        room->sendLog(log);
-    }
+    }else
+        room->sendLog(LogMessage("#CBYuXueLog", card_use.from));
 }
 
 class CBYuXue: public ZeroCardViewAsSkill{
@@ -387,12 +379,8 @@ void CBChanSheCard::onUse(Room *room, const CardUseStruct &card_use) const{
             use.card = new_card;
             room->useCard(use);
         }
-    }else{
-        LogMessage log;
-        log.type = "#CBChanSheLog";
-        log.from = card_use.from;
-        room->sendLog(log);
-    }
+    }else
+        room->sendLog(LogMessage("#CBChanSheLog", card_use.from));
 }
 
 class CBChanShe: public ZeroCardViewAsSkill{
@@ -455,12 +443,8 @@ void CBShiShenCard::use(Room *room, ServerPlayer *source, const QList<ServerPlay
             room->throwCard(anger2);
             room->loseHp(target, 1);
         }
-    }else{
-        LogMessage log;
-        log.type = "#CBShiShenLog";
-        log.from = source;
-        room->sendLog(log);
-    }
+    }else
+        room->sendLog(LogMessage("#CBShiShenLog", source));
 }
 
 class CBShiShen: public ZeroCardViewAsSkill{

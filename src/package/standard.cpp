@@ -234,11 +234,7 @@ QString DelayedTrick::getSubtype() const{
 void DelayedTrick::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
 
-    LogMessage log;
-    log.from = effect.to;
-    log.type = "#DelayedTrick";
-    log.arg = effect.card->objectName();
-    room->sendLog(log);
+    room->sendLog(LogMessage("#DelayedTrick", effect.to, effect.card->objectName()));
 
     JudgeStruct judge_struct = judge;
     judge_struct.who = effect.to;

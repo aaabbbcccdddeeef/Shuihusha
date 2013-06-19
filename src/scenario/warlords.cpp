@@ -34,13 +34,7 @@ public:
                 qShuffle(players);
 
                 ServerPlayer *target = players.at(0);
-
-                LogMessage log;
-                log.type = player->isLord() ? "#NewLord" : "#NewLord2";
-                log.from = target;
-                log.arg = target->getScreenRole();
-                room->sendLog(log);
-
+                room->sendLog(LogMessage(player->isLord() ? "#NewLord" : "#NewLord2", target, target->getScreenRole()));
                 room->setPlayerProperty(target, "role", "lord");
             }
             else if(room->getLord() && scenario->getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
@@ -50,11 +44,7 @@ public:
                 if(players.length() > 1) {
                     ServerPlayer *junshi = room->askForPlayerChosen(lord, players, "getJunShi");
 
-                    LogMessage log;
-                    log.type = "#NewLoya";
-                    log.from = junshi;
-                    log.arg = junshi->getScreenRole();
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#NewLoya", junshi, junshi->getScreenRole()));
 
                     if(!scenario->getPlayersbyRole(room, "loyalist").isEmpty())
                         room->setPlayerProperty(scenario->getPlayersbyRole(room, "loyalist").first(), "role", "rebel");

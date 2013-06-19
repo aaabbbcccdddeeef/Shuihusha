@@ -62,11 +62,7 @@ public:
                 killer->addMark("wheelon");
                 if(killer->getMark("wheelon") >= 3){
                     int wheel = killer->getMark("@skull");
-                    LogMessage log;
-                    log.type = "#KillerB";
-                    log.from = killer;
-                    log.arg = killer->getGeneralName();
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#KillerB", killer, killer->getGeneralName()));
 
                     Oyasumi(room, killer);
                     room->setPlayerMark(killer, "@skull", wheel);
@@ -82,11 +78,7 @@ public:
 
             int wheel = player->getMark("@skull");
 
-            LogMessage log;
-            log.type = "#VictimB";
-            log.from = player;
-            log.arg = QString::number(wheel);
-            room->sendLog(log);
+            room->sendLog(LogMessage("#VictimB", player, QString::number(wheel)));
             int maxwheel = Config.value("Scenario/WheelCount", 10).toInt();
             if((float)wheel / (float)maxwheel > 0.7){
                 log.type = "#VictimC";

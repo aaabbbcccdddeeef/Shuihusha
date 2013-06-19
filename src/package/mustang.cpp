@@ -214,11 +214,7 @@ public:
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             CardStar slash = pilipili->tag["JizhanCard"].value<CardStar>();
             if(effect.slash == slash){
-                LogMessage log;
-                log.type = "#Jizhan";
-                log.from = pilipili;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Jizhan", pilipili, objectName()));
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 if(!room->askForDiscard(pilipili, objectName(), 2, true))
                     room->loseHp(pilipili);

@@ -425,10 +425,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
         switch(room->getTag("SceneID").toInt()) {
         case 7:
             if(effect.card->inherits("TrickCard") && !effect.card->inherits("DelayedTrick")) {
-                LogMessage log;
-                log.type = "#Scene7CardInvalid";
-                log.from = player;
-                room->sendLog(log);
+                room->sendLog(LogMessage("#Scene7CardInvalid", player));
 
                 return true;
             }

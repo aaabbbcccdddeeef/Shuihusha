@@ -20,7 +20,7 @@ return {
 	["#Bihu"] = "%from 对 %to 施展了结界庇护，在一段时间内 %from 不会变成僵尸",
 	["@round"] = "退治",
 	["@harb"] = "结界",
-	["#survive_victory"] = "%from 聚集起了足够的退治之力！僵尸被退治！",
+	["#SurviveVictory"] = "%from 聚集起了足够的退治之力！僵尸被退治！",
 	["designer:zombie"] = "HyperCross",
 	["cv:zombie"] = "CSOL+植物大战僵尸音效",
 	["illustrator:zombie"] = "鬼戲",

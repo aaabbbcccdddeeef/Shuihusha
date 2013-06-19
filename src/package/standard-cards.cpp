@@ -33,12 +33,8 @@ QString Slash::getSubtype() const{
 void Slash::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     BasicCard::use(room, source, targets);
 
-    if(source->hasFlag("drank")){
-        LogMessage log;
-        log.type = "#UnsetDrank";
-        log.from = source;
-        room->sendLog(log);
-    }
+    if(source->hasFlag("drank"))
+        room->sendLog(LogMessage("#UnsetDrank", source));
 }
 
 void Slash::onEffect(const CardEffectStruct &card_effect) const{

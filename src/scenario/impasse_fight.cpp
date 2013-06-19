@@ -332,10 +332,7 @@ public:
     void startDeadJudge(ServerPlayer *lord) const{
         Room *room = lord->getRoom();
 
-        LogMessage log;
-        log.type = "#BaozouOver";
-        log.from = lord;
-        room->sendLog(log);
+        room->sendLog(LogMessage("#BaozouOver", lord));
 
         QList<ServerPlayer *> players = room->getOtherPlayers(lord);
         foreach(ServerPlayer *player, players){
@@ -447,10 +444,7 @@ public:
         case HpChanged:{
             if(player->isLord()){
                 if(player->getHp() <= 3 && !player->hasMark("@frantic")){
-                    LogMessage log;
-                    log.type = "#Baozou";
-                    log.from = player;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#Baozou", player));
 
                     QList<ServerPlayer *> others = room->getOtherPlayers(player);
                     player->gainMark("@frantic", others.length());

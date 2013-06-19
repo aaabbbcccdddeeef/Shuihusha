@@ -23,10 +23,7 @@ public:
         room->detachSkillFromPlayer(player, "yuanzhu", false);
         room->detachSkillFromPlayer(player, "bihu", false);
 
-        LogMessage log;
-        log.type = "#Zombify";
-        log.from = player;
-        room->sendLog(log);
+        room->sendLog(LogMessage("#Zombify", player));
 
         room->broadcastInvoke("playAudio", QString("mode/zombify-%1").arg(player->getGenderString()));
         room->updateStateItem();
@@ -119,11 +116,7 @@ public:
                     player->gainMark("@round");
 
                     if(player->getMark("@round") > 7){
-                        LogMessage log;
-                        log.type = "#survive_victory";
-                        log.from = player;
-                        room->sendLog(log);
-
+                        room->sendLog(LogMessage("#SurviveVictory", player));
                         room->gameOver("lord+loyalist");
                     }
                     else if(round == 2){

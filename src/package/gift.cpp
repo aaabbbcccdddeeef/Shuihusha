@@ -126,11 +126,7 @@ public:
                 targets << use.from;
 
             room->playSkillEffect(objectName(), player->getGeneral()->isMale() ? 1 : 2);
-            LogMessage ogg;
-            ogg.type = "#BeatJapan";
-            ogg.from = player;
-            ogg.arg = objectName();
-            room->sendLog(ogg);
+            room->sendLog(LogMessage("#Sheri", player, objectName()));
             room->throwCard(use.card);
 
             foreach(ServerPlayer *target, targets)
