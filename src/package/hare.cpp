@@ -727,12 +727,8 @@ public:
 
     virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
         if(damage.card && damage.card->inherits("Slash") && hedgehog->getMaxHp() > 3){
-            LogMessage log;
             Room *room = hedgehog->getRoom();
-            log.type = "#TriggerSkill";
-            log.from = hedgehog;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", hedgehog, objectName()));
             room->playSkillEffect(objectName());
             room->loseMaxHp(hedgehog);
             hedgehog->drawCards(3);

@@ -45,11 +45,7 @@ public:
         ServerPlayer *gao = effect.from;
         Room *room = gao->getRoom();
         room->playSkillEffect(objectName());
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = gao;
-        log.arg = objectName();
-        room->sendLog(log);
+        room->sendLog(LogMessage("#TriggerSkill", gao, objectName()));
 
         room->slashResult(effect, NULL);
         return true;
@@ -67,11 +63,7 @@ public:
             Room *room = han->getRoom();
             if(han->getSlashCount() == 0){
                 room->playSkillEffect(objectName());
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = han;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", han, objectName()));
 
                 room->loseHp(han);
             }

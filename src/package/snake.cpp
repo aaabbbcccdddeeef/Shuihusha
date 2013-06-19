@@ -350,12 +350,8 @@ public:
         if(mowang->isKongcheng()){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand){
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = mowang;
-                log.arg = objectName();
                 room->playSkillEffect(objectName());
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", mowang, objectName()));
                 room->recover(mowang, RecoverStruct());
             }
         }
@@ -1002,11 +998,7 @@ public:
                 return false;
             if(move->from_place == Player::Equip && !player->faceUp()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = player;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
 
                 player->turnOver();
             }

@@ -67,12 +67,7 @@ public:
 
         if(effect.from->getHp() <= 2){
             room->playSkillEffect(objectName());
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = effect.from;
-            log.to << effect.to;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", effect.from, objectName()));
 
             room->slashResult(effect, NULL);
             return true;

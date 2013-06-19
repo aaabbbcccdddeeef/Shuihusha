@@ -183,20 +183,16 @@ public:
 
         if(!effect.card->inherits("Slash"))
             return false;
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = player;
-        log.arg = objectName();
         if(event == CardEffect){
             if(effect.to->getGender() == General::Male && !effect.to->isKongcheng()){
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 room->askForDiscard(effect.to, objectName(), 1);
             }
         }
         else{
             if(effect.from->getGender() == General::Male){
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 player->drawCards(1);
             }

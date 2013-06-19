@@ -35,8 +35,7 @@ SWIG_arg ++;
 %{
 size_t len = lua_objlen(L, $input);
 
-int i;
-for(i=0; i<len; i++){
+for (size_t i = 0; i < len; i++) {
 	lua_rawgeti(L, $input, i+1);
 	const char *elem = luaL_checkstring(L, -1);
 	$1 << elem;
@@ -49,8 +48,7 @@ for(i=0; i<len; i++){
 %{
 lua_createtable(L, $1.length(), 0);
 
-int i;
-for(i=0; i<$1.length(); i++){
+for (int i = 0; i < $1.length(); i++) {
 	QString str = $1.at(i);
 	lua_pushstring(L, str.toUtf8());
 	lua_rawseti(L, -2, i+1);

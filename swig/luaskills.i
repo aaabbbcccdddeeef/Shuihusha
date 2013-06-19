@@ -569,8 +569,7 @@ bool LuaViewAsSkill::viewFilter(const QList<CardItem *> &selected, const CardIte
 	pushSelf(L);
 
 	lua_createtable(L, selected.length(), 0);
-	int i;
-	for(i=0; i<selected.length(); i++){
+	for(int i=0; i<selected.length(); i++){
 		const Card *card = selected.at(i)->getFilteredCard();
 		SWIG_NewPointerObj(L, card, SWIGTYPE_p_Card, 0);
 		lua_rawseti(L, -2, i+1);
@@ -601,8 +600,7 @@ const Card *LuaViewAsSkill::viewAs(const QList<CardItem *> &cards) const{
 	pushSelf(L);
 
 	lua_createtable(L, cards.length(), 0);
-	int i;
-	for(i=0; i<cards.length(); i++){
+	for(int i=0; i<cards.length(); i++){
 		const Card *card = cards.at(i)->getFilteredCard();
 		SWIG_NewPointerObj(L, card, SWIGTYPE_p_Card, 0);
 		lua_rawseti(L, -2, i+1);
@@ -716,8 +714,7 @@ bool LuaSkillCard::targetFilter(const QList<const Player *> &targets, const Play
 	pushSelf(L);
 
 	lua_createtable(L, targets.length(), 0);
-	int i;
-	for(i=0; i<targets.length(); i++){
+	for(int i=0; i<targets.length(); i++){
 		SWIG_NewPointerObj(L, targets.at(i), SWIGTYPE_p_Player, 0);
 		lua_rawseti(L, -2, i+1);
 	}
@@ -748,8 +745,7 @@ bool LuaSkillCard::targetsFeasible(const QList<const Player *> &targets, const P
 	pushSelf(L);
 
 	lua_createtable(L, targets.length(), 0);
-	int i;
-	for(i=0; i<targets.length(); i++){
+	for(int i=0; i<targets.length(); i++){
 		SWIG_NewPointerObj(L, targets.at(i), SWIGTYPE_p_Player, 0);
 		lua_rawseti(L, -2, i+1);
 	}
@@ -783,8 +779,7 @@ void LuaSkillCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
 	SWIG_NewPointerObj(L, source, SWIGTYPE_p_ServerPlayer, 0);
 
 	lua_createtable(L, targets.length(), 0);
-	int i;
-	for(i=0; i<targets.length(); i++){
+	for(int i=0; i<targets.length(); i++){
 		SWIG_NewPointerObj(L, targets.at(i), SWIGTYPE_p_ServerPlayer, 0);
 		lua_rawseti(L, -2, i+1);
 	}

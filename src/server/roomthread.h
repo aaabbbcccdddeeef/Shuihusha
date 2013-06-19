@@ -11,7 +11,7 @@
 
 struct LogMessage{
     LogMessage();
-    LogMessage(QString type, ServerPlayer *from, QString arg);
+    LogMessage(QString type, ServerPlayer *from, QString arg = QString());
 
     QString toString() const;
     Json::Value toJsonValue() const;

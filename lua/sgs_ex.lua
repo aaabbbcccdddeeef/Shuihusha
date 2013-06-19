@@ -82,19 +82,6 @@ function sgs.CreateDistanceSkill(spec)
 	return skill
 end
 
-function sgs.CreateMasochismSkill(spec)
-	assert(type(spec.on_damaged) == "function")
-	
-	spec.events = sgs.Damaged
-	
-	function spec.on_trigger(skill, event, player, data)
-		spec.on_damaged(skill, player)
-		return false		
-	end
-	
-	return sgs.CreateTriggerSkill(spec)
-end
-
 function sgs.CreateMaxCardsSkill(spec)
 	assert(type(spec.name) == "string")
 	assert(type(spec.extra_func) == "function")
@@ -147,6 +134,19 @@ function sgs.CreateTargetModSkill(spec)
 	end
 
 	return skill
+end
+
+function sgs.CreateMasochismSkill(spec)
+	assert(type(spec.on_damaged) == "function")
+	
+	spec.events = sgs.Damaged
+	
+	function spec.on_trigger(skill, event, player, data)
+		spec.on_damaged(skill, player)
+		return false
+	end
+	
+	return sgs.CreateTriggerSkill(spec)
 end
 
 --------------------------------------------

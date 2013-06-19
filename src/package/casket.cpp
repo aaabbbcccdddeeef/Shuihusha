@@ -25,11 +25,7 @@ public:
     virtual bool trigger(TriggerEvent, Room *, ServerPlayer *yunr, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.to->getGender() == General::Male && damage.to->isAlive()){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = yunr;
-            log.arg = objectName();
-            yunr->getRoom()->sendLog(log);
+            yunr->getRoom()->sendLog(LogMessage("#TriggerSkill", yunr, objectName()));
             yunr->playSkillEffect(objectName());
 
             damage.to->gainJur("poison_jur");
@@ -110,11 +106,7 @@ public:
         ServerPlayer *killer = damage ? damage->from : NULL;
 
         if(killer){
-            LogMessage log;
-            log.from = player;
-            log.type = "#TriggerSkill";
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
             room->playSkillEffect(objectName(), 1);
             killer->throwAllCards(true);
             killer->loseAllMarks("poison_jur");
@@ -211,11 +203,7 @@ public:
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
         if(killer){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = player;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
             killer->playSkillEffect(objectName(), 1);
             room->loseMaxHp(killer);
             room->acquireSkill(killer, objectName());
@@ -245,11 +233,7 @@ public:
                 break;
             if(room->askForCard(huhu, "..", "@suqing:" + player->objectName(), true, QVariant::fromValue(damage), CardDiscarded)){
                 room->playSkillEffect(objectName());
-                LogMessage g;
-                g.type = "#InvokeSkill";
-                g.from = huhu;
-                g.arg = objectName();
-                room->sendLog(g);
+                room->sendLog(LogMessage("#InvokeSkill", huhu, objectName()));
                 player->gainJur("lucky_jur");
             }
         }
@@ -353,11 +337,7 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == Death){
             if(player->hasSkill(objectName())){
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = player;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
                 player->playSkillEffect(objectName());
                 foreach(ServerPlayer *tmp, room->getAlivePlayers()){
                     QStringList jurs = tmp->getAllMarkName(3, "_jur");
@@ -427,11 +407,7 @@ public:
                 return false;
         }
 
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = player;
-        log.arg = objectName();
-        room->sendLog(log);
+        room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
         room->playSkillEffect(objectName());
 
         QList<ServerPlayer *> targets;
@@ -470,11 +446,7 @@ public:
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
         if(killer){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = player;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
             killer->playSkillEffect(objectName(), 1);
             room->acquireSkill(killer, "rugou");
         }
@@ -493,11 +465,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 0){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = player;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
             room->playSkillEffect(objectName(), player->getGender() == General::Male ? qrand() % 2 + 1: qrand() % 2 + 3);
             room->loseMaxHp(player, damage.damage);
             return true;

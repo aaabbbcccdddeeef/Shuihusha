@@ -232,11 +232,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *xuning, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(xuning != damage.to && damage.to->isChained() && damage.nature == DamageStruct::Normal){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = xuning;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", xuning, objectName()));
             room->playSkillEffect(objectName());
 
             damage.damage ++;
@@ -315,12 +311,8 @@ public:
             return;
         const Card *card = damage.card;
         if(card && room->obtainable(card, wusong)){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = wusong;
-            log.arg = objectName();
             room->playSkillEffect(objectName());
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", wusong, objectName()));
 
             wusong->addToPile("chou", card->getEffectiveId(), true);
         }
@@ -481,10 +473,7 @@ public:
                     player->jilei(".");
                     player->invoke("jilei");
 
-                    LogMessage log;
-                    log.type = "#XianjiClear";
-                    log.from = player;
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#XianjiClear", player));
                 }
             }
         }

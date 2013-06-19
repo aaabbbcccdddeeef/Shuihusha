@@ -108,11 +108,7 @@ public:
                 return false;
             if(move->from_place == Player::Hand || move->from_place == Player::Equip){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = conan;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", conan, objectName()));
 
                 conan->drawCards(1);
             }

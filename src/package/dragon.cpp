@@ -20,11 +20,7 @@ public:
                 foreach(ServerPlayer *yn, yanes){
                     if(yn->isWounded()){
                         room->playSkillEffect(objectName(), qrand() % 2 + 4);
-                        LogMessage log;
-                        log.type = "#TriggerSkill";
-                        log.from = yn;
-                        log.arg = objectName();
-                        room->sendLog(log);
+                        room->sendLog(LogMessage("#TriggerSkill", yn, objectName()));
                         room->recover(yn, RecoverStruct(player));
                     }
                 }
@@ -46,11 +42,7 @@ public:
         }
         if(index > 0){
             room->playSkillEffect(objectName(), index);
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = source;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", source, objectName()));
             room->loseHp(damage.to, damage.damage);
             return true;
         }
@@ -453,11 +445,7 @@ public:
                     return false;
                 if(room->askForCard(water, "BasicCard", "@shuizhen2:" + damage.to->objectName(), true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
-                    LogMessage log;
-                    log.type = "#InvokeSkill";
-                    log.from = water;
-                    log.arg = objectName();
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#InvokeSkill", water, objectName()));
 
                     foreach(ServerPlayer *tmp, room->getOtherPlayers(water)){
                         if(tmp == forbider)
@@ -886,11 +874,7 @@ public:
 
             if(room->askForCard(player, "..", "@xiaozhan", true, data, CardDiscarded)){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                LogMessage log;
-                log.type = "#InvokeSkill";
-                log.from = player;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#InvokeSkill", player, objectName()));
                 foreach(ServerPlayer *p, use.to)
                     if(!p->isKongcheng())
                         room->askForDiscard(p, objectName(), 1);

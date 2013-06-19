@@ -165,11 +165,7 @@ public:
             return;
         int percent = 30 + player->getEquips().length() * 15;
         if(qrand() % 100 < percent){
-            LogMessage log;
-            log.from = player;
-            log.type = "#TriggerSkill";
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
             DamageStruct damage2 = damage;
             damage2.from = player;
             damage2.to = damage.from;
@@ -363,12 +359,8 @@ public:
         if(v == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand && player->isAlive()){
-                if(player->getHandcardNum() < player->getMaxHP()){
-                    LogMessage log;
-                    log.type = "#TriggerSkill";
-                    log.from = player;
-                    log.arg = objectName();
-                    room->sendLog(log);
+                if(player->getHandcardNum() < player->getMaxHp()){
+                    room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
                     player->drawCards(1);
                 }
             }

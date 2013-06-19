@@ -48,11 +48,7 @@ public:
 
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") && damage.card->isRed()){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = player;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
 
             room->playSkillEffect(objectName(), player->getGeneral()->isMale() ? qrand() % 2 + 1 : qrand() % 2 + 3);
             room->loseMaxHp(player);

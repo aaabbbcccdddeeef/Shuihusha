@@ -112,11 +112,7 @@ public:
             if(!invoke_skill)
                 return false;
 
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = target;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#TriggerSkill", target, objectName()));
 
             foreach(ServerPlayer *player, others){
                 if(player->getHandcardNum() == 0){
@@ -181,11 +177,7 @@ public:
                 damage.damage = damage.damage-1;
                 data = QVariant::fromValue(damage);
 
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = player;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#TriggerSkill", player, objectName()));
                 room->playSkillEffect(player->getGender() == General::Male ? objectName() : objectName() + "f", 6);
                 return false;
             }

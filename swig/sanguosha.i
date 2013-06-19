@@ -379,6 +379,8 @@ extern ClientPlayer *Self;
 
 struct DamageStruct{
 	DamageStruct();
+	DamageStruct(const Card *card, ServerPlayer *from, ServerPlayer *to, int damage = 1, DamageStruct::Nature nature = Normal);
+	DamageStruct(const char *reason, ServerPlayer *from, ServerPlayer *to, int damage = 1, DamageStruct::Nature nature = Normal);
 
 	enum Nature{
 		Normal, // normal slash, duel and most damage caused by skill

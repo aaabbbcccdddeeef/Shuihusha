@@ -502,11 +502,7 @@ public:
             QString choice = room->askForChoice(source, objectName(), "hp+card+cancel");
             if(choice == "cancel")
                 return false;
-            LogMessage log;
-            log.type = "#InvokeSkill";
-            log.from = source;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#InvokeSkill", source, objectName()));
             if(choice == "hp"){
                 room->playSkillEffect(objectName(), 1);
                 room->recover(room->getLord(), RecoverStruct(source, NULL, num));
@@ -533,11 +529,7 @@ public:
         QString choice = room->askForChoice(player, "yuzhong", "all+me+cancel");
         if(choice == "cancel")
             return false;
-        LogMessage log;
-        log.type = "#InvokeSkill";
-        log.from = player;
-        log.arg = "yuzhong";
-        room->sendLog(log);
+        room->sendLog(LogMessage("#InvokeSkill", player, "yuzhong"));
         if(choice == "all"){
             if(!room->askForUseCard(player, "@@yuzhong", "@yuzhong"))
                 choice = "me";
@@ -546,11 +538,7 @@ public:
         }
         if(choice == "me"){
             room->playSkillEffect(objectName(), 4);
-            LogMessage log;
-            log.type = "#InvokeSkill";
-            log.from = player;
-            log.arg = "yuzhong";
-            room->sendLog(log);
+            room->sendLog(LogMessage("#InvokeSkill", player, "yuzhong"));
             player->drawCards(2);
         }
 

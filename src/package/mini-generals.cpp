@@ -83,11 +83,7 @@ public:
             if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
                room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), true, chu, CardDiscarded)){
                 room->playSkillEffect(objectName());
-                LogMessage log;
-                log.type = "#InvokeSkill";
-                log.from = ran;
-                log.arg = objectName();
-                room->sendLog(log);
+                room->sendLog(LogMessage("#InvokeSkill", ran, objectName()));
                 room->loseHp(player);
             }
         }
@@ -219,11 +215,7 @@ public:
                 int x = qMax(1, jie->getLostHp());
                 room->setPlayerMark(jie, "BeishuiNum", x);
                 if(choice == "bei"){
-                    LogMessage log;
-                    log.type = "#InvokeSkill";
-                    log.from = jie;
-                    log.arg = objectName();
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#InvokeSkill", jie, objectName()));
                     ServerPlayer *target = room->askForPlayerChosen(jie, room->getAlivePlayers(), objectName());
                     room->playSkillEffect(objectName(), qrand() % 2 + 1);
                     target->drawCards(x);

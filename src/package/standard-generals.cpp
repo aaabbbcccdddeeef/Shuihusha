@@ -1884,11 +1884,7 @@ public:
             QString ball = room->askForChoice(hu3niang, objectName(), voly, data);
             if(ball == "cancel")
                 return false;
-            LogMessage log;
-            log.type = "#InvokeSkill";
-            log.from = hu3niang;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#InvokeSkill", hu3niang, objectName()));
 
             if(ball == "throw"){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
@@ -1947,17 +1943,13 @@ public:
         QList<ServerPlayer *> sunny = room->findPlayersBySkillName(objectName());
         if(sunny.isEmpty())
             return false;
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.arg = objectName();
         foreach(ServerPlayer *sun, sunny){
-            log.from = sun;
             if(v == Damaged){
                 DamageStruct damage = data.value<DamageStruct>();
                 if(damage.to == sun && damage.from && damage.from != damage.to &&
                    !damage.from->isKongcheng()){
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                    room->sendLog(log);
+                    room->sendLog(LogMessage("#TriggerSkill", sun, objectName()));
                     if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data, CardDiscarded))
                         room->throwCard(damage.from->getRandomHandCard(), damage.from);
                 }
@@ -1969,7 +1961,7 @@ public:
                     CardMoveStar move = data.value<CardMoveStar>();
                     if(move->from_place == Player::Hand && player->isAlive()){
                         room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                        room->sendLog(log);
+                        room->sendLog(LogMessage("#TriggerSkill", sun, objectName()));
 
                         const Card *card = !player->hasEquip() ? NULL :
                                            room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data, NonTrigger);
@@ -2323,11 +2315,7 @@ public:
                 foreach(ServerPlayer *tmp, lieges){
                     const Card *card = room->askForCard(tmp, ".|.|.|hand$", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
                     if(card){
-                        LogMessage lo;
-                        lo.type = "#InvokeSkill";
-                        lo.from = tmp;
-                        lo.arg = objectName();
-                        room->sendLog(lo);
+                        room->sendLog(LogMessage("#InvokeSkill", tmp, objectName()));
                         room->obtainCard(fang1a, card, false);
                     }
                 }
@@ -2350,12 +2338,7 @@ public:
             room->playSkillEffect(objectName(), qrand() % 2 + 1);
         else
             room->playSkillEffect(objectName(), qrand() % 2 + 3);
-
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = wangq;
-        log.arg = objectName();
-        room->sendLog(log);
+        room->sendLog(LogMessage("#TriggerSkill", wangq, objectName()));
 
         return todraw;
     }
@@ -2378,11 +2361,7 @@ public:
         if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), QVariant::fromValue(damage), CardDiscarded)){
             room->playSkillEffect(objectName());
 
-            LogMessage log;
-            log.type = "#InvokeSkill";
-            log.from = player;
-            log.arg = objectName();
-            room->sendLog(log);
+            room->sendLog(LogMessage("#InvokeSkill", player, objectName()));
             room->recover(wangqing, RecoverStruct(player));
         }
     }
