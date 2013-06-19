@@ -84,11 +84,8 @@ public:
                                          "draw2card";
                         if(choice == "draw2card")
                             target->drawCards(2);
-                        else{
-                            RecoverStruct rev;
-                            rev.who = lusashi;
-                            room->recover(target, rev);
-                        }
+                        else
+                            room->recover(target, RecoverStruct(lusashi));
                         break;
                     }
                 default:{
@@ -512,10 +509,7 @@ public:
             room->sendLog(log);
             if(choice == "hp"){
                 room->playSkillEffect(objectName(), 1);
-                RecoverStruct rev;
-                rev.who = source;
-                rev.recover = num;
-                room->recover(room->getLord(), rev);
+                room->recover(room->getLord(), RecoverStruct(source, NULL, num));
             }
             else if(choice == "card"){
                 room->playSkillEffect(objectName(), 2);

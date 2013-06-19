@@ -17,8 +17,6 @@ public:
         if(event == Death){
             QList<ServerPlayer *> yanes = room->findPlayersBySkillName(objectName());
             if(player->getGender() == General::Female){
-                RecoverStruct rec;
-                rec.who = player;
                 foreach(ServerPlayer *yn, yanes){
                     if(yn->isWounded()){
                         room->playSkillEffect(objectName(), qrand() % 2 + 4);
@@ -27,7 +25,7 @@ public:
                         log.from = yn;
                         log.arg = objectName();
                         room->sendLog(log);
-                        room->recover(yn, rec);
+                        room->recover(yn, RecoverStruct(player));
                     }
                 }
             }

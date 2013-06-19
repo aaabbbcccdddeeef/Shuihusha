@@ -61,9 +61,9 @@ DamageStruct::DamageStruct(const QString &reason, ServerPlayer *from, ServerPlay
 }
 
 QString DamageStruct::getReason() const{
-    if (reason != QString())
+    if(reason != QString())
         return reason;
-    else if (card)
+    else if(card)
         return card->objectName();
     return QString();
 }
@@ -88,7 +88,7 @@ RecoverStruct::RecoverStruct()
 {
 }
 
-RecoverStruct::RecoverStruct(const Card *card, ServerPlayer *who, int recover){
+RecoverStruct::RecoverStruct(ServerPlayer *who, const Card *card, int recover){
     this->who = who;
     this->card = card;
     this->recover = recover;

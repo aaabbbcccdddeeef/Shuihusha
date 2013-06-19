@@ -356,9 +356,7 @@ public:
                 log.arg = objectName();
                 room->playSkillEffect(objectName());
                 room->sendLog(log);
-                RecoverStruct o;
-                o.card = Sanguosha->getCard(move->card_id);
-                room->recover(mowang, o);
+                room->recover(mowang, RecoverStruct());
             }
         }
         return false;
@@ -901,11 +899,8 @@ public:
                     room->playSkillEffect("yima");
                 huangfu->obtainCard(horse);
                 if(player && player->isWounded()
-                        && room->askForChoice(huangfu, "yima", "yes+no", QVariant::fromValue(player)) == "yes"){
-                    RecoverStruct ruc;
-                    ruc.who = huangfu;
-                    room->recover(player, ruc);
-                }
+                        && room->askForChoice(huangfu, "yima", "yes+no", QVariant::fromValue(player)) == "yes")
+                    room->recover(player, RecoverStruct(huangfu));
                 break;
             }
         }
@@ -1110,11 +1105,8 @@ public:
                 else if(judge.card->isRed()){
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
                     if(player->isWounded() &&
-                       room->askForCard(xiu, ".|.|.|hand|red", "@fuxu:" + player->objectName(), data, CardDiscarded)){
-                        RecoverStruct t;
-                        t.who = xiu;
-                        room->recover(player, t);
-                    }
+                       room->askForCard(xiu, ".|.|.|hand|red", "@fuxu:" + player->objectName(), data, CardDiscarded))
+                        room->recover(player, RecoverStruct(xiu));
                 }
             }
         }

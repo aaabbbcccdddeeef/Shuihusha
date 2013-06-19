@@ -188,12 +188,9 @@ void ShensuanCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
 void ShensuanCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
 
-    if(effect.to->isWounded()){
-        RecoverStruct recover;
-        recover.card = this;
-        recover.who = effect.from;
-        room->recover(effect.to, recover);
-    }else
+    if(effect.to->isWounded())
+        room->recover(effect.to, RecoverStruct(effect.from, this));
+    else
         effect.to->drawCards(2);
 }
 

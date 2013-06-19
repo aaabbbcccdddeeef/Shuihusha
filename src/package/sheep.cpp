@@ -268,11 +268,8 @@ void CihuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
     PlayerStar target = !targets.isEmpty() ? targets.first() :
                         (source->getGeneral()->isFemale() && source->isWounded()) ?
                         source : NULL;
-    if(target){
-        RecoverStruct recover;
-        recover.who = source;
-        room->recover(target, recover);
-    }
+    if(target)
+        room->recover(target, RecoverStruct(source));
 }
 
 class CihuViewAsSkill: public ViewAsSkill{

@@ -1492,10 +1492,8 @@ bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                 log.arg = "mastermind";
                 room->sendLog(log);
 
-                RecoverStruct recover;
-                recover.who = player;
-                recover.recover = t->getMark("mind");
-                room->recover(t, recover);
+                int n = qMin(t->getMark("mind"), t->getLostHp());
+                room->recover(t, RecoverStruct(player, NULL, n));
                 room->setPlayerMark(t, "mind", 0);
             }
         }

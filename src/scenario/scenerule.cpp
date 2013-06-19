@@ -315,9 +315,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                         if(!p->isKongcheng() && !nextAlivePlayer->isKongcheng()) {
                             if(p->pindian(nextAlivePlayer, "Scene29")) {
                                 if(room->askForChoice(p, "scene_29_eff", "dscorlose+recover") == "recover") {
-                                    RecoverStruct recover;
-                                    recover.who = p;
-                                    room->recover(nextAlivePlayer, recover, false);
+                                    room->recover(nextAlivePlayer, RecoverStruct(p), false);
                                 } else {
                                     if(nextAlivePlayer->isKongcheng())
                                         room->loseHp(nextAlivePlayer);
@@ -331,9 +329,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                             } else {
                                 if(room->askForChoice(nextAlivePlayer, "scene_29_eff", "dscorlose+recover") == "recover")
                                 {
-                                    RecoverStruct recover;
-                                    recover.who = nextAlivePlayer;
-                                    room->recover(p, recover, false);
+                                    room->recover(p, RecoverStruct(nextAlivePlayer), false);
                                 } else {
                                     if(p->isKongcheng())
                                         room->loseHp(p);
@@ -407,9 +403,6 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
         case 16:
             if(use.card->inherits("Peach") && player->getPhase() == Player::Play) {
                 ServerPlayer *effectTo = room->askForPlayerChosen(player, room->getOtherPlayers(player), "Scene16");
-                RecoverStruct recover;
-                recover.who = effectTo;
-                recover.card = use.card;
 
                 LogMessage log;
                 log.type = "#Scene16Recover";
@@ -418,7 +411,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                 room->sendLog(log);
 
                 room->throwCard(use.card);
-                room->recover(effectTo, recover, false);
+                room->recover(effectTo, RecoverStruct(effectTo, use.card), false);
                 return true;
             }
             break;

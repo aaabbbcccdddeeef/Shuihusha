@@ -407,9 +407,7 @@ void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
                     break;
             }
         }
-        RecoverStruct recover;
-        recover.who = source;
-        room->recover(target, recover);
+        room->recover(target, RecoverStruct(source));
     }
 }
 
@@ -828,8 +826,7 @@ void DingceCard::onEffect(const CardEffectStruct &effect) const{
     room->showCard(effect.from, card_id);
     if(Sanguosha->getCard(card_id)->inherits("TrickCard") && effect.from->askForSkillInvoke("dingce")){
         room->throwCard(card_id, effect.to, effect.from);
-        RecoverStruct tec;
-        room->recover(effect.from, tec);
+        room->recover(effect.from, RecoverStruct());
     }
 }
 
@@ -980,12 +977,10 @@ bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *
 void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
     Room *o = effect.from->getRoom();
     effect.from->loseAllMarks("@rope");
-    RecoverStruct r;
-    r.who = effect.from;
-    r.recover = 2;
+    int n = qMin(effect.to->getLostHp(), 2);
     o->playLightbox(effect.from, "Ziyi", "5000", 2500);
     o->getThread()->delay(2500);
-    o->recover(effect.to, r);
+    o->recover(effect.to, RecoverStruct(effect.from, this, n));
     effect.from->setFlags("Hanging");
 }
 

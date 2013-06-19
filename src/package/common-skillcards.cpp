@@ -31,7 +31,7 @@ void QingnangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
 }
 
 void QingnangCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->getRoom()->recover(effect.to, RecoverStruct(this, effect.from));
+    effect.to->getRoom()->recover(effect.to, RecoverStruct(effect.from, this));
 }
 
 FreeRegulateCard::FreeRegulateCard(){

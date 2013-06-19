@@ -443,11 +443,8 @@ void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     int num = getSubcards().length();
     ServerPlayer *target = targets.first();
     target->obtainCard(this, false);
-    if(num >= 3){
-        RecoverStruct rev;
-        rev.who = source;
-        room->recover(source, rev);
-    }
+    if(num >= 3)
+        room->recover(source, RecoverStruct(source));
 }
 
 class BinggongViewAsSkill: public ViewAsSkill{
@@ -716,9 +713,7 @@ public:
         sq->drawCards(a + 1);
         if(sq->isWounded()){
             a = qMin(sq->getLostHp(), a);
-            RecoverStruct rev;
-            rev.recover = a;
-            room->recover(sq, rev, a > 0);
+            room->recover(sq, RecoverStruct(NULL, NULL, a), a > 0);
         }
         return false;
     }
@@ -811,11 +806,8 @@ public:
                 delete dummy;
             }
         }
-        if(target->isWounded()){
-            RecoverStruct recover;
-            recover.who = target;
-            room->recover(target, recover);
-        }
+        if(target->isWounded())
+            room->recover(target, RecoverStruct(target));
         return false;
     }
 
@@ -836,9 +828,6 @@ public:
             && damage.to->isWounded() && !damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName(), qrand() % 2 + 1);
             int card_id = room->askForCardChosen(damage.from, damage.to, "he", objectName());
-            RecoverStruct re;
-            re.card = Sanguosha->getCard(card_id);
-            re.who = player;
             room->obtainCard(player, card_id, false);
 
             LogMessage log;
@@ -846,10 +835,10 @@ public:
             log.type = "#Qiangqu";
             log.to << damage.to;
             room->sendLog(log);
-            room->recover(damage.to, re);
+            room->recover(damage.to, RecoverStruct(player));
             if(player->isWounded()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                room->recover(damage.from, re);
+                room->recover(damage.from, RecoverStruct(player));
             }
             room->setEmotion(damage.to, "avoid");
             return true;
@@ -875,10 +864,8 @@ bool HuatianCard::targetFilter(const QList<const Player *> &targets, const Playe
 void HuatianCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     if(effect.from->getMark("Huatian") == 1){
-        RecoverStruct recovvv;
-        recovvv.who = effect.from;
         room->playSkillEffect(skill_name, qrand() % 2 + 1);
-        room->recover(effect.to, recovvv);
+        room->recover(effect.to, RecoverStruct(effect.from));
     }
     else if(effect.from->getMark("Huatian") == 2){
         room->playSkillEffect(skill_name, qrand() % 2 + 3);

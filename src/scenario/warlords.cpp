@@ -310,9 +310,7 @@ public:
             if(player->isAlive() && move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
                 const Card *card = room->askForCardShow(jinge, player, "youxia");
                 player->obtainCard(card, false);
-                RecoverStruct o;
-                o.card = card;
-                room->recover(jinge, o);
+                room->recover(jinge, RecoverStruct());
             }
         }
         return false;

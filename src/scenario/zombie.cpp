@@ -77,10 +77,7 @@ public:
                         room->setPlayerProperty(p, "role", "lord");
                         room->setPlayerProperty(p, "maxhp",  p->getMaxHP()+1);
 
-                        RecoverStruct recover;
-                        recover.who = p;
-                        recover.recover = 1;
-                        room->recover(p, recover, false);
+                        room->recover(p, RecoverStruct(), false);
 
                         int n = player->getMark("@round")>1 ? player->getMark("@round")-1 : 1;
                         p->gainMark("@round", n);
@@ -96,10 +93,7 @@ public:
                 ServerPlayer *killer = damage->from;
 
                 if(player->getGeneral2Name()=="zombie"){
-                    RecoverStruct recover;
-                    recover.who = killer;
-                    recover.recover = killer->getLostHp();
-                    room->recover(killer, recover, false);
+                    room->recover(killer, RecoverStruct(killer, NULL, killer->getLostHp()), false);
                     if(player->getRole()=="renegade")
                         killer->drawCards(3);
                 }
@@ -297,11 +291,11 @@ YuanzhuCard::YuanzhuCard(){
 void YuanzhuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     foreach(ServerPlayer *tmp, room->getOtherPlayers(source)){
         if(tmp->isWounded() && source->distanceTo(tmp) == 1){
-            RecoverStruct recover;
-            recover.card = this;
-            recover.who = source;
+            //RecoverStruct recover;
+            //recover.card = this;
+            //recover.who = source;
             //room->recover(tmp, recover);
-            room->recover(tmp, RecoverStruct(this, source));
+            room->recover(tmp, RecoverStruct(source, this));
         }
     }
 }

@@ -649,10 +649,7 @@ public:
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
-            RecoverStruct rev;
-            rev.who = player;
-            rev.recover = player->getMaxHP();
-            room->recover(player, rev);
+            room->recover(player, RecoverStruct(player, NULL, player->getMaxHp()));
             room->setPlayerProperty(player, "hp", player->getMaxHp());
         }
         return false;

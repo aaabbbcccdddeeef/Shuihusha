@@ -122,11 +122,7 @@ void Peach::onEffect(const CardEffectStruct &effect) const{
     }
 
     // recover hp
-    RecoverStruct recover;
-    recover.card = this;
-    recover.who = effect.from;
-
-    room->recover(effect.to, recover, false);
+    room->recover(effect.to, RecoverStruct(effect.from, this), false);
 }
 
 bool Peach::IsAvailable(const Player *player){
@@ -584,11 +580,7 @@ bool GodSalvation::isCancelable(const CardEffectStruct &effect) const{
 
 void GodSalvation::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
-
-    RecoverStruct recover;
-    recover.card = this;
-    recover.who = effect.from;
-    room->recover(effect.to, recover, false);
+    room->recover(effect.to, RecoverStruct(effect.from, this), false);
 }
 
 SavageAssault::SavageAssault(Suit suit, int number)

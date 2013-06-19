@@ -92,7 +92,7 @@ struct DyingStruct{
 
 struct RecoverStruct{
     RecoverStruct();
-    RecoverStruct(const Card *card, ServerPlayer *who = NULL, int recover = 1);
+    RecoverStruct(ServerPlayer *who, const Card *card = NULL, int recover = 1);
 
     int recover;
     ServerPlayer *who;

@@ -127,12 +127,8 @@ void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     int new_value = old_value + num;
     room->setPlayerMark(source, "Yinlang", new_value);
 
-    if(old_value < 1 && new_value >= 1){
-        RecoverStruct recover;
-        recover.card = this;
-        recover.who = source;
-        room->recover(source, recover);
-    }
+    if(old_value < 1 && new_value >= 1)
+        room->recover(source, RecoverStruct(source, this));
 }
 
 class YinlangViewAsSkill:public ViewAsSkill{

@@ -117,7 +117,7 @@ void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     room->setPlayerMark(source, "rende", new_value);
 
     if(old_value < 2 && new_value >= 2)
-        room->recover(source, RecoverStruct(this, source), false);
+        room->recover(source, RecoverStruct(source, this), false);
 }
 
 YijiViewAsSkill::YijiViewAsSkill()

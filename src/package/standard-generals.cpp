@@ -1690,15 +1690,13 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         PlayerStar target = player->tag["dalei_target"].value<PlayerStar>();
         if(damage.to == target){
-            RecoverStruct rev;
-            rev.who = player;
             for(int p = 0; p < damage.damage; p++){
                 QList<ServerPlayer *> targets;
                 foreach(ServerPlayer *tmp, room->getOtherPlayers(target))
                     if(tmp->isWounded())
                         targets << tmp;
                 if(!targets.isEmpty() && player->askForSkillInvoke(objectName(), data))
-                    room->recover(room->askForPlayerChosen(player, targets, objectName()), rev);
+                    room->recover(room->askForPlayerChosen(player, targets, objectName()), RecoverStruct(player));
             }
         }
         return false;
@@ -1779,10 +1777,6 @@ public:
             QString prompt = "@jishi:" + player->objectName();
             const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", prompt, true, data, CardDiscarded);
             if(card){
-                RecoverStruct lty;
-                lty.card = card;
-                lty.who = lingtianyi;
-
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.from = lingtianyi;
@@ -1791,7 +1785,7 @@ public:
                 log.arg = objectName();
                 room->sendLog(log);
 
-                room->recover(player, lty);
+                room->recover(player, RecoverStruct(lingtianyi, card));
             }
         }
         return false;
@@ -2382,8 +2376,6 @@ public:
         if(player->getKingdom() != "min" || !wangqing || !wangqing->hasLordSkill(objectName()))
             return;
         if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), QVariant::fromValue(damage), CardDiscarded)){
-            RecoverStruct rev;
-            rev.who = player;
             room->playSkillEffect(objectName());
 
             LogMessage log;
@@ -2391,7 +2383,7 @@ public:
             log.from = player;
             log.arg = objectName();
             room->sendLog(log);
-            room->recover(wangqing, rev);
+            room->recover(wangqing, RecoverStruct(player));
         }
     }
 };
@@ -2408,12 +2400,8 @@ bool MeihuoCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void MeihuoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    RecoverStruct recover;
-    recover.card = this;
-    recover.who = source;
-
-    room->recover(source, recover);
-    room->recover(targets.first(), recover);
+    room->recover(source, RecoverStruct(source, this));
+    room->recover(targets.first(), RecoverStruct(source, this));
 }
 
 class Meihuo: public OneCardViewAsSkill{
@@ -2526,11 +2514,8 @@ public:
         judge.who = player;
         room->judge(judge);
 
-        if(judge.card->getSuit() == suit){
-            RecoverStruct rec;
-            rec.who = player;
-            room->recover(player, rec);
-        }
+        if(judge.card->getSuit() == suit)
+            room->recover(player, RecoverStruct());
         else
             player->obtainCard(judge.card);
 

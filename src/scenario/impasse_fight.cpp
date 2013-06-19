@@ -221,10 +221,7 @@ public:
 
         if(player->getHp() != player->getMaxHP() && event == Damage){
             room->playSkillEffect(objectName(), player->getGender() == General::Male ? 1: 3);
-            RecoverStruct recover;
-            recover.who = player;
-            recover.recover = 1;
-            room->recover(player, recover);
+            room->recover(player, RecoverStruct());
         }
         else{
             QList<ServerPlayer *> players = room->getAlivePlayers();

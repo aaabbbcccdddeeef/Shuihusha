@@ -392,6 +392,9 @@ struct DamageStruct{
 	int damage;
 	Nature nature;
 	bool chain;
+	QString reason;
+
+	QString getReason() const;
 };
 
 struct CardEffectStruct{
