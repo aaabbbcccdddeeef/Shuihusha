@@ -36,18 +36,28 @@ QString LogMessage::toString() const{
 }
 
 DamageStruct::DamageStruct()
-    :from(NULL), to(NULL), card(NULL), damage(1), nature(Normal), chain(false)
+    :from(NULL), to(NULL), card(NULL), damage(1), nature(Normal), chain(false), reason(QString())
 {
 }
 
 DamageStruct::DamageStruct(const Card *card, ServerPlayer *from, ServerPlayer *to, int damage, DamageStruct::Nature nature)
-    :chain(false)
+    :chain(false), reason(QString())
 {
     this->card = card;
     this->from = from;
     this->to = to;
     this->damage = damage;
     this->nature = nature;
+}
+
+DamageStruct::DamageStruct(const QString &reason, ServerPlayer *from, ServerPlayer *to, int damage, DamageStruct::Nature nature)
+    :card(NULL), chain(false)
+{
+    this->from = from;
+    this->to = to;
+    this->damage = damage;
+    this->nature = nature;
+    this->reason = reason;
 }
 
 QString DamageStruct::getReason() const{

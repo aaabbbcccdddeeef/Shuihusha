@@ -20,8 +20,8 @@ public:
         room->setPlayerProperty(player, "maxhp", maxhp);
         room->setPlayerProperty(player, "hp", player->getMaxHP());
         room->setPlayerProperty(player, "role", "renegade");
-        room->detachSkillFromPlayer(player, "Yuanzhu", false);
-        room->detachSkillFromPlayer(player, "Bihu", false);
+        room->detachSkillFromPlayer(player, "yuanzhu", false);
+        room->detachSkillFromPlayer(player, "bihu", false);
 
         LogMessage log;
         log.type = "#Zombify";
@@ -50,8 +50,8 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         switch(event){
         case GameStart:{
-                room->acquireSkill(player, "Yuanzhu");
-                room->acquireSkill(player, "Bihu");
+                room->acquireSkill(player, "yuanzhu");
+                room->acquireSkill(player, "bihu");
                 break;
             }
 
@@ -149,8 +149,8 @@ public:
                 }
 
                 if(round == 1){
-                    room->acquireSkill(player, "Yuanzhu");
-                    room->acquireSkill(player, "Bihu");
+                    room->acquireSkill(player, "yuanzhu");
+                    room->acquireSkill(player, "bihu");
                 }
                 gameOverJudge(room);
             }
@@ -413,4 +413,4 @@ ZombieScenario::ZombieScenario()
     addMetaObject<GanranEquip>();
 }
 
-//ADD_SCENARIO(Zombie)
+ADD_SCENARIO(Zombie)

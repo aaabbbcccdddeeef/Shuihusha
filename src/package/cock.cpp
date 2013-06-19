@@ -327,10 +327,8 @@ public:
                 room->playSkillEffect(objectName(), 1);
                 if(!anu->isWounded() || room->askForChoice(anu, objectName(), "qiao+nu") == "nu")
                     anu->drawCards(2);
-                else{
-                    RecoverStruct r;
-                    room->recover(anu, r);
-                }
+                else
+                    room->recover(anu, RecoverStruct());
             }
         }
         return false;

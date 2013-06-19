@@ -23,6 +23,7 @@ struct DamageStruct{
     };
 
     DamageStruct(const Card *card, ServerPlayer *from, ServerPlayer *to, int damage = 1, Nature nature = Normal);
+    DamageStruct(const QString &reason, ServerPlayer *from, ServerPlayer *to, int damage = 1, Nature nature = Normal);
 
     ServerPlayer *from;
     ServerPlayer *to;
@@ -30,6 +31,9 @@ struct DamageStruct{
     int damage;
     Nature nature;
     bool chain;
+    QString reason;
+
+    QString getReason() const;
 };
 
 struct CardEffectStruct{
